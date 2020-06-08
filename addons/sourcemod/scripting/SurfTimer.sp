@@ -35,7 +35,7 @@
 #pragma semicolon 1
 
 // Plugin Info
-#define VERSION "285"
+#define VERSION "286 - jokes on u"
 
 // Database Definitions
 #define MYSQL 0
@@ -124,7 +124,7 @@
 #define MAX_LOCS 1024
 
 //CSGO HUD Hint Fix
-#define MAX_HINT_SIZE 225
+#define MAX_HINT_SIZE 254
 
 /*====================================
 =            Enumerations            =

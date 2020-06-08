@@ -3322,6 +3322,7 @@ public void CenterHudAlive(int client)
 						case 4: Format(module[i], 128, "LG %s", module[i]);
 						case 5: Format(module[i], 128, "SM %s", module[i]);
 						case 6: Format(module[i], 128, "FF %s", module[i]);
+						case 7: Format(module[i], 128, "FS %s", module[i]);
 					}
 				}
 			}
@@ -3504,7 +3505,7 @@ public void CenterHudAlive(int client)
 		if (IsValidEntity(client) && 1 <= client <= MaxClients && !g_bOverlay[client])
 		{
 			// PrintCSGOHUDText(client, "<font face=''>%s%s\n%s%s\n%s%s</font>", module[0], module2, module[2], module4, module[4], module6);
-			PrintCSGOHUDText(client, "<pre><font class='fontSize-sm'>%15s\t %15s\n%15s\t %15s\n%15s\t %15s</font></pre>", module[0], module[1], module[2], module[3], module[4], module[5]);
+			PrintCSGOHUDText(client, "<pre><font>%15s\t %15s\n%15s\t %15s\n%15s\t %15s</font></pre>", module[0], module[1], module[2], module[3], module[4], module[5]);
 		}
 	}
 }
@@ -4632,10 +4633,12 @@ void PrintCSGOHUDText(int client, const char[] format, any ...)
 {
 	char buff[MAX_HINT_SIZE];
 	VFormat(buff, sizeof(buff), format, 3);
-	Format(buff, sizeof(buff), "</font>%s ", buff);
+	Format(buff, sizeof(buff), "</font>%s", buff);
 
-	for(int i = strlen(buff); i < sizeof(buff); i++)
+	for(int i = strlen(buff); i < sizeof(buff) - 1; i++)
 		buff[i] = '\n';
+
+	buff[sizeof(buff) - 1] = '\0';
 
 	Protobuf pb = view_as<Protobuf>(StartMessageOne("TextMsg", client, USERMSG_RELIABLE | USERMSG_BLOCKHOOKS));
 	pb.SetInt("msg_dst", 4);

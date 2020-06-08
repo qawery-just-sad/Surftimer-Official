@@ -547,6 +547,12 @@ public Action Command_normalMode(int client, int args)
 		return Plugin_Handled;
 
 	Client_Stop(client, 1);
+	g_iCurrentStyle[client] = 0;
+	g_iInitalStyle[client] = 0;
+	Format(g_szInitalStyle[client], 128, "Normal");
+	Format(g_szStyleHud[client], 32, "");
+	g_bRankedStyle[client] = true;
+	g_bFunStyle[client] = false;
 	g_bPracticeMode[client] = false;
 	Command_Restart(client, 1);
 
