@@ -162,6 +162,21 @@ void CreateCommands()
 	// Styles
 	RegConsoleCmd("sm_style", Client_SelectStyle, "[surftimer] open style select menu.");
 	RegConsoleCmd("sm_styles", Client_SelectStyle, "[surftimer] open style select menu.");
+	RegConsoleCmd("sm_sw", Client_SelectStyleSW, "[surftimer] Switches to sideways.");
+	RegConsoleCmd("sm_hsw", Client_SelectStyleHSW, "[surftimer] Switches to half-sideways.");
+	RegConsoleCmd("sm_bw", Client_SelectStyleBW, "[surftimer] Switches to backwards.");
+	RegConsoleCmd("sm_lg", Client_SelectStyleLG, "[surftimer] Switches to low gravity.");
+	RegConsoleCmd("sm_sm", Client_SelectStyleSM, "[surftimer] Switches to slow motion.");
+	RegConsoleCmd("sm_ffw", Client_SelectStyleFF, "[surftimer] Switches to fast foward.");
+	RegConsoleCmd("sm_fs", Client_SelectStyleFS, "[surftimer] Switches to freestyle.");
+	RegConsoleCmd("sm_sideways", Client_SelectStyleSW, "[surftimer] Switches to sideways.");
+	RegConsoleCmd("sm_halfsideways", Client_SelectStyleHSW, "[surftimer] Switches to half-sideways.");
+	RegConsoleCmd("sm_backwards", Client_SelectStyleBW, "[surftimer] Switches to backwards.");
+	RegConsoleCmd("sm_lowgravity", Client_SelectStyleLG, "[surftimer] Switches to low gravity.");
+	RegConsoleCmd("sm_slowmotion", Client_SelectStyleSM, "[surftimer] Switches to slow motion.");
+	RegConsoleCmd("sm_fastfoward", Client_SelectStyleFF, "[surftimer] Switches to fast foward.");
+	RegConsoleCmd("sm_freestyle", Client_SelectStyleFS, "[surftimer] Switches to freestyle.");
+
 
 	// Test
 	RegAdminCmd("sm_test", sm_test, ADMFLAG_CUSTOM6);
@@ -175,6 +190,7 @@ void CreateCommands()
 	// Discord
 	RegConsoleCmd("sm_bug", Command_Bug, "[surftimer] report a bug to our discord");
 	RegConsoleCmd("sm_calladmin", Command_Calladmin, "[surftimer] sends a message to the staff");
+	RegAdminCmd("sm_ck_discord_test", Command_DiscordTest, ADMFLAG_ROOT, "[surftimer] Allows to test the discord webhook");
 
 	// CPR
 	RegConsoleCmd("sm_cpr", Command_CPR, "[surftimer] Compare clients time to another clients time");
@@ -205,6 +221,18 @@ void CreateCommands()
 	RegConsoleCmd("sm_nctriggers", Command_ToggleNcTriggers, "[surftimer] [settings] on/off - toggle triggers while noclipping");
 	RegConsoleCmd("sm_autoreset", Command_ToggleAutoReset, "[surftimer] [settings] on/off - toggle auto reset for your current map/bonus run if your above your pb");
 
+}
+
+public Action Command_DiscordTest(int client, int args)
+{
+	if (!GetConVarBool(g_dcTest))
+	{
+		return Plugin_Handled;
+	}
+	sendDiscordAnnouncement("Test Player", "surf_utopia_v3", "0:00:00", "0:00:00");
+	sendDiscordAnnouncementBonus("Test Player", "surf_utopia_v3", "0:00:00", 1, "0:00:00");
+	CPrintToChat(client, "%t", "Discord_Test", g_szChatPrefix);
+	return Plugin_Handled;
 }
 
 public Action Command_ToggleAutoReset(int client, int args) {
@@ -557,6 +585,125 @@ public Action Command_normalMode(int client, int args)
 	Command_Restart(client, 1);
 
 	CPrintToChat(client, "%t", "PracticeNormal", g_szChatPrefix);
+	return Plugin_Handled;
+}
+
+public Action Client_SelectStyleSW(int client, int args)
+{
+	if (!IsValidClient(client))
+		return Plugin_Handled;
+
+	Client_Stop(client, 1);
+	g_iCurrentStyle[client] = 1;
+	g_iInitalStyle[client] = 1;
+	Format(g_szInitalStyle[client], 128, "Sideways");
+	Format(g_szStyleHud[client], 32, "[SW]");
+	g_bRankedStyle[client] = true;
+	g_bFunStyle[client] = false;
+	Command_Restart(client, 1);
+	return Plugin_Handled;
+}
+
+
+public Action Client_SelectStyleHSW(int client, int args)
+{
+	if (!IsValidClient(client))
+		return Plugin_Handled;
+
+	Client_Stop(client, 1);
+	g_iCurrentStyle[client] = 2;
+	g_iInitalStyle[client] = 2;
+	Format(g_szInitalStyle[client], 128, "Half-Sideways");
+	Format(g_szStyleHud[client], 32, "[HSW]");
+	g_bRankedStyle[client] = true;
+	g_bFunStyle[client] = false;
+	Command_Restart(client, 1);
+	return Plugin_Handled;
+
+}
+
+public Action Client_SelectStyleBW(int client, int args)
+{
+	if (!IsValidClient(client))
+		return Plugin_Handled;
+
+	Client_Stop(client, 1);
+	g_iCurrentStyle[client] = 3;
+	g_iInitalStyle[client] = 3;
+	Format(g_szInitalStyle[client], 128, "Backwards");
+	Format(g_szStyleHud[client], 32, "[BW]");
+	g_bRankedStyle[client] = true;
+	g_bFunStyle[client] = false;
+	Command_Restart(client, 1);
+	return Plugin_Handled;
+}
+
+public Action Client_SelectStyleLG(int client, int args)
+{
+	if (!IsValidClient(client))
+		return Plugin_Handled;
+
+	Client_Stop(client, 1);
+	g_iCurrentStyle[client] = 4;
+	g_iInitalStyle[client] = 4;
+	Format(g_szInitalStyle[client], 128, "Low-Gravity");
+	Format(g_szStyleHud[client], 32, "[LG]");
+	SetEntityGravity(client, 0.5);
+	g_bRankedStyle[client] = false;
+	g_bFunStyle[client] = true;
+	Command_Restart(client, 1);
+	return Plugin_Handled;
+}
+
+public Action Client_SelectStyleSM(int client, int args)
+{
+	if (!IsValidClient(client))
+		return Plugin_Handled;
+
+	Client_Stop(client, 1);
+	g_iCurrentStyle[client] = 5;
+	g_iInitalStyle[client] = 5;
+	Format(g_szInitalStyle[client], 128, "Slow Motion");
+	Format(g_szStyleHud[client], 32, "[SM]");
+	SetEntPropFloat(client, Prop_Data, "m_flLaggedMovementValue", 0.5);
+	g_bRankedStyle[client] = false;
+	g_bFunStyle[client] = true;
+	Command_Restart(client, 1);
+	return Plugin_Handled;
+}
+
+public Action Client_SelectStyleFF(int client, int args)
+{
+	if (!IsValidClient(client))
+		return Plugin_Handled;
+
+	Client_Stop(client, 1);
+	g_iCurrentStyle[client] = 6;
+	g_iInitalStyle[client] = 6;
+	Format(g_szInitalStyle[client], 128, "Fast Forward");
+	Format(g_szStyleHud[client], 32, "[FF]");
+	SetEntPropFloat(client, Prop_Data, "m_flLaggedMovementValue", 1.5);
+	g_bRankedStyle[client] = false;
+	g_bFunStyle[client] = true;
+	Command_Restart(client, 1);
+	return Plugin_Handled;
+}
+
+public Action Client_SelectStyleFS(int client, int args)
+{
+	if (!IsValidClient(client))
+		return Plugin_Handled;
+
+	Client_Stop(client, 1);
+	g_iCurrentStyle[client] = 7;
+	g_iInitalStyle[client] = 7;
+	Format(g_szInitalStyle[client], 128, "Freestyle");
+	Format(g_szStyleHud[client], 32, "[FS]");
+	g_bRankedStyle[client] = false;
+	g_bFunStyle[client] = true;
+	g_bAutoBhop = true;
+	g_bAutoBhopClient[client] = true;
+	Command_Restart(client, 1);
 	return Plugin_Handled;
 }
 
@@ -1464,6 +1611,7 @@ public void TopMenuStyleSelect(int client)
 	AddMenuItem(menu, "", "Low-Gravity");
 	AddMenuItem(menu, "", "Slow Motion");
 	AddMenuItem(menu, "", "Fast Forwards");
+	AddMenuItem(menu, "", "Freestyle");
 	SetMenuExitButton(menu, true);
 	DisplayMenu(menu, client, MENU_TIME_FOREVER);
 }

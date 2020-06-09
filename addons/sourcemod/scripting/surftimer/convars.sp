@@ -117,6 +117,14 @@ ConVar g_dcBugTrackerName = null;
 ConVar g_drDeleteSecurity = null;
 ConVar g_iAdminCountryTags = null;
 ConVar g_replayBotDelay = null;
+ConVar g_dcColor = null;
+ConVar g_dcTitle = null;
+ConVar g_dcTitleBonus = null;
+ConVar g_dcMention = null;
+ConVar g_dcKSFStyle = null;
+ConVar g_dcTest = null;
+ConVar g_dcUrl_main = null;
+ConVar g_dcUrl_thumb = null;
 
 void CreateConVars()
 {
@@ -323,16 +331,20 @@ void CreateConVars()
 
 	// Discord
 	g_hRecordAnnounceDiscord = CreateConVar("ck_announce_records_discord", "", "Web hook link to announce records to discord, keep empty to disable");
-
 	g_hRecordAnnounceDiscordBonus = CreateConVar("ck_announce_bonus_records_discord", "", "Web hook link to announce bonus records to discord, keep empty to use ck_announce_records_discord");	
-
 	g_hReportBugsDiscord = CreateConVar("ck_report_discord", "", "Web hook link to report bugs to discord, keep empty to disable");
-
 	g_hCalladminDiscord = CreateConVar("ck_calladmin_discord", "", "Web hook link to allow players to call admin to discord, keep empty to disable");
-
 	g_hSidewaysBlockKeys = CreateConVar("ck_sideways_block_keys", "0", "Changes the functionality of sideways, 1 will block keys, 0 will change the clients style to normal if not surfing sideways");
-
 	g_hEnforceDefaultTitles = CreateConVar("ck_enforce_default_titles", "0", "Sets whether default titles will be enforced on clients, Enable / Disable");
+	g_dcColor = CreateConVar("ck_discord_embed_color", "#ff2222", "The color of the discord embed message - Discord side", FCVAR_NOTIFY);
+	g_dcTitle = CreateConVar("ck_discord_embed_title", "New Server Record on {Server_Name}!", "The title of the discord embed for a server record, {Server_Name} will be replaced with your server's name - Discord side", FCVAR_NOTIFY);
+	g_dcTitleBonus = CreateConVar("ck_discord_embed_title_bonus", "New Server Bonus Record on {Server_Name}!", "The title of the discord embed for a bonus record, {Server_Name} will be replaced with your server's name - Discord side", FCVAR_NOTIFY);
+	g_dcMention = CreateConVar("ck_discord_mention", "@here", "Group to mention when somebody sets a record. Leave blank to disable. For a group other than @here or @everyone, use backslash@groupname in the discord's chat.", FCVAR_NOTIFY);
+	g_dcKSFStyle = CreateConVar("ck_discord_ksf_style", "0", "Wether or not to use the KSF style for discord announcements. Set to 1 for KSF style.", FCVAR_NOTIFY);
+	g_dcTest = CreateConVar("ck_discord_test", "0", "Wether or not discord testing is enabled. If it is, type !ck_discord_test to test it.", FCVAR_NOTIFY);
+	g_dcUrl_main = CreateConVar("ck_discord_url_main", "", "The base url of where the Discord main images are stored. Leave blank to disable.");
+	g_dcUrl_thumb = CreateConVar("ck_discord_url_thumb", "https://image.gametracker.com/images/maps/160x120/csgo/", "The base url of where the Discord thumb images are stored. Leave blank to disable.");
+	
 	HookConVarChange(g_hEnforceDefaultTitles, OnSettingChanged);
 
 	// WRCP Points
