@@ -257,6 +257,8 @@ public void CL_OnEndTimerPress(int client)
 			// If the server already has a record
 			if (g_MapTimesCount > 0)
 			{
+				
+				g_fOldRecordMapTime = g_fRecordMapTime;
 				if (g_fFinalTime[client] < g_fRecordMapTime)
 				{
 					// New fastest time in map

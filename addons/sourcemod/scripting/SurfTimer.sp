@@ -860,6 +860,9 @@ char g_szRecordPlayer[MAX_NAME_LENGTH];
 // Checks if the bot is new, if so, set weapon
 bool g_bNewRecordBot;
 
+// Old Map Record
+float g_fOldRecordMapTime;
+
 // Checks if the bot is new, if so, set weapon
 bool g_bNewBonusBot;
 
