@@ -190,7 +190,7 @@ void CreateCommands()
 	// Discord
 	RegConsoleCmd("sm_bug", Command_Bug, "[surftimer] report a bug to our discord");
 	RegConsoleCmd("sm_calladmin", Command_Calladmin, "[surftimer] sends a message to the staff");
-	RegAdminCmd("sm_ck_discord_test", Command_DiscordTest, ADMFLAG_ROOT, "[surftimer] Allows to test the discord webhook");
+	RegAdminCmd("sm_discordtest", Command_DiscordTest, ADMFLAG_ROOT, "[surftimer] Allows to test the discord webhook");
 
 	// CPR
 	RegConsoleCmd("sm_cpr", Command_CPR, "[surftimer] Compare clients time to another clients time");
