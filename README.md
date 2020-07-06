@@ -138,7 +138,6 @@ Extensions used in this version:
 *   [SMJansson](https://forums.alliedmods.net/showthread.php?t=184604) (Thrawn2)
 *   [DHooks](https://forums.alliedmods.net/showthread.php?t=180114) (Dr!fter)
 *   [Discord API](https://github.com/Deathknife/sourcemod-discord) (Deathknife)
-*   [Trails Chroma](https://github.com/Nickelony/Trails-Chroma) (Nickelony)
 <details>
   <summary>forked from fluffys - contributors</summary> 
   

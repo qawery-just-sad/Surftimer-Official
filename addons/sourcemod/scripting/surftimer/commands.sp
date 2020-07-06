@@ -117,7 +117,6 @@ void CreateCommands()
 	RegConsoleCmd("sm_customtitle", Command_SetDbTitle, "[surftimer] [vip] VIPs can set their own custom title into a db");
 	RegConsoleCmd("sm_namecolour", Command_SetDbNameColour, "[surftimer] [vip] VIPs can set their own custom name colour into the db");
 	RegConsoleCmd("sm_textcolour", Command_SetDbTextColour, "[surftimer] [vip] VIPs can set their own custom text colour into the db");
-	RegConsoleCmd("sm_ve", Command_VoteExtend, "[surftimer] [vip] Vote to extend the map");
 	RegConsoleCmd("sm_colours", Command_ListColours, "[surftimer] Lists available colours for sm_mytitle and sm_namecolour");
 	RegConsoleCmd("sm_colors", Command_ListColours, "[surftimer] Lists available colours for sm_mytitle and sm_namecolour");
 	RegConsoleCmd("sm_toggletitle", Command_ToggleTitle, "[surftimer] [vip] VIPs can toggle their title.");
@@ -527,46 +526,6 @@ public int CustomTitleMenuHandler(Handle menu, MenuAction action, int param1, in
 	}
 	else if (action == MenuAction_End)
 		CloseHandle(menu);
-}
-
-public Action Command_VoteExtend(int client, int args)
-{
-	if (!IsValidClient(client) || !IsPlayerVip(client))
-		return Plugin_Handled;
-
-	VoteExtend(client);
-	return Plugin_Handled;
-}
-
-public void VoteExtend(int client)
-{
-	int timeleft;
-	GetMapTimeLeft(timeleft);
-
-	if (timeleft > 300)
-	{
-		CPrintToChat(client, "%t", "Commands4", g_szChatPrefix);
-		return;
-	}
-
-	if (IsVoteInProgress())
-	{
-		CPrintToChat(client, "%t", "Commands5", g_szChatPrefix);
-		return;
-	}
-
-	char szPlayerName[MAX_NAME_LENGTH];
-	GetClientName(client, szPlayerName, MAX_NAME_LENGTH);
-
-	Menu menu = CreateMenu(Handle_VoteMenuExtend);
-	SetMenuTitle(menu, "Extend the map by 10 minutes?");
-	AddMenuItem(menu, "###yes###", "Yes");
-	AddMenuItem(menu, "###no###", "No");
-	SetMenuExitButton(menu, false);
-	VoteMenuToAll(menu, 20);
-	CPrintToChatAll("%t", "VoteStartedBy", g_szChatPrefix, szPlayerName);
-
-	return;
 }
 
 public Action Command_normalMode(int client, int args)

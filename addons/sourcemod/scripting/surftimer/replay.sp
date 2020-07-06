@@ -716,6 +716,7 @@ public void LoadRecordReplay()
 		// https://github.com/crashfort/SourceToolAssist/blob/be9218583ee0a8086c817a5bd29101b2a260e5a7/Source/surf_segmentplay.sp#L113
 		// Disabling noclip, makes the bot bug, look into later
 		// SetEntityMoveType(g_RecordBot, MOVETYPE_NOCLIP);
+		// g_iDisableTriggers[g_RecordBot] = false;
 		SetEntityGravity(g_RecordBot, 0.0);
 
 		PlayRecord(g_RecordBot, 0, 0);
@@ -776,6 +777,7 @@ public void LoadBonusReplay()
 		// https://github.com/crashfort/SourceToolAssist/blob/be9218583ee0a8086c817a5bd29101b2a260e5a7/Source/surf_segmentplay.sp#L113
 		// Disabling noclip, makes the bot bug, look into later
 		// SetEntityMoveType(g_BonusBot, MOVETYPE_NOCLIP);
+		// g_iDisableTriggers[g_BonusBot] = false;
 		SetEntityGravity(g_BonusBot, 0.0);
 
 		PlayRecord(g_BonusBot, 1, 0);
@@ -836,6 +838,7 @@ public void LoadWrcpReplay()
 		// https://github.com/crashfort/SourceToolAssist/blob/be9218583ee0a8086c817a5bd29101b2a260e5a7/Source/surf_segmentplay.sp#L113
 		// Disabling noclip, makes the bot bug, look into later
 		// SetEntityMoveType(g_WrcpBot, MOVETYPE_NOCLIP);
+		// g_iDisableTriggers[g_WrcpBot] = false;
 		SetEntityGravity(g_WrcpBot, 0.0);
 
 		PlayRecord(g_WrcpBot, -g_StageReplayCurrentStage, 0);
