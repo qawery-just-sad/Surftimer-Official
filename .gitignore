@@ -112,3 +112,4 @@ addons/sourcemod/scripting/include/usermessages.inc
 addons/sourcemod/scripting/include/vector.inc
 addons/sourcemod/scripting/include/version.inc
 addons/sourcemod/scripting/include/version_auto.inc
+addons/sourcemod/scripting/include/autoexecconfig.inc
