@@ -2763,6 +2763,10 @@ public int BonusTopMenuHandler(Menu menu, MenuAction action, int param1, int par
 	{
 		db_selectBonusTopSurfers(param1, g_szMapName, param2 + 1);
 	}
+	else if (action == MenuAction_End)
+	{
+		delete menu;
+	}
 }
 
 public void OptionMenu(int client)
