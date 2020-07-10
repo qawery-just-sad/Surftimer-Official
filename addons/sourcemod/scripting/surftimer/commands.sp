@@ -845,6 +845,7 @@ public Action Command_Teleport(int client, int args)
 		PauseMethod(client);
 
 	teleportClient(client, g_iClientInZone[client][2], g_Stage[g_iClientInZone[client][2]][client], false);
+
 	if (g_iCurrentStyle[client] == 4) // 4 low gravity
 		SetEntityGravity(client, 0.5);
 	else if (g_iCurrentStyle[client] == 5)// 5 slowmo
