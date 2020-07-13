@@ -935,8 +935,9 @@ public Action OnPlayerRunCmd(int client, int &buttons, int &impulse, float vel[3
 			ResetGravity(client);
 			if (GetConVarInt(g_hLimitSpeedType) == 1)
 			{
-				
-					// This logic for detecting bhops is pretty terrible and should be reworked -sneaK
+				// The jump thingy magic does not do anything when copy pasta here - https://github.com/qawery-just-sad/Surftimer-olokos/blob/0d4b16fb817dd778f949353cafb942270cc95786/addons/sourcemod/scripting/surftimer/hooks.sp#L1453
+
+				// This logic for detecting bhops is pretty terrible and should be reworked -sneaK
 				g_iTicksOnGround[client] = 0;
 				float time = GetGameTime();
 				float cTime = time - g_iLastJump[client];
@@ -1015,6 +1016,7 @@ public Action OnPlayerRunCmd(int client, int &buttons, int &impulse, float vel[3
 	{
 		if (g_bInStartZone[client] || g_bInStageZone[client])
 		{
+			// The jump thingy magic does not do anything when copy pasta here - https://github.com/qawery-just-sad/Surftimer-olokos/blob/0d4b16fb817dd778f949353cafb942270cc95786/addons/sourcemod/scripting/surftimer/hooks.sp#L1453
 			if (GetConVarInt(g_hLimitSpeedType) == 1)
 			{
 					// This logic for detecting bhops is pretty terrible and should be reworked -sneaK

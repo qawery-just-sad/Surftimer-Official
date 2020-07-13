@@ -714,9 +714,11 @@ public void LoadRecordReplay()
 
 		// "Having a bot in noclip and zero gravity ensures it's smooth" - Crashfort
 		// https://github.com/crashfort/SourceToolAssist/blob/be9218583ee0a8086c817a5bd29101b2a260e5a7/Source/surf_segmentplay.sp#L113
-		// Disabling noclip, makes the bot bug, look into later
-		// SetEntityMoveType(g_RecordBot, MOVETYPE_NOCLIP);
-		// g_iDisableTriggers[g_RecordBot] = false;
+		// Enabling noclip, makes the bot bug, look into later
+		// g_bNoClip[g_RecordBot] = true; - needed this for
+		// SetEntityMoveType(g_RecordBot, MOVETYPE_NOCLIP); - this. I think we would need to save pos in replay as well.
+		// g_iDisableTriggers[g_RecordBot] = false; - erm idk https://github.com/surftimer/Surftimer-olokos/pull/20#issuecomment-614683052
+		// SetEntProp(g_RecordBot, Prop_Send, "m_CollisionGroup", 0); - erm idk https://github.com/surftimer/Surftimer-olokos/pull/20#issuecomment-614678570 does nothing
 		SetEntityGravity(g_RecordBot, 0.0);
 
 		PlayRecord(g_RecordBot, 0, 0);
@@ -775,9 +777,11 @@ public void LoadBonusReplay()
 
 		// "Having a bot in noclip and zero gravity ensures it's smooth" - Crashfort
 		// https://github.com/crashfort/SourceToolAssist/blob/be9218583ee0a8086c817a5bd29101b2a260e5a7/Source/surf_segmentplay.sp#L113
-		// Disabling noclip, makes the bot bug, look into later
-		// SetEntityMoveType(g_BonusBot, MOVETYPE_NOCLIP);
-		// g_iDisableTriggers[g_BonusBot] = false;
+		// Enabling noclip, makes the bot bug, look into later
+		// g_bNoClip[g_BonusBot] = true; - needed this for
+		// SetEntityMoveType(g_BonusBot, MOVETYPE_NOCLIP); - this. I think we would need to save pos in replay as well.
+		// g_iDisableTriggers[g_BonusBot] = false; - erm idk https://github.com/surftimer/Surftimer-olokos/pull/20#issuecomment-614683052
+		// SetEntProp(g_BonusBot, Prop_Send, "m_CollisionGroup", 0); - erm idk https://github.com/surftimer/Surftimer-olokos/pull/20#issuecomment-614678570 does nothing
 		SetEntityGravity(g_BonusBot, 0.0);
 
 		PlayRecord(g_BonusBot, 1, 0);
@@ -836,9 +840,11 @@ public void LoadWrcpReplay()
 
 		// "Having a bot in noclip and zero gravity ensures it's smooth" - Crashfort
 		// https://github.com/crashfort/SourceToolAssist/blob/be9218583ee0a8086c817a5bd29101b2a260e5a7/Source/surf_segmentplay.sp#L113
-		// Disabling noclip, makes the bot bug, look into later
-		// SetEntityMoveType(g_WrcpBot, MOVETYPE_NOCLIP);
-		// g_iDisableTriggers[g_WrcpBot] = false;
+		// Enabling noclip, makes the bot bug, look into later
+		// g_bNoClip[g_WrcpBot] = true; - needed this for
+		// SetEntityMoveType(g_WrcpBot, MOVETYPE_NOCLIP); - this. I think we would need to save pos in replay as well.
+		// g_iDisableTriggers[g_WrcpBot] = false; - erm idk https://github.com/surftimer/Surftimer-olokos/pull/20#issuecomment-614683052
+		// SetEntProp(g_WrcpBot, Prop_Send, "m_CollisionGroup", 0); - erm idk https://github.com/surftimer/Surftimer-olokos/pull/20#issuecomment-614678570 does nothing
 		SetEntityGravity(g_WrcpBot, 0.0);
 
 		PlayRecord(g_WrcpBot, -g_StageReplayCurrentStage, 0);
