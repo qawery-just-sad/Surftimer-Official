@@ -1324,6 +1324,11 @@ bool g_bPrestigeAvoid[MAXPLAYERS + 1];
 // Menus mapname
 char g_szMapNameFromDatabase[MAXPLAYERS + 1][128];
 
+// New noclipspeed vars
+ConVar sv_noclipspeed;
+float g_iDefaultNoclipSpeed;
+float g_iNoclipSpeed[MAXPLAYERS + 1];
+
 // New speed limit variables
 bool g_bInBhop[MAXPLAYERS + 1];
 bool g_bFirstJump[MAXPLAYERS + 1];
@@ -2055,6 +2060,9 @@ public void OnClientDisconnect(int client)
 		--g_iTriggerTransmitCount;
 		TransmitTriggers(g_iTriggerTransmitCount > 0);
 	}
+
+	// New noclipspeed
+	sv_noclipspeed.FloatValue = g_iDefaultNoclipSpeed;
 }
 
 public void OnSettingChanged(Handle convar, const char[] oldValue, const char[] newValue)

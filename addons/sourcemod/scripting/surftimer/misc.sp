@@ -1395,6 +1395,10 @@ public void SetClientDefaults(int client)
 		g_Stage[i][client] = 1;
 
 	g_bInBhop[client] = false;
+
+	// New noclipspeed
+	g_iNoclipSpeed[client] = g_iDefaultNoclipSpeed;
+	
 }
 
 // Get Runtime
