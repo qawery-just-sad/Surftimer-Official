@@ -864,7 +864,7 @@ public void checkSpawnPoints()
 			{
 				if (StrEqual(sClassName, "info_player_start") || StrEqual(sClassName, "info_player_teamspawn"))
 				{
-					RemoveEdict(i);
+					RemoveEntity(i);
 				}
 			}
 		}
@@ -1043,7 +1043,7 @@ stock void StripAllWeapons(int client)
 			while ((iEnt = GetPlayerWeaponSlot(client, i)) != -1)
 		{
 			RemovePlayerItem(client, iEnt);
-			RemoveEdict(iEnt);
+			RemoveEntity(iEnt);
 		}
 	}
 	if (GetPlayerWeaponSlot(client, 2) == -1)
