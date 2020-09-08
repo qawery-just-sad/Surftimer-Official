@@ -1555,7 +1555,7 @@ public void sql_selectRankedPlayersRankCallback(Handle owner, Handle hndl, const
 
 	if (SQL_HasResultSet(hndl) && SQL_FetchRow(hndl))
 	{
-		g_PlayerRank[client][style] = SQL_GetRowCount(hndl);
+		g_PlayerRank[client][style] = SQL_FetchInt(hndl,0);
 		if (GetConVarInt(g_hPrestigeRank) > 0)
 		{
 			if (GetConVarBool(g_hPrestigeStyles) && !g_bPrestigeAvoid[client])
@@ -1687,7 +1687,7 @@ public void sql_selectPlayerRankCallback (Handle owner, Handle hndl, const char[
 
 	if (SQL_HasResultSet(hndl) && SQL_FetchRow(hndl))
 	{
-		WritePackCell(pack, SQL_GetRowCount(hndl));
+		WritePackCell(pack, SQL_FetchInt(hndl,0));
 
 		// "SELECT steamid, steamid64, name, country, points, wrpoints, wrbpoints, wrcppoints, top10points, groupspoints, mappoints, bonuspoints, finishedmapspro, finishedbonuses, finishedstages, wrs, wrbs, wrcps, top10s, groups, lastseen FROM ck_playerrank WHERE steamid = '%s' AND style = '%i';";
 		char szQuery[512];
@@ -4837,7 +4837,7 @@ public void db_InsertLatestRecords(char szSteamID[32], char szName[128], float F
 public void db_CalcAvgRunTime()
 {
 	char szQuery[256];
-	Format(szQuery, 256, sql_selectAllMapTimesinMap, g_szMapName);
+	Format(szQuery, sizeof(szQuery), sql_selectAVGruntimepro, g_szMapName);
 	SQL_TQuery(g_hDb, SQL_db_CalcAvgRunTimeCallback, szQuery, DBPrio_Low);
 }
 
@@ -4855,25 +4855,11 @@ public void SQL_db_CalcAvgRunTimeCallback(Handle owner, Handle hndl, const char[
 		return;
 	}
 
-	g_favg_maptime = 0.0;
 	if (SQL_HasResultSet(hndl))
 	{
-		int rowcount = SQL_GetRowCount(hndl);
-		int i, protimes;
-		float ProTime;
 		while (SQL_FetchRow(hndl))
 		{
-			float pro = SQL_FetchFloat(hndl, 0);
-			if (pro > 0.0)
-			{
-				ProTime += pro;
-				protimes++;
-			}
-			i++;
-			if (rowcount == i)
-			{
-				g_favg_maptime = ProTime / protimes;
-			}
+			g_favg_maptime = SQL_FetchFloat(hndl,0);
 		}
 	}
 
@@ -6889,7 +6875,7 @@ public void db_viewStyleMapRankCount(int style)
 {
 	g_StyleMapTimesCount[style] = 0;
 	char szQuery[512];
-	Format(szQuery, 512, "SELECT name FROM ck_playertimes WHERE mapname = '%s' AND style = %i AND runtimepro  > -1.0;", g_szMapName, style);
+	Format(szQuery, sizeof(szQuery), "SELECT COUNT(*) FROM ck_playertimes WHERE mapname = '%s' AND style = %i AND runtimepro  > -1.0;", g_szMapName, style);
 	SQL_TQuery(g_hDb, sql_selectStylePlayerCountCallback, szQuery, style, DBPrio_Low);
 }
 
@@ -6902,9 +6888,9 @@ public void sql_selectStylePlayerCountCallback(Handle owner, Handle hndl, const 
 	}
 
 	if (SQL_HasResultSet(hndl) && SQL_FetchRow(hndl))
-	g_StyleMapTimesCount[style] = SQL_GetRowCount(hndl);
+		g_StyleMapTimesCount[style] = SQL_FetchInt(hndl,0);
 	else
-	g_StyleMapTimesCount[style] = 0;
+		g_StyleMapTimesCount[style] = 0;
 
 	return;
 }
@@ -7497,7 +7483,7 @@ public void db_SelectTotalMapCompletesCallback(Handle owner, Handle hndl, const 
 
 		char szQuery[1024];
 
-		Format(szQuery, 1024, "SELECT name,mapname FROM ck_playertimes WHERE runtimepro <= (SELECT runtimepro FROM ck_playertimes WHERE steamid = '%s' AND mapname = '%s' AND runtimepro > -1.0 AND style = 0) AND mapname = '%s' AND style = 0 AND runtimepro > -1.0 ORDER BY runtimepro;", szSteamId, mapname, mapname);
+		Format(szQuery, sizeof(szQuery), "SELECT COUNT(name), mapname FROM ck_playertimes WHERE runtimepro <= (SELECT runtimepro FROM ck_playertimes WHERE steamid = '%s' AND mapname = '%s' AND runtimepro > -1.0 AND style = 0) AND mapname = '%s' AND style = 0 AND runtimepro > -1.0;", szSteamId, mapname, mapname);
 		SQL_TQuery(g_hDb, db_SelectPlayersMapRankCallback, szQuery, pack, DBPrio_Low);
 	}
 	else
@@ -7526,7 +7512,7 @@ public void db_SelectPlayersMapRankCallback(Handle owner, Handle hndl, const cha
 	if (SQL_HasResultSet(hndl) && SQL_FetchRow(hndl))
 	{
 		int rank;
-		rank = SQL_GetRowCount(hndl);
+		rank = SQL_FetchInt(hndl,0);
 
 		if (StrEqual(mapname, g_szMapName))
 		{
@@ -7945,7 +7931,7 @@ public void db_getPlayerRankUnknownCallback(Handle owner, Handle hndl, const cha
 
 	if (SQL_HasResultSet(hndl) && SQL_FetchRow(hndl))
 	{
-		int playerrank = SQL_GetRowCount(hndl);
+		int playerrank = SQL_FetchInt(hndl,0);
 
 		CPrintToChatAll("%t", "SQL39", g_szChatPrefix, szName, playerrank, g_pr_RankedPlayers, points);
 	}
@@ -9079,7 +9065,7 @@ public void db_viewCustomTitles(int client, char[] szSteamID)
 	Handle pack = CreateDataPack();
 	WritePackCell(pack, client);
 	WritePackString(pack, szSteamID);
-	Format(szQuery, 728, "SELECT `title`, `namecolour`, `textcolour`, `inuse`, `vip`, `zoner`, `joinmsg` FROM `ck_vipadmins` WHERE `steamid` = '%s'", szSteamID);
+	Format(szQuery, sizeof(szQuery), "SELECT `title`, `namecolour`, `textcolour`, `inuse`, `vip`, `zoner`, `joinmsg` FROM `ck_vipadmins` WHERE `steamid` = '%s';", szSteamID);
 	SQL_TQuery(g_hDb, SQL_viewCustomTitlesCallback, szQuery, pack, DBPrio_Low);
 }
 
