@@ -3103,7 +3103,7 @@ public void LoadInfoBot()
 	else
 	{
 		setBotQuota();
-		CreateTimer(0.5, RefreshInfoBot, TIMER_FLAG_NO_MAPCHANGE);
+		CreateTimer(0.5, RefreshInfoBot, _, TIMER_FLAG_NO_MAPCHANGE);
 	}
 }
 

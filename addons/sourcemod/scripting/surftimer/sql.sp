@@ -1981,7 +1981,7 @@ public void sql_selectMapRecordCallback(Handle owner, Handle hndl, const char[] 
 		if (!g_bServerDataLoaded)
 		{
 			db_viewMapProRankCount();
-			CreateTimer(3.0, RefreshZonesTimer, INVALID_HANDLE, TIMER_FLAG_NO_MAPCHANGE);
+			CreateTimer(3.0, RefreshZonesTimer, _, TIMER_FLAG_NO_MAPCHANGE);
 		}
 		return;
 	}
@@ -2042,7 +2042,7 @@ public void sql_selectMapRecordCallback(Handle owner, Handle hndl, const char[] 
 	if (!g_bServerDataLoaded)
 	{
 		db_viewMapProRankCount();
-		CreateTimer(3.0, RefreshZonesTimer, INVALID_HANDLE, TIMER_FLAG_NO_MAPCHANGE);
+		CreateTimer(3.0, RefreshZonesTimer, _, TIMER_FLAG_NO_MAPCHANGE);
 	}
 	return;
 }

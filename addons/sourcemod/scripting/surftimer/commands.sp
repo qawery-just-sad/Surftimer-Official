@@ -2448,8 +2448,7 @@ public int GoToMenuHandler(Menu menu, MenuAction action, int param1, int param2)
 			}
 		}
 	}
-	else
-		if (action == MenuAction_End)
+	else if (action == MenuAction_End)
 	{
 		CloseHandle(menu);
 	}
@@ -2712,8 +2711,7 @@ public int TopMenuHandler(Menu menu, MenuAction action, int param1, int param2)
 			case 2: BonusTopMenu(param1);
 		}
 	}
-	else
-		if (action == MenuAction_End)
+	else if (action == MenuAction_End)
 		CloseHandle(menu);
 }
 
@@ -3623,14 +3621,11 @@ public int StageSelectMenuHandler(Menu menu, MenuAction action, int param1, int 
 		GetMenuItem(menu, param2, info, sizeof(info));
 		db_selectStageTopSurfers(param1, info, g_szWrcpMapSelect[param1]);
 	}
-	else
+	else if (action == MenuAction_End)
 	{
-		if (action == MenuAction_End)
-		{
-			if (IsValidClient(param1))
-				g_bSelectWrcp[param1] = false;
-			CloseHandle(menu);
-		}
+		if (IsValidClient(param1))
+			g_bSelectWrcp[param1] = false;
+		CloseHandle(menu);
 	}
 }
 
@@ -3643,14 +3638,11 @@ public int StageStyleSelectMenuHandler(Menu menu, MenuAction action, int param1,
 		GetMenuItem(menu, param2, info, sizeof(info));
 		db_selectStageStyleTopSurfers(param1, info, g_szWrcpMapSelect[param1], style);
 	}
-	else
+	else if (action == MenuAction_End)
 	{
-		if (action == MenuAction_End)
-		{
-			if (IsValidClient(param1))
-				g_bSelectWrcp[param1] = false;
-			CloseHandle(menu);
-		}
+		if (IsValidClient(param1))
+			g_bSelectWrcp[param1] = false;
+		CloseHandle(menu);
 	}
 }
 
@@ -3713,11 +3705,8 @@ public int StyleTypeSelectMenuHandler(Menu styleSelect, MenuAction action, int p
 			}
 		}
 	}
-	else
-	{
-		if (action == MenuAction_End)
-			CloseHandle(styleSelect);
-	}
+	else if (action == MenuAction_End)
+		CloseHandle(styleSelect);
 }
 
 public int StyleSelectMenuHandler(Menu menu, MenuAction action, int param1, int param2)
@@ -4141,8 +4130,8 @@ public Action Admin_FixBot(int client, int args)
 		return Plugin_Handled;
 
 	CPrintToChat(client, "%t", "Commands52", g_szChatPrefix);
-	CreateTimer(5.0, FixBot_Off, INVALID_HANDLE, TIMER_FLAG_NO_MAPCHANGE);
-	CreateTimer(10.0, FixBot_On, INVALID_HANDLE, TIMER_FLAG_NO_MAPCHANGE);
+	CreateTimer(5.0, FixBot_Off, _, TIMER_FLAG_NO_MAPCHANGE);
+	CreateTimer(10.0, FixBot_On, _, TIMER_FLAG_NO_MAPCHANGE);
 
 	return Plugin_Handled;
 }

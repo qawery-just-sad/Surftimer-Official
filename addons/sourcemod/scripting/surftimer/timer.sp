@@ -8,9 +8,10 @@ public Action reloadRank(Handle timer, any client)
 public Action AnnounceMap(Handle timer, any client)
 {
 	if (IsValidClient(client))
+	{
 		CPrintToChat(client, "%t", "Timer1", g_szChatPrefix, g_sTierString);
-
-	AnnounceTimer[client] = null;
+		AnnounceTimer[client] = null;
+	}
 	return Plugin_Handled;
 }
 
@@ -69,6 +70,7 @@ public Action UpdatePlayerProfile(Handle timer, Handle pack)
 	ResetPack(pack);
 	int client = GetClientOfUserId(ReadPackCell(pack));
 	int style = ReadPackCell(pack);
+	delete pack;
 
 	if (IsValidClient(client) && !IsFakeClient(client))
 		db_updateStat(client, style);
@@ -179,7 +181,7 @@ public Action CKTimer2(Handle timer)
 				case 3:CPrintToChatAll("%s ~~~ MAP ENDING ~~~", g_szChatPrefix);
 				case 2:CPrintToChatAll("%s ~~~ MAP ENDING ~~~", g_szChatPrefix);
 				case 1:CPrintToChatAll("%s ~~~ MAP ENDING ~~~", g_szChatPrefix);
-				case 0:CreateTimer(14.0, ForceNextMap, INVALID_HANDLE, TIMER_FLAG_NO_MAPCHANGE);	
+				case 0:CreateTimer(14.0, ForceNextMap, _, TIMER_FLAG_NO_MAPCHANGE);	
 				case -1:
 				{
 					if (!g_bRoundEnd)
@@ -188,7 +190,7 @@ public Action CKTimer2(Handle timer)
 						ServerCommand("mp_ignore_round_win_conditions 0");
 						char szNextMap[128];
 						GetNextMap(szNextMap, 128);
-						CreateTimer(1.0, TerminateRoundTimer, INVALID_HANDLE, TIMER_FLAG_NO_MAPCHANGE);
+						CreateTimer(1.0, TerminateRoundTimer, _, TIMER_FLAG_NO_MAPCHANGE);
 					}
 				}
 			}
@@ -301,6 +303,7 @@ public Action BonusReplayTimer(Handle timer, Handle pack)
 	ResetPack(pack);
 	int client = GetClientOfUserId(ReadPackCell(pack));
 	int zGrp = ReadPackCell(pack);
+	delete pack;
 
 	if (IsValidClient(client) && !IsFakeClient(client))
 		SaveRecording(client, zGrp, 0);
@@ -316,6 +319,7 @@ public Action StyleReplayTimer(Handle timer, Handle pack)
 	ResetPack(pack);
 	int client = GetClientOfUserId(ReadPackCell(pack));
 	int style = ReadPackCell(pack);
+	delete pack;
 
 	if (IsValidClient(client) && !IsFakeClient(client))
 		SaveRecording(client, 0, style);
@@ -331,6 +335,7 @@ public Action StyleBonusReplayTimer(Handle timer, Handle pack)
 	int client = GetClientOfUserId(ReadPackCell(pack));
 	int zGrp = ReadPackCell(pack);
 	int style = ReadPackCell(pack);
+	delete pack;
 
 	if (IsValidClient(client) && !IsFakeClient(client))
 		SaveRecording(client, zGrp, style);
@@ -554,17 +559,6 @@ public Action StartJumpZonePrintTimer(Handle timer, any client)
 	return Plugin_Handled;
 }
 
-
-public Action Block2Unload(Handle timer, any client)
-{
-	ServerCommand("sm plugins unload block2");
-}
-
-public Action Block2Load(Handle timer, any client)
-{
-	ServerCommand("sm plugins load block2");
-}
-
 // Replay Bot Fixes
 
 public Action FixBot_Off(Handle timer)
@@ -651,6 +645,7 @@ public Action SpecBot(Handle timer, Handle pack)
 	ResetPack(pack);
 	int client = GetClientOfUserId(ReadPackCell(pack));
 	int bot = ReadPackCell(pack);
+	delete pack;
 
 	ChangeClientTeam(client, 1);
 	SetEntPropEnt(client, Prop_Send, "m_hObserverTarget", bot);

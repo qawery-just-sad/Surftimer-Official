@@ -1620,7 +1620,7 @@ public void OnEntityCreated(int entity, const char[] classname) {
 
 public void OnMapStart()
 {
-	CreateTimer(30.0, EnableJoinMsgs, INVALID_HANDLE, TIMER_FLAG_NO_MAPCHANGE);
+	CreateTimer(30.0, EnableJoinMsgs, _, TIMER_FLAG_NO_MAPCHANGE);
 
 	// Get mapname
 	GetCurrentMap(g_szMapName, 128);
@@ -1680,10 +1680,10 @@ public void OnMapStart()
 	SetCashState();
 
 	// Timers
-	CreateTimer(0.1, CKTimer1, INVALID_HANDLE, TIMER_FLAG_NO_MAPCHANGE | TIMER_REPEAT);
-	CreateTimer(1.0, CKTimer2, INVALID_HANDLE, TIMER_FLAG_NO_MAPCHANGE | TIMER_REPEAT);
-	CreateTimer(60.0, AttackTimer, INVALID_HANDLE, TIMER_FLAG_NO_MAPCHANGE | TIMER_REPEAT);
-	CreateTimer(600.0, PlayerRanksTimer, INVALID_HANDLE, TIMER_FLAG_NO_MAPCHANGE | TIMER_REPEAT);
+	CreateTimer(0.1, CKTimer1, _, TIMER_FLAG_NO_MAPCHANGE | TIMER_REPEAT);
+	CreateTimer(1.0, CKTimer2, _, TIMER_FLAG_NO_MAPCHANGE | TIMER_REPEAT);
+	CreateTimer(60.0, AttackTimer, _, TIMER_FLAG_NO_MAPCHANGE | TIMER_REPEAT);
+	CreateTimer(600.0, PlayerRanksTimer, _, TIMER_FLAG_NO_MAPCHANGE | TIMER_REPEAT);
 	g_hZoneTimer = CreateTimer(GetConVarFloat(g_hChecker), BeamBoxAll, _, TIMER_REPEAT);
 
 	// AutoBhop
@@ -1693,11 +1693,11 @@ public void OnMapStart()
 		g_bAutoBhop = false;
 
 	// main.cfg & replays
-	CreateTimer(1.0, DelayedStuff, INVALID_HANDLE, TIMER_FLAG_NO_MAPCHANGE);
-	CreateTimer(GetConVarFloat(g_replayBotDelay), LoadReplaysTimer, INVALID_HANDLE, TIMER_FLAG_NO_MAPCHANGE); // replay bots
+	CreateTimer(1.0, DelayedStuff, _, TIMER_FLAG_NO_MAPCHANGE);
+	CreateTimer(GetConVarFloat(g_replayBotDelay), LoadReplaysTimer, _, TIMER_FLAG_NO_MAPCHANGE); // replay bots
 
 	g_Advert = 0;
-	CreateTimer(180.0, AdvertTimer, INVALID_HANDLE, TIMER_FLAG_NO_MAPCHANGE | TIMER_REPEAT);
+	CreateTimer(180.0, AdvertTimer, _, TIMER_FLAG_NO_MAPCHANGE | TIMER_REPEAT);
 
 	int iEnt;
 
@@ -1760,12 +1760,12 @@ public void OnMapStart()
 	g_bRoundEnd = false;
 
 	// Playtime
-	CreateTimer(1.0, PlayTimeTimer, INVALID_HANDLE, TIMER_REPEAT|TIMER_FLAG_NO_MAPCHANGE);
+	CreateTimer(1.0, PlayTimeTimer, _, TIMER_REPEAT|TIMER_FLAG_NO_MAPCHANGE);
 
 	// Server Announcements
 	g_iServerID = GetConVarInt(g_hServerID);
 	if (GetConVarBool(g_hRecordAnnounce))
-		CreateTimer(45.0, AnnouncementTimer, INVALID_HANDLE, TIMER_REPEAT|TIMER_FLAG_NO_MAPCHANGE);
+		CreateTimer(45.0, AnnouncementTimer, _, TIMER_REPEAT|TIMER_FLAG_NO_MAPCHANGE);
 
 	// Show Triggers
 	g_iTriggerTransmitCount = 0;
@@ -2660,7 +2660,7 @@ public void OnPluginStart()
 
 	if (g_bLateLoaded)
 	{
-		CreateTimer(3.0, LoadPlayerSettings, INVALID_HANDLE, TIMER_FLAG_NO_MAPCHANGE);
+		CreateTimer(3.0, LoadPlayerSettings, _, TIMER_FLAG_NO_MAPCHANGE);
 	}
 
 	Format(szWHITE, 12, "%c", WHITE);
