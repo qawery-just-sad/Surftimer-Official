@@ -6,7 +6,7 @@ Gimme a good idea to rename this fork.
 ## Project Goals
 
 As you probably all know there are quite some bugs in all open-source versions of cksurf or surftimer.(yep and in anything beyond 285)
-[Our](https://www.youtube.com/watch?v=U06jlgpMtQs) main goal with this project to have a bug-free, properly optimized surf timer that would work as we all expect it to, across ~~all~~[Our](https://www.youtube.com/watch?v=U06jlgpMtQs) configuration~~s~~.
+[Our](https://www.youtube.com/watch?v=U06jlgpMtQs) main goal with this project to have a bug-free, properly optimized surf timer that would work as we all expect it to, across ~~all~~ [Our](https://www.youtube.com/watch?v=U06jlgpMtQs) configuration~~s~~.
 Because of this, [we](https://www.youtube.com/watch?v=U06jlgpMtQs) will be putting new features and additions on the side, as they can potentially introduce new, unknown issues and there's plenty of those already.(no shit)
 
 **Does it mean this version is buggy?**
@@ -45,11 +45,14 @@ Yes
 *   Grandpa Goose
   
 </details>
+
 <details>
 	<summary>current dev crew over at https://github.com/surftimer/Surftimer-olokos
+
 *	[Ace](https://github.com/13ace37) [xace.ch](https://xace.ch)
 *	[olokos](https://github.com/olokos) [Steam](https://steamcommunity.com/id/olokos/) [My server](https://kiepownica.pl/)
 *	and many, many more people who contributed to the project!
 *	_Like @Bara, @dPexxIAM, @LubricantJam_
+
 </details>
 
