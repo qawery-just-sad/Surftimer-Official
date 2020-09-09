@@ -27,11 +27,6 @@ public void db_setupDatabase()
 		SQL_FastQuery(g_hDb, "SET sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));");
 		g_DbType = MYSQL;
 	}
-	else if (strcmp(szIdent, "sqlite", false) == 0)
-	{
-		SetFailState("[SurfTimer] Sorry SQLite is not supported.");
-		return;
-	}
 	else
 	{
 		SetFailState("[SurfTimer] Invalid database type");
@@ -42,10 +37,6 @@ public void db_setupDatabase()
 	SQL_LockDatabase(g_hDb);
 	SQL_FastQuery(g_hDb, "SET NAMES 'utf8mb4'");
 
-
-	// Check if tables need to be Created or database needs to be upgraded
-	g_bRenaming = false;
-	g_bInTransactionChain = false;
 
 	// If tables haven't been created yet.
 	if (!SQL_FastQuery(g_hDb, "SELECT steamid FROM ck_playerrank LIMIT 1"))
