@@ -46,13 +46,9 @@ Yes
   
 </details>
 
-<details>
-	<summary>current dev crew over at https://github.com/surftimer/Surftimer-olokos
+Current dev crew over at https://github.com/surftimer/Surftimer-olokos
 
-*	[Ace](https://github.com/13ace37) [xace.ch](https://xace.ch)
+*	[Ace](https://github.com/13ace37) [xace.ch](https://xace.ch) (actually ace just left after 285 release [nice move])
 *	[olokos](https://github.com/olokos) [Steam](https://steamcommunity.com/id/olokos/) [My server](https://kiepownica.pl/)
 *	and many, many more people who contributed to the project!
 *	_Like @Bara, @dPexxIAM, @LubricantJam_
-
-</details>
-
