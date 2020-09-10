@@ -525,7 +525,7 @@ public int CustomTitleMenuHandler(Handle menu, MenuAction action, int param1, in
 		}
 	}
 	else if (action == MenuAction_End)
-		CloseHandle(menu);
+		delete menu;
 }
 
 public Action Command_normalMode(int client, int args)
@@ -1070,7 +1070,7 @@ public int MenuHandler_SelectStage(Menu tMenu, MenuAction action, int client, in
 		}
 		case MenuAction_End:
 		{
-			CloseHandle(tMenu);
+			delete tMenu;
 		}
 	}
 }
@@ -1597,7 +1597,7 @@ public int TopMenuStyleSelectHandler(Handle menu, MenuAction action, int param1,
 		ckTopMenu(param1, param2);
 	}
 	else if (action == MenuAction_End)
-		CloseHandle(menu);
+		delete menu;
 }
 
 public Action Client_MapTop(int client, int args)
@@ -1985,7 +1985,7 @@ public int SpecMenuHandler(Menu menu, MenuAction action, int param1, int param2)
 	else
 		if (action == MenuAction_End)
 		{
-			CloseHandle(menu);
+			delete menu;
 		}
 }
 
@@ -2158,7 +2158,7 @@ public Action Client_Help(int client, int args)
 public int HelpMenuHandler(Menu menu, MenuAction action, int param1, int param2)
 {
 	if (action == MenuAction_End)
-		CloseHandle(menu);
+		delete menu;
 }
 
 public Action Client_Ranks(int client, int args)
@@ -2197,7 +2197,7 @@ public int ShowRanksMenuHandler(Menu menu, MenuAction action, int param1, int pa
 {
 	if (action == MenuAction_End)
 	{
-		CloseHandle(menu);
+		delete menu;
 	}
 }
 
@@ -2450,7 +2450,7 @@ public int GoToMenuHandler(Menu menu, MenuAction action, int param1, int param2)
 	}
 	else if (action == MenuAction_End)
 	{
-		CloseHandle(menu);
+		delete menu;
 	}
 }
 
@@ -2546,7 +2546,7 @@ public Action Client_GoTo(int client, int args)
 					}
 					else
 					{
-						CloseHandle(menu);
+						delete menu;
 					}
 				}
 				else
@@ -2712,7 +2712,7 @@ public int TopMenuHandler(Menu menu, MenuAction action, int param1, int param2)
 		}
 	}
 	else if (action == MenuAction_End)
-		CloseHandle(menu);
+		delete menu;
 }
 
 public void SelectMapTop(int client, int style)
@@ -2804,7 +2804,7 @@ public int OptionMenuHandler(Menu menu, MenuAction action, int param1, int param
 	}
 	else if (action == MenuAction_End)
 	{
-		CloseHandle(menu);
+		delete menu;
 	}
 }
 
@@ -2883,7 +2883,7 @@ public int CentreHudOptionsHandler(Menu menu, MenuAction action, int param1, int
 	else if (action == MenuAction_Cancel)
 		OptionMenu(param1);
 	else if (action == MenuAction_End)
-		CloseHandle(menu);
+		delete menu;
 }
 
 public void CentreHudModulesMenu(int client, int module, const char[] szTitle)
@@ -2976,7 +2976,7 @@ public int CentreHudModulesMenuHandler(Menu menu, MenuAction action, int param1,
 	else if (action == MenuAction_Cancel)
 		CentreHudOptions(param1, 0);
 	else if (action == MenuAction_End)
-		CloseHandle(menu);
+		delete menu;
 }
 
 public void SideHudOptions(int client, int item)
@@ -3032,7 +3032,7 @@ public int SideHudOptionsHandler(Menu menu, MenuAction action, int param1, int p
 	else if (action == MenuAction_Cancel)
 		OptionMenu(param1);
 	else if (action == MenuAction_End)
-		CloseHandle(menu);
+		delete menu;
 }
 
 public void SideHudModulesMenu(int client, int module, char[] szTitle)
@@ -3117,7 +3117,7 @@ public int SideHudModulesMenuHandler(Menu menu, MenuAction action, int param1, i
 	else if (action == MenuAction_Cancel)
 		SideHudOptions(param1, 0);
 	else if (action == MenuAction_End)
-		CloseHandle(menu);
+		delete menu;
 }
 
 public void MiscellaneousOptions(int client)
@@ -3209,7 +3209,7 @@ public int MiscellaneousOptionsHandler(Menu menu, MenuAction action, int param1,
 	else if (action == MenuAction_Cancel)
 		OptionMenu(param1);
 	else if (action == MenuAction_End)
-		CloseHandle(menu);
+		delete menu;
 }
 
 // fluffys
@@ -3622,7 +3622,7 @@ public int StageSelectMenuHandler(Menu menu, MenuAction action, int param1, int 
 	{
 		if (IsValidClient(param1))
 			g_bSelectWrcp[param1] = false;
-		CloseHandle(menu);
+		delete menu;
 	}
 }
 
@@ -3639,7 +3639,7 @@ public int StageStyleSelectMenuHandler(Menu menu, MenuAction action, int param1,
 	{
 		if (IsValidClient(param1))
 			g_bSelectWrcp[param1] = false;
-		CloseHandle(menu);
+		delete menu;
 	}
 }
 
@@ -3703,7 +3703,7 @@ public int StyleTypeSelectMenuHandler(Menu styleSelect, MenuAction action, int p
 		}
 	}
 	else if (action == MenuAction_End)
-		CloseHandle(styleSelect);
+		delete styleSelect;
 }
 
 public int StyleSelectMenuHandler(Menu menu, MenuAction action, int param1, int param2)
@@ -3797,7 +3797,7 @@ public int StyleSelectMenuHandler(Menu menu, MenuAction action, int param1, int 
 		if (action == MenuAction_Cancel)
 			styleSelectMenu(param1);
 		if (action == MenuAction_End)
-			CloseHandle(menu);
+			delete menu;
 	}
 }
 
@@ -4673,7 +4673,7 @@ public int ReportBugHandler(Menu menu, MenuAction action, int param1, int param2
 		CPrintToChat(param1, "%t", "Commands70", g_szChatPrefix);
 	}
 	else if (action == MenuAction_End)
-		CloseHandle(menu);
+		delete menu;
 }
 
 public Action Command_Calladmin(int client, int args)

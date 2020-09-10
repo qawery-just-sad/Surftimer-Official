@@ -271,7 +271,7 @@ public void db_viewMapSettings()
 	SQL_TQuery(g_hDb, sql_viewMapSettingsCallback, szQuery, DBPrio_High);
 }
 
-public void sql_viewMapSettingsCallback(Handle owner, Handle hndl, const char[] error, any pack)
+public void sql_viewMapSettingsCallback(Handle owner, Handle hndl, const char[] error, DataPack pack)
 {
 	if (hndl == null)
 	{
@@ -290,7 +290,7 @@ public void sql_viewMapSettingsCallback(Handle owner, Handle hndl, const char[] 
 	}
 }
 
-public void sql_insertMapSettingsCallback(Handle owner, Handle hndl, const char[] error, any pack)
+public void sql_insertMapSettingsCallback(Handle owner, Handle hndl, const char[] error, DataPack pack)
 {
 	if (hndl == null)
 	{

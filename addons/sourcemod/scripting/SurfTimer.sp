@@ -1540,7 +1540,7 @@ public void OnLibraryAdded(const char[] name)
 	if ((StrEqual("mapchooser", name)) || (tmp != null && GetPluginStatus(tmp) == Plugin_Running))
 		g_bMapChooser = true;
 	if (tmp != null)
-		CloseHandle(tmp);
+		delete tmp;
 
 	// botmimic 2
 	if (StrEqual(name, "dhooks") && g_hTeleport == null)
@@ -1550,7 +1550,7 @@ public void OnLibraryAdded(const char[] name)
 		if (hGameData == null)
 			return;
 		int iOffset = GameConfGetOffset(hGameData, "Teleport");
-		CloseHandle(hGameData);
+		delete hGameData;
 		if (iOffset == -1)
 			return;
 
@@ -1714,7 +1714,7 @@ public void OnMapStart()
 	// Hook Zones
 	iEnt = -1;
 	if (g_hTriggerMultiple != null)
-		CloseHandle(g_hTriggerMultiple);
+		delete g_hTriggerMultiple;
 
 	g_hTriggerMultiple = CreateArray(256);
 	while ((iEnt = FindEntityByClassname(iEnt, "trigger_multiple")) != -1)
@@ -1743,7 +1743,7 @@ public void OnMapStart()
 	// info_teleport_destinations
 	iEnt = -1;
 	if (g_hDestinations != null)
-		CloseHandle(g_hDestinations);
+		delete g_hDestinations;
 
 	g_hDestinations = CreateArray(128);
 	while ((iEnt = FindEntityByClassname(iEnt, "info_teleport_destination")) != -1)
@@ -1785,7 +1785,7 @@ public void OnMapEnd()
 	db_Cleanup();
 
 	if (g_hSkillGroups != null)
-		CloseHandle(g_hSkillGroups);
+		delete g_hSkillGroups;
 	g_hSkillGroups = null;
 
 
@@ -1801,17 +1801,17 @@ public void OnMapEnd()
 	// Hook Zones
 	if (g_hTriggerMultiple != null)
 	{
-		ClearArray(g_hTriggerMultiple);
-		CloseHandle(g_hTriggerMultiple);
+		delete g_hTriggerMultiple;
+		delete g_hTriggerMultiple;
 	}
 
 	g_hTriggerMultiple = null;
 	delete g_hTriggerMultiple;
 
-	CloseHandle(g_mTriggerMultipleMenu);
+	delete g_mTriggerMultipleMenu;
 
 	if (g_hDestinations != null)
-		CloseHandle(g_hDestinations);
+		delete g_hDestinations;
 
 	g_hDestinations = null;
 }
@@ -1988,7 +1988,7 @@ public void OnClientDisconnect(int client)
 {
 	if (IsFakeClient(client) && g_hRecordingAdditionalTeleport[client] != null)
 	{
-		CloseHandle(g_hRecordingAdditionalTeleport[client]);
+		delete g_hRecordingAdditionalTeleport[client];
 		g_hRecordingAdditionalTeleport[client] = null;
 	}
 
@@ -2622,7 +2622,7 @@ public void OnPluginStart()
 		return;
 	}
 	int iOffset = GameConfGetOffset(hGameData, "Teleport");
-	CloseHandle(hGameData);
+	delete hGameData;
 	if (iOffset == -1)
 		return;
 

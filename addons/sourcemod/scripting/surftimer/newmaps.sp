@@ -23,7 +23,7 @@ public Action Client_AddNewMap(int client, int args)
 public int NewMapMenuHandler(Menu menu, MenuAction action, int param1, int param2)
 {
 	if (action == MenuAction_End)
-		CloseHandle(menu);
+		delete menu;
 }
 
 
@@ -60,7 +60,7 @@ public void sql_selectNewestMapsCallback(Handle owner, Handle hndl, const char[]
 		}
 		if (i == 1)
 		{
-			CloseHandle(menu);
+			delete menu;
 		}
 		else
 		{

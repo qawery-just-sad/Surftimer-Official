@@ -57,7 +57,7 @@ public int Handle_VoteMenuChangeMap(Menu menu, MenuAction action, int param1, in
 {
 	if (action == MenuAction_End)
 	{
-		CloseHandle(menu);
+		delete menu;
 	}
 	else if (action == MenuAction_VoteEnd)
 	{
@@ -86,7 +86,7 @@ public int Handle_VoteMenuSetNextMap(Menu menu, MenuAction action, int param1, i
 	if (action == MenuAction_End)
 	{
 		/* This is called after VoteEnd */
-		CloseHandle(menu);
+		delete menu;
 	}
 	else if (action == MenuAction_VoteEnd)
 	{

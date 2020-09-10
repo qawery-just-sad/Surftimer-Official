@@ -72,7 +72,7 @@ public int ProfileInfoMenuHandler(Menu menu, MenuAction action, int param1, int 
 	{
 		if (IsValidClient(param1))
 			g_bSelectProfile[param1] = false;
-		CloseHandle(menu);
+		delete menu;
 	}
 }
 
