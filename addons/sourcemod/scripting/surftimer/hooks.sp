@@ -609,6 +609,7 @@ public Action Event_OnPlayerDeath(Handle event, const char[] name, bool dontBroa
 	int client = GetEventInt(event, "userid");
 	if (IsValidClient(client))
 	{
+		SDKUnhook(client, SDKHook_SetTransmit, Hook_SetTransmit);
 		if (!IsFakeClient(client))
 		{
 			if (g_hRecording[client] != null)

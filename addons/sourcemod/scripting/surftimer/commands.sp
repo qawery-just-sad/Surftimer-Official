@@ -2802,8 +2802,7 @@ public int OptionMenuHandler(Menu menu, MenuAction action, int param1, int param
 			case 3: MiscellaneousOptions(param1);
 		}
 	}
-	else
-		if (action == MenuAction_End)
+	else if (action == MenuAction_End)
 	{
 		CloseHandle(menu);
 	}
@@ -2969,7 +2968,6 @@ public int CentreHudModulesMenuHandler(Menu menu, MenuAction action, int param1,
 		else
 		{
 			CPrintToChat(param1, "%t", "Commands37", g_szChatPrefix);
-			CloseHandle(menu);
 		}
 
 		g_iCentreHudModule[param1][module] = param2;
@@ -3105,7 +3103,6 @@ public int SideHudModulesMenuHandler(Menu menu, MenuAction action, int param1, i
 		else
 		{
 			CPrintToChat(param1, "%t", "Commands39", g_szChatPrefix);
-			CloseHandle(menu);
 		}
 
 		g_iSideHudModule[param1][module] = param2;
