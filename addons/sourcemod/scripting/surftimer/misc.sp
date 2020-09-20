@@ -1856,13 +1856,15 @@ stock void MapFinishedMsgs(int client, int rankThisRun = 0)
 			RecordDiff = g_fOldRecordMapTime - g_fFinalTime[client];
 			FormatTimeFloat(client, RecordDiff, 3, szRecordDiff, 32);
 			Format(szRecordDiff, 32, "-%s", szRecordDiff);
+			char szSteamId64[64];
+			GetClientAuthId(client, AuthId_SteamID64, szSteamId64, sizeof(szSteamId64), true);
 
 			if (GetConVarBool(g_hRecordAnnounce))
 				db_insertAnnouncement(szName, g_szMapName, 0, g_szFinalTime[client], 0);
 			char buffer[1024];
 			GetConVarString(g_hRecordAnnounceDiscord, buffer, 1024);
 			if (!StrEqual(buffer, ""))
-				sendDiscordAnnouncement(szName, g_szMapName, g_szFinalTime[client], szRecordDiff);
+				sendDiscordAnnouncement(szName, szSteamId64, g_szMapName, g_szFinalTime[client], szRecordDiff);
 		}
 
 		if (g_bTop10Time[client])
@@ -2000,6 +2002,8 @@ stock void PrintChatBonus (int client, int zGroup, int rank = 0)
 		RecordDiff = g_fOldBonusRecordTime[zGroup] - g_fFinalTime[client];
 		FormatTimeFloat(client, RecordDiff, 3, szRecordDiff, 54);
 		Format(szRecordDiff, 54, "-%s", szRecordDiff);
+		char szSteamId64[64];
+		GetClientAuthId(client, AuthId_SteamID64, szSteamId64, sizeof(szSteamId64), true);
 
 		if (GetConVarBool(g_hRecordAnnounce))
 			db_insertAnnouncement(szName, g_szMapName, 1, g_szFinalTime[client], zGroup);
@@ -2007,7 +2011,7 @@ stock void PrintChatBonus (int client, int zGroup, int rank = 0)
 		GetConVarString(g_hRecordAnnounceDiscord, buffer, 1024);
 		GetConVarString(g_hRecordAnnounceDiscordBonus, buffer1, 1024);
 		if (!StrEqual(buffer, "") && !StrEqual(buffer1, ""))
-			sendDiscordAnnouncementBonus(szName, g_szMapName, g_szFinalTime[client], zGroup, szRecordDiff);
+			sendDiscordAnnouncementBonus(szName, szSteamId64, g_szMapName, g_szFinalTime[client], zGroup, szRecordDiff);
 	}
 
 	/* Start function call */
@@ -4320,7 +4324,7 @@ public void totalTimeForHumans(int unix, char[] buffer, int size)
 	}
 }
 
-public void sendDiscordAnnouncement(char szName[128], char szMapName[128], char szTime[32], char szRecordDiff[32])
+public void sendDiscordAnnouncement(char szName[128], char szSteamId64[64], char szMapName[128], char szTime[32], char szRecordDiff[32])
 {
 	//Test which style to use
 	if (!GetConVarBool(g_dcKSFStyle))
@@ -4351,11 +4355,16 @@ public void sendDiscordAnnouncement(char szName[128], char szMapName[128], char 
 
 		char szColor[128];
 		GetConVarString(g_dcColor, szColor, 128);
+		
+		char szPlayerID[MAX_NAME_LENGTH * 2 + 1];
+		Format(szPlayerID, sizeof(szPlayerID), "[%s](https://steamcommunity.com/profiles/%s)", szName, szSteamId64);
+
 		char szTimeDiscord[128];
 		Format(szTimeDiscord, sizeof(szTimeDiscord), "%s (%s)", szTime, szRecordDiff);
+
 		Embed.SetColor(szColor);
 		Embed.SetTitle(szTitle);
-		Embed.AddField("Player", szName, true);
+		Embed.AddField("Player", szPlayerID, true);
 		Embed.AddField("Time", szTimeDiscord, true);
 		Embed.AddField("Map", szMapName, true);
 
@@ -4412,7 +4421,7 @@ public void sendDiscordAnnouncement(char szName[128], char szMapName[128], char 
 	}
 }
 
-public void sendDiscordAnnouncementBonus(char szName[128], char szMapName[128], char szTime[32], int zGroup, char szRecordDiff[54])
+public void sendDiscordAnnouncementBonus(char szName[128], char szSteamId64[64], char szMapName[128], char szTime[32], int zGroup, char szRecordDiff[54])
 {
 	//Test which style to use
 	if (!GetConVarBool(g_dcKSFStyle))
@@ -4449,12 +4458,15 @@ public void sendDiscordAnnouncementBonus(char szName[128], char szMapName[128], 
 		char szColor[128];
 		GetConVarString(g_dcColor, szColor, 128);
 
+		char szPlayerID[MAX_NAME_LENGTH * 2 + 1];
+		Format(szPlayerID, sizeof(szPlayerID), "[%s](https://steamcommunity.com/profiles/%s)", szName, szSteamId64);
+
 		char szTimeDiscord[128];
 		Format(szTimeDiscord, sizeof(szTimeDiscord), "%s (%s)", szTime, szRecordDiff);
 
 		Embed.SetColor(szColor);
 		Embed.SetTitle(szTitle);
-		Embed.AddField("Player", szName, true);
+		Embed.AddField("Player", szPlayerID, true);
 		Embed.AddField("Time", szTimeDiscord, true);
 		Embed.AddField("Map", szMapName, true);
 		char szGroup[8];
