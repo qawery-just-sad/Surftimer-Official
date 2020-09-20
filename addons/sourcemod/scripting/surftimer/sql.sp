@@ -2903,7 +2903,7 @@ public void SQL_ViewTop10RecordsCallback3(Handle owner, Handle hndl, const char[
 	// if there is a player record
 	if (SQL_HasResultSet(hndl) && SQL_FetchRow(hndl))
 	{
-		int count = SQL_GetRowCount(hndl);
+		int count = SQL_FetchInt(hndl,1);
 		char szTime[32];
 		char szMapName[128];
 		char szSteamId[32];
