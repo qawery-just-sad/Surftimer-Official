@@ -628,6 +628,11 @@ public void LoadRecordFromFile(const char[] path, FileHeader header, bool header
 	Handle hRecordFrames = CreateArray(sizeof(FrameInfo));
 	Handle hAdditionalTeleport = CreateArray(sizeof(AdditionalTeleport));
 
+	if (hRecordFrames != null)
+		ClearArray(hRecordFrames);
+	if (hAdditionalTeleport != null)
+		ClearArray(hAdditionalTeleport);
+
 	FrameInfo iFrame;
 	for (int i = 0; i < iTickCount; i++)
 	{
