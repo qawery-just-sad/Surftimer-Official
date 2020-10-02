@@ -35,7 +35,7 @@
 #pragma semicolon 1
 
 // Plugin Info
-#define VERSION "69 - jokes on u"
+#define VERSION "IDK I ran out of numbers"
 
 // Database Definitions
 #define MYSQL 0
@@ -202,10 +202,10 @@ enum struct SkillGroup
 public Plugin myinfo =
 {
 	name = "SurfTimer",
-	author = "Ace & olokos",
+	author = "All SurfTimer & ckSurf contributors",
 	description = "a fork from fluffys cksurf fork",
 	version = VERSION,
-	url = "https://github.com/olokos/Surftimer-olokos"
+	url = "https://github.com/qawery-just-sad/Surftimer-Official"
 };
 
 /*===================================
