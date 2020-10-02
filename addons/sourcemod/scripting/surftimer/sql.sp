@@ -125,7 +125,7 @@ public void SQLTxn_CreateDatabaseSuccess(Handle db, any data, int numQueries, DB
 	}
 }
 
-public void sqlcreatePlayertimesIndex(Database db, DBResultSet results, const char[] error, any data)
+public void sqlcreatePlayertimesIndex(Handle db, Handle hndl, const char[] error, any data)
 {
 	if (db == null || (strlen(error) && StrContains(error, "Duplicate", false) == -1))
 	{
@@ -134,7 +134,7 @@ public void sqlcreatePlayertimesIndex(Database db, DBResultSet results, const ch
 	}
 }
 
-public void sqlcreateBonusIndex(Database db, DBResultSet results, const char[] error, any data)
+public void sqlcreateBonusIndex(Handle db, Handle hndl, const char[] error, any data)
 {
 	if (db == null || (strlen(error) && StrContains(error, "Duplicate", false) == -1))
 	{
