@@ -76,36 +76,76 @@ public void db_setupDatabase()
 
 public void db_createTables()
 {
-	Transaction createTableTnx = SQL_CreateTransaction();
+	Transaction tTransaction = new Transaction();
 
-	SQL_AddQuery(createTableTnx, sql_createPlayertmp);
-	SQL_AddQuery(createTableTnx, sql_createPlayertimes);
-	SQL_AddQuery(createTableTnx, sql_createPlayertimesIndex);
-	SQL_AddQuery(createTableTnx, sql_createPlayerRank);
-	SQL_AddQuery(createTableTnx, sql_createPlayerOptions);
-	SQL_AddQuery(createTableTnx, sql_createLatestRecords);
-	SQL_AddQuery(createTableTnx, sql_createBonus);
-	SQL_AddQuery(createTableTnx, sql_createBonusIndex);
-	SQL_AddQuery(createTableTnx, sql_createCheckpoints);
-	SQL_AddQuery(createTableTnx, sql_createZones);
-	SQL_AddQuery(createTableTnx, sql_createMapTier);
-	SQL_AddQuery(createTableTnx, sql_createSpawnLocations);
-	SQL_AddQuery(createTableTnx, sql_createAnnouncements);
-	SQL_AddQuery(createTableTnx, sql_createVipAdmins);
-	SQL_AddQuery(createTableTnx, sql_createWrcps);
+	tTransaction.AddQuery(sql_createPlayertmp, 1);
+	tTransaction.AddQuery(sql_createPlayertimes, 2);
+	tTransaction.AddQuery("SELECT COUNT(1) FROM INFORMATION_SCHEMA.STATISTICS WHERE table_schema=DATABASE() AND table_name='ck_playertimes' AND index_name='maprank';", 3);
+	tTransaction.AddQuery(sql_createPlayerRank, 4);
+	tTransaction.AddQuery(sql_createPlayerOptions, 5);
+	tTransaction.AddQuery(sql_createLatestRecords, 6);
+	tTransaction.AddQuery(sql_createBonus, 7);
+	tTransaction.AddQuery("SELECT COUNT(1) FROM INFORMATION_SCHEMA.STATISTICS WHERE table_schema=DATABASE() AND table_name='ck_bonus' AND index_name='bonusrank';", 8);
+	tTransaction.AddQuery(sql_createCheckpoints, 9);
+	tTransaction.AddQuery(sql_createZones, 10);
+	tTransaction.AddQuery(sql_createMapTier, 11);
+	tTransaction.AddQuery(sql_createSpawnLocations, 12);
+	tTransaction.AddQuery(sql_createAnnouncements, 13);
+	tTransaction.AddQuery(sql_createVipAdmins, 14);
+	tTransaction.AddQuery(sql_createWrcps, 15);
+	tTransaction.AddQuery(sql_createNewestMaps, 16);
 
-	SQL_ExecuteTransaction(g_hDb, createTableTnx, SQLTxn_CreateDatabaseSuccess, SQLTxn_CreateDatabaseFailed);
+	SQL_ExecuteTransaction(g_hDb, tTransaction, SQLTxn_CreateDatabaseSuccess, SQLTxn_CreateDatabaseFailed, DBPrio_High);
 
 }
 
-public void SQLTxn_CreateDatabaseSuccess(Handle db, any data, int numQueries, Handle[] results, any[] queryData)
+public void SQLTxn_CreateDatabaseSuccess(Handle db, any data, int numQueries, DBResultSet[] results, any[] queryData)
 {
 	PrintToServer("[SurfTimer] Database tables succesfully created!");
+
+	for (int i = 0; i < numQueries; i++)
+	{
+		if (queryData[i] == 3 || queryData[i] == 8)
+		{
+			if (results[i].HasResults && results[i].FetchRow())
+			{
+				if (results[i].FetchInt(0) == 0)
+				{
+					if (queryData[i] == 3)
+					{
+						SQL_TQuery(g_hDb, sqlcreatePlayertimesIndex, sql_createPlayertimesIndex, _, DBPrio_High);
+					}
+					else
+					{
+						SQL_TQuery(g_hDb, sqlcreateBonusIndex, sql_createBonusIndex, _, DBPrio_High);
+					}
+				}
+			}
+		}
+	}
+}
+
+public void sqlcreatePlayertimesIndex(Database db, DBResultSet results, const char[] error, any data)
+{
+	if (db == null || (strlen(error) && StrContains(error, "Duplicate", false) == -1))
+	{
+		SetFailState("[SurfTimer] (sqlcreatePlayertimesIndex) Can't add playertimes index. Error: %s", error);
+		return;
+	}
+}
+
+public void sqlcreateBonusIndex(Database db, DBResultSet results, const char[] error, any data)
+{
+	if (db == null || (strlen(error) && StrContains(error, "Duplicate", false) == -1))
+	{
+		SetFailState("[SurfTimer] (sqlcreateBonusIndex) Can't add bonus index. Error: %s", error);
+		return;
+	}
 }
 
 public void SQLTxn_CreateDatabaseFailed(Handle db, any data, int numQueries, const char[] error, int failIndex, any[] queryData)
 {
-	SetFailState("[SurfTimer] Database tables could not be created! Error: %s", error);
+	SetFailState("[SurfTimer] Database tables could not be created! Error (Query: %d): %s", queryData[failIndex], error);
 }
 
 public void db_upgradeDatabase(int ver)
@@ -343,6 +383,91 @@ public int callback_Confirm(Menu menu, MenuAction action, int client, int key)
 		delete menu;
 }
 
+public void db_WipePlayer(int client, char szSteamID[32])
+{
+	Transaction tTransaction = new Transaction();
+	char szQuery[256];
+
+	Format(szQuery, sizeof(szQuery), "DELETE FROM ck_playertimes WHERE steamid = \"%s\";", szSteamID);
+	tTransaction.AddQuery(szQuery, 1);
+	Format(szQuery, sizeof(szQuery), "DELETE FROM ck_bonus WHERE steamid = \"%s\";", szSteamID);
+	tTransaction.AddQuery(szQuery, 2);
+	Format(szQuery, sizeof(szQuery), "DELETE FROM ck_checkpoints WHERE steamid = \"%s\";", szSteamID);
+	tTransaction.AddQuery(szQuery, 3);
+	Format(szQuery, sizeof(szQuery), "DELETE FROM ck_playerrank WHERE steamid = \"%s\";", szSteamID);
+	tTransaction.AddQuery(szQuery, 4);
+	Format(szQuery, sizeof(szQuery), "DELETE FROM ck_wrcps WHERE steamid = \"%s\";", szSteamID);
+	tTransaction.AddQuery(szQuery, 5);
+	Format(szQuery, sizeof(szQuery), "DELETE FROM ck_playeroptions2 WHERE steamid = \"%s\";", szSteamID);
+	tTransaction.AddQuery(szQuery, 6);
+	Format(szQuery, sizeof(szQuery), "DELETE FROM ck_latestrecords WHERE steamid = \"%s\";", szSteamID);
+	tTransaction.AddQuery(szQuery, 7);
+	Format(szQuery, sizeof(szQuery), "DELETE FROM ck_playertemp WHERE steamid = \"%s\";", szSteamID);
+	tTransaction.AddQuery(szQuery, 8);
+
+	DataPack pack = new DataPack();
+	pack.WriteCell(GetClientUserId(client));
+	pack.WriteString(szSteamID);
+	SQL_ExecuteTransaction(g_hDb ,tTransaction, SQLTxn_WipePlayerSuccess, SQLTxn_WipePlayerFailed, pack, DBPrio_High);
+}
+
+public void SQLTxn_WipePlayerSuccess(Handle db, DataPack pack, int numQueries, Handle[] results, any[] queryData)
+{
+	pack.Reset();
+
+	int client = GetClientOfUserId(pack.ReadCell());
+
+	char szSteamID[32];
+	pack.ReadString(szSteamID, sizeof(szSteamID));
+
+	delete pack;
+
+
+	if (IsValidClient(client))
+	{
+		PrintToChat(client, "Player %s has been wiped!", szSteamID);
+		PrintToConsole(client, "Player %s has been wiped!", szSteamID);
+	}
+
+	char sBuffer[32];
+
+	for(int i = 1; i <= MaxClients; i++)
+	{
+		if (!IsClientInGame(i))
+			continue;
+
+		GetClientAuthId(i, AuthId_Steam2, sBuffer, sizeof(sBuffer));
+		if (StrEqual(sBuffer, szSteamID, false))
+		{
+			g_bSettingsLoaded[client] = false;
+			g_bLoadingSettings[client] = true;
+			g_iSettingToLoad[client] = 0;
+			LoadClientSetting(client, g_iSettingToLoad[client]);
+			break;
+		}
+	}
+}
+
+public void SQLTxn_WipePlayerFailed(Handle db, DataPack pack, int numQueries, const char[] error, int failIndex, any[] queryData)
+{
+	pack.Reset();
+
+	int client = GetClientOfUserId(pack.ReadCell());
+
+	char szSteamID[32];
+	pack.ReadString(szSteamID, sizeof(szSteamID));
+
+	delete pack;
+
+
+	LogError("[SurfTimer] Wipe of player %s failed! Error (Query: %d): %s", szSteamID, queryData[failIndex], error);
+
+	if (IsValidClient(client))
+	{
+		PrintToChat(client, "[SurfTimer] Wipe of player %s failed! Error (Query: %d): %s", szSteamID, queryData[failIndex], error);
+		PrintToConsole(client, "[SurfTimer] Wipe of player %s failed! Error (Query: %d): %s", szSteamID, queryData[failIndex], error);
+	}
+}
 
 /*==================================
 =          SPAWN LOCATION          =
