@@ -2087,7 +2087,7 @@ public void db_GetMapRecord_Pro()
 
 	char szQuery[512];
 	// SELECT MIN(runtimepro), name, steamid, style FROM ck_playertimes WHERE mapname = '%s' AND runtimepro > -1.0 GROUP BY style
-	Format(szQuery, 512, sql_selectMapRecord, g_szMapName);
+	Format(szQuery, 512, sql_selectMapRecord, g_szMapName, g_szMapName);
 	SQL_TQuery(g_hDb, sql_selectMapRecordCallback, szQuery, DBPrio_Low);
 }
 
