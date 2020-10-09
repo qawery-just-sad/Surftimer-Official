@@ -1658,4 +1658,9 @@
 		"#format"	"{1:s},{2:s}"
 		"en"		"{1} Auto-reset is enabled, but you weren't teleported because you're surfing in {gold}{2}"
 	}
+	"AlreadyHasKnife"
+	{
+		"#format"	"{1:s}"
+		"en"	"{1} {darkred}You can't get a knife!"
+	}
 }

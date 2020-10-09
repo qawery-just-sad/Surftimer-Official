@@ -4136,9 +4136,13 @@ public Action Admin_FixBot(int client, int args)
 
 public Action Command_GiveKnife(int client, int args)
 {
-	if (IsPlayerAlive(client))
+	if (IsValidClient(client) && IsPlayerAlive(client) && (GetPlayerWeaponSlot(client, CS_SLOT_KNIFE) == -1))
 	{
 		GivePlayerItem(client, "weapon_knife");
+	}
+	else
+	{
+		CPrintToChat(client, "%t", "AlreadyHasKnife", g_szChatPrefix);
 	}
 
 	return Plugin_Handled;
