@@ -5850,8 +5850,8 @@ public void sql_selectTotalBonusCountCallback(Handle owner, Handle hndl, const c
 // fluffys sql select total stages
 public void db_selectTotalStageCount()
 {
-	char szQuery[512];
-	Format(szQuery, sizeof(szQuery), "SELECT SUM(c.stages) FROM (SELECT a.mapname, MAX(zonetypeid)+2 as stages FROM `ck_zones` a RIGHT JOIN ck_maptier b ON a.mapname = b.mapname WHERE zonetype = 3 GROUP BY a.mapname)c;");
+	char szQuery[256];
+	Format(szQuery, sizeof(szQuery), "SELECT SUM(a.stages) FROM (SELECT COUNT(zonetype)+1 AS stages FROM `ck_zones` WHERE zonetype=3 GROUP BY mapname)a;");
 	SQL_TQuery(g_hDb, sql_selectTotalStageCountCallback, szQuery, DBPrio_Low);
 }
 
