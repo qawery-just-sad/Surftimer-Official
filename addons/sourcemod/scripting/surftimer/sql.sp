@@ -5869,7 +5869,6 @@ public void sql_selectTotalStageCountCallback(Handle owner, Handle hndl, const c
 	if (SQL_HasResultSet(hndl) && SQL_FetchRow(hndl))
 		g_pr_StageCount = SQL_FetchInt(hndl, 0);
 
-	g_pr_StageCount = g_pr_StageCount * 2;
 
 	if (!g_bServerDataLoaded)
 		db_selectCurrentMapImprovement();
