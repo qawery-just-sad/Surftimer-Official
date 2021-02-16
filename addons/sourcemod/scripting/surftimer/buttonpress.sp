@@ -357,6 +357,8 @@ public void CL_OnEndTimerPress(int client)
 		}
 		else if (style != 0)
 		{
+			g_fOldRecordStyleMapTime[style] = g_fRecordStyleMapTime[style];
+
 			// Make a new record bot?
 			if (GetConVarBool(g_hReplaceReplayTime) && (g_fFinalTime[client] < g_fReplayTimes[0][style] || g_fReplayTimes[0][style] == 0.0))
 			{

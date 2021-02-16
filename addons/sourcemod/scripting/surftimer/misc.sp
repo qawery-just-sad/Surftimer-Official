@@ -3987,7 +3987,8 @@ stock void StyleFinishedMsgs(int client, int style)
 {
 	if (IsValidClient(client))
 	{
-		char szName[MAX_NAME_LENGTH];
+		float RecordDiff;
+		char szRecordDiff[32], szName[MAX_NAME_LENGTH];
 		GetClientName(client, szName, MAX_NAME_LENGTH);
 		int count = g_StyleMapTimesCount[style];
 
@@ -4032,6 +4033,21 @@ stock void StyleFinishedMsgs(int client, int style)
 
 		if (g_StyleMapRank[style][client] == 99999 && IsValidClient(client))
 			CPrintToChat(client, "%t", "Misc19", g_szChatPrefix);
+
+		// Send Announcements
+		if (g_bStyleMapSRVRecord[style][client])
+		{
+			RecordDiff = g_fOldRecordStyleMapTime[style] - g_fFinalTime[client];
+			FormatTimeFloat(client, RecordDiff, 3, szRecordDiff, 32);
+			Format(szRecordDiff, 32, "-%s", szRecordDiff);
+			char szSteamId64[64];
+			GetClientAuthId(client, AuthId_SteamID64, szSteamId64, sizeof(szSteamId64), true);
+
+			char buffer[1024];
+			GetConVarString(g_hRecordAnnounceDiscordStyle, buffer, 1024);
+			if (!StrEqual(buffer, ""))
+				sendDiscordAnnouncementStyle(szName, szSteamId64, g_szMapName, g_szFinalTime[client], szRecordDiff, client);
+		}
 
 		CalculatePlayerRank(client, style);
 		return;
@@ -4089,6 +4105,23 @@ stock void PrintChatBonusStyle (int client, int zGroup, int style, int rank = 0)
 
 	if (rank == 9999999 && IsValidClient(client))
 		CPrintToChat(client, "%t", "Misc19", g_szChatPrefix);
+
+	// Send Announcements
+	if (g_bBonusSRVRecord[client])
+	{
+		RecordDiff = g_fStyleOldBonusRecordTime[style][zGroup] - g_fFinalTime[client];
+		FormatTimeFloat(client, RecordDiff, 3, szRecordDiff, 54);
+		Format(szRecordDiff, 54, "-%s", szRecordDiff);
+		
+		char szSteamId64[64];
+		GetClientAuthId(client, AuthId_SteamID64, szSteamId64, sizeof(szSteamId64), true);
+
+		char buffer[1024], buffer1[1024];
+		GetConVarString(g_hRecordAnnounceDiscordStyle, buffer, 1024);
+		GetConVarString(g_hRecordAnnounceDiscordBonusStyle, buffer1, 1024);
+		if (!StrEqual(buffer, "") && !StrEqual(buffer1, ""))
+			sendDiscordAnnouncementBonusStyle(szName, szSteamId64, g_szMapName, g_szFinalTime[client], zGroup, szRecordDiff, client);
+	}
 
 	CalculatePlayerRank(client, style);
 	return;
@@ -4427,21 +4460,130 @@ public void sendDiscordAnnouncement(char szName[128], char szSteamId64[64], char
 	}
 }
 
+public void sendDiscordAnnouncementStyle(char szName[128], char szSteamId64[64], char szMapName[128], char szTime[32], char szRecordDiff[32], int client)
+{
+	//Test which style to use
+	if (!GetConVarBool(g_dcKSFStyle))
+	{
+		//Get the WebHook
+		char webhook[1024], webhookName[1024];
+		GetConVarString(g_hRecordAnnounceDiscordStyle, webhook, 1024);
+		GetConVarString(g_dcMapRecordName, webhookName, 1024);
+		if (StrEqual(webhook, ""))
+			return;
+
+		DiscordWebHook hook = new DiscordWebHook(webhook);
+		char szMention[128];
+		hook.SlackMode = true;
+		GetConVarString(g_dcMention, szMention, 128);
+		if (!StrEqual(szMention, "")) //Checks if mention is disabled
+		{
+			hook.SetContent(szMention);
+		}
+		hook.SetUsername(webhookName);
+
+		//Format the message
+		char szTitle[256];
+		GetConVarString(g_dcTitle, szTitle, 256);
+		ReplaceString(szTitle, sizeof(szTitle), "{Server_Name}", g_sServerName);
+		
+		//Format player style
+		char szPlayerStyle[32];
+		switch (g_iCurrentStyle[client])
+		{
+			case 1: Format(szPlayerStyle, 128, "Sideways %s", szPlayerStyle);
+			case 2: Format(szPlayerStyle, 128, "Half Sideways %s", szPlayerStyle);
+			case 3: Format(szPlayerStyle, 128, "Backwards %s", szPlayerStyle);
+			case 4: Format(szPlayerStyle, 128, "Low Gravity %s", szPlayerStyle);
+			case 5: Format(szPlayerStyle, 128, "Slow Motion %s", szPlayerStyle);
+			case 6: Format(szPlayerStyle, 128, "Fast Forward %s", szPlayerStyle);
+			case 7: Format(szPlayerStyle, 128, "Free Style %s", szPlayerStyle);
+		}
+
+		//Create the embed message
+		MessageEmbed Embed = new MessageEmbed();
+
+		char szColor[128];
+		GetConVarString(g_dcColor, szColor, 128);
+		
+		char szPlayerID[MAX_NAME_LENGTH * 2 + 1];
+		Format(szPlayerID, sizeof(szPlayerID), "[%s](https://steamcommunity.com/profiles/%s)", szName, szSteamId64);
+
+		char szTimeDiscord[128];
+		Format(szTimeDiscord, sizeof(szTimeDiscord), "%s (%s)", szTime, szRecordDiff);
+
+		Embed.SetColor(szColor);
+		Embed.SetTitle(szTitle);
+		Embed.AddField("Player", szPlayerID, true);
+		Embed.AddField("Time", szTimeDiscord, true);
+		Embed.AddField("Map", szMapName, true);
+		Embed.AddField("Style", szPlayerStyle, true);
+
+		//Send the main image of the map
+		char szUrlMain[1024];
+		GetConVarString(g_dcUrl_main, szUrlMain, 1024);
+		if (!StrEqual(szUrlMain, ""))
+		{
+			StrCat(szUrlMain, sizeof(szUrlMain), szMapName);
+			StrCat(szUrlMain, sizeof(szUrlMain), ".jpg");
+			Embed.SetImage(szUrlMain);
+		}
+
+
+		//Send the thumb image of the map
+		char szUrlThumb[1024];
+		GetConVarString(g_dcUrl_thumb, szUrlThumb, 1024);
+		if (!StrEqual(szUrlThumb, ""))
+		{
+			StrCat(szUrlThumb, sizeof(szUrlThumb), szMapName);
+			StrCat(szUrlThumb, sizeof(szUrlThumb), ".jpg");
+			Embed.SetThumb(szUrlThumb);
+		}
+
+
+		//Send the message
+		hook.Embed(Embed);
+
+		hook.Send();
+		delete hook;
+	}
+	else
+	{
+		char webhook[1024], webhookName[1024];
+		GetConVarString(g_hRecordAnnounceDiscordStyle, webhook, 1024);
+		GetConVarString(g_dcMapRecordName, webhookName, 1024);
+		if (StrEqual(webhook, ""))
+			return;
+
+		// Send Discord Announcement
+		DiscordWebHook hook = new DiscordWebHook(webhook);
+		hook.SlackMode = true;
+
+		hook.SetUsername(webhookName);
+
+		// Format The Message
+		char szMessage[256];
+
+		Format(szMessage, sizeof(szMessage), "```md\n# New Server Record on %s #\n\n[%s] beat the server record on < %s > with a time of < %s (%s) > ]:```", g_sServerName, szName, szMapName, szTime, szRecordDiff);
+
+		hook.SetContent(szMessage);
+		hook.Send();
+		delete hook;
+	}
+}
+
 public void sendDiscordAnnouncementBonus(char szName[128], char szSteamId64[64], char szMapName[128], char szTime[32], int zGroup, char szRecordDiff[54])
 {
 	//Test which style to use
 	if (!GetConVarBool(g_dcKSFStyle))
 	{
 		//Get the WebHook
-		char webhook[1024], webhookN[1024], webhookName[1024];
-		GetConVarString(g_hRecordAnnounceDiscord, webhookN, 1024);
+		char webhook[1024], webhookName[1024];
+		
 		GetConVarString(g_hRecordAnnounceDiscordBonus, webhook, 1024);
 		GetConVarString(g_dcBonusRecordName, webhookName, 1024);
 		if (StrEqual(webhook, ""))
-			if (StrEqual(webhookN, ""))
-				return;
-			else
-				webhook = webhookN;
+			return;
 
 		DiscordWebHook hook = new DiscordWebHook(webhook);
 		hook.SlackMode = true;
@@ -4510,6 +4652,124 @@ public void sendDiscordAnnouncementBonus(char szName[128], char szSteamId64[64],
 		char webhook[1024], webhookN[1024], webhookName[1024];
 		GetConVarString(g_hRecordAnnounceDiscord, webhookN, 1024);
 		GetConVarString(g_hRecordAnnounceDiscordBonus, webhook, 1024);
+		GetConVarString(g_dcBonusRecordName, webhookName, 1024);
+		if (StrEqual(webhook, ""))
+			if (StrEqual(webhookN, ""))
+				return;
+			else
+				webhook = webhookN;
+
+
+	 	// Send Discord Announcement
+		DiscordWebHook hook = new DiscordWebHook(webhook);
+		hook.SlackMode = true;
+
+		hook.SetUsername(webhookName);
+
+		// Format The Message
+		char szMessage[256];
+
+		Format(szMessage, sizeof(szMessage), "```md\n# New Bonus Server Record on %s #\n\n[%s] beat the bonus %i server record on < %s > with a time of < %s (%s) > ]:```", g_sServerName, szName, zGroup, szMapName, szTime, szRecordDiff);
+
+		hook.SetContent(szMessage);
+		hook.Send();
+		delete hook;
+	}
+}
+
+public void sendDiscordAnnouncementBonusStyle(char szName[128], char szSteamId64[64], char szMapName[128], char szTime[32], int zGroup, char szRecordDiff[54], int client)
+{
+	//Test which style to use
+	if (!GetConVarBool(g_dcKSFStyle))
+	{
+		//Get the WebHook
+		char webhook[1024], webhookName[1024];
+		GetConVarString(g_hRecordAnnounceDiscordBonusStyle, webhook, 1024);
+		GetConVarString(g_dcBonusRecordName, webhookName, 1024);
+		if (StrEqual(webhook, ""))
+			return;
+
+		DiscordWebHook hook = new DiscordWebHook(webhook);
+		hook.SlackMode = true;
+		char szMention[128];
+		GetConVarString(g_dcMention, szMention, 128);
+		if (!StrEqual(szMention, "")) //Checks if mention is disabled
+		{
+			hook.SetContent(szMention);
+		}
+		hook.SetUsername(webhookName);
+
+		//Format the message
+		char szTitle[256];
+		GetConVarString(g_dcTitleBonus, szTitle, 256);
+		ReplaceString(szTitle, sizeof(szTitle), "{Server_Name}", g_sServerName);
+
+		//Format player style
+		char szPlayerStyle[32];
+		switch (g_iCurrentStyle[client])
+		{
+			case 1: Format(szPlayerStyle, 128, "Sideways %s", szPlayerStyle);
+			case 2: Format(szPlayerStyle, 128, "Half Sideways %s", szPlayerStyle);
+			case 3: Format(szPlayerStyle, 128, "Backwards %s", szPlayerStyle);
+			case 4: Format(szPlayerStyle, 128, "Low Gravity %s", szPlayerStyle);
+			case 5: Format(szPlayerStyle, 128, "Slow Motion %s", szPlayerStyle);
+			case 6: Format(szPlayerStyle, 128, "Fast Forward %s", szPlayerStyle);
+			case 7: Format(szPlayerStyle, 128, "Free Style %s", szPlayerStyle);
+		}
+
+		//Create the embed message
+		MessageEmbed Embed = new MessageEmbed();
+
+		char szColor[128];
+		GetConVarString(g_dcColor, szColor, 128);
+
+		char szPlayerID[MAX_NAME_LENGTH * 2 + 1];
+		Format(szPlayerID, sizeof(szPlayerID), "[%s](https://steamcommunity.com/profiles/%s)", szName, szSteamId64);
+
+		char szTimeDiscord[128];
+		Format(szTimeDiscord, sizeof(szTimeDiscord), "%s (%s)", szTime, szRecordDiff);
+
+		Embed.SetColor(szColor);
+		Embed.SetTitle(szTitle);
+		Embed.AddField("Player", szPlayerID, true);
+		Embed.AddField("Time", szTimeDiscord, true);
+		Embed.AddField("Map", szMapName, true);
+		char szGroup[8];
+		IntToString(zGroup, szGroup, sizeof(szGroup));
+		Embed.AddField("Bonus", szGroup, true);
+		Embed.AddField("Style", szPlayerStyle, true);
+
+		//Send the main image of the map
+		char szUrlMain[1024];
+		GetConVarString(g_dcUrl_main, szUrlMain, 1024);
+		if (!StrEqual(szUrlMain, ""))
+		{
+			StrCat(szUrlMain, sizeof(szUrlMain), szMapName);
+			StrCat(szUrlMain, sizeof(szUrlMain), ".jpg");
+			Embed.SetImage(szUrlMain);
+		}
+
+		//Send the thumb image of the map
+		char szUrlThumb[1024];
+		GetConVarString(g_dcUrl_thumb, szUrlThumb, 1024);
+		if (!StrEqual(szUrlThumb, ""))
+		{
+			StrCat(szUrlThumb, sizeof(szUrlThumb), szMapName);
+			StrCat(szUrlThumb, sizeof(szUrlThumb), ".jpg");
+			Embed.SetThumb(szUrlThumb);
+		}
+
+		//Send the message
+		hook.Embed(Embed);
+
+		hook.Send();
+		delete hook;
+	}
+	else
+	{
+		char webhook[1024], webhookN[1024], webhookName[1024];
+		GetConVarString(g_hRecordAnnounceDiscordStyle, webhookN, 1024);
+		GetConVarString(g_hRecordAnnounceDiscordBonusStyle, webhook, 1024);
 		GetConVarString(g_dcBonusRecordName, webhookName, 1024);
 		if (StrEqual(webhook, ""))
 			if (StrEqual(webhookN, ""))
