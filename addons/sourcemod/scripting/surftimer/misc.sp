@@ -2013,10 +2013,9 @@ stock void PrintChatBonus (int client, int zGroup, int rank = 0)
 
 		if (GetConVarBool(g_hRecordAnnounce))
 			db_insertAnnouncement(szName, g_szMapName, 1, g_szFinalTime[client], zGroup);
-		char buffer[1024], buffer1[1024];
-		GetConVarString(g_hRecordAnnounceDiscord, buffer, 1024);
+		char buffer1[1024];
 		GetConVarString(g_hRecordAnnounceDiscordBonus, buffer1, 1024);
-		if (!StrEqual(buffer, "") && !StrEqual(buffer1, ""))
+		if (!StrEqual(buffer1, ""))
 			sendDiscordAnnouncementBonus(szName, szSteamId64, g_szMapName, g_szFinalTime[client], zGroup, szRecordDiff);
 	}
 
@@ -4116,10 +4115,9 @@ stock void PrintChatBonusStyle (int client, int zGroup, int style, int rank = 0)
 		char szSteamId64[64];
 		GetClientAuthId(client, AuthId_SteamID64, szSteamId64, sizeof(szSteamId64), true);
 
-		char buffer[1024], buffer1[1024];
-		GetConVarString(g_hRecordAnnounceDiscordStyle, buffer, 1024);
+		char buffer1[1024];
 		GetConVarString(g_hRecordAnnounceDiscordBonusStyle, buffer1, 1024);
-		if (!StrEqual(buffer, "") && !StrEqual(buffer1, ""))
+		if (!StrEqual(buffer1, ""))
 			sendDiscordAnnouncementBonusStyle(szName, szSteamId64, g_szMapName, g_szFinalTime[client], zGroup, szRecordDiff, style);
 	}
 
@@ -4649,17 +4647,12 @@ public void sendDiscordAnnouncementBonus(char szName[128], char szSteamId64[64],
 	}
 	else
 	{
-		char webhook[1024], webhookN[1024], webhookName[1024];
-		GetConVarString(g_hRecordAnnounceDiscord, webhookN, 1024);
+		char webhook[1024], webhookName[1024];
 		GetConVarString(g_hRecordAnnounceDiscordBonus, webhook, 1024);
 		GetConVarString(g_dcBonusRecordName, webhookName, 1024);
 		if (StrEqual(webhook, ""))
-			if (StrEqual(webhookN, ""))
-				return;
-			else
-				webhook = webhookN;
-
-
+			return;
+		
 	 	// Send Discord Announcement
 		DiscordWebHook hook = new DiscordWebHook(webhook);
 		hook.SlackMode = true;
@@ -4767,17 +4760,12 @@ public void sendDiscordAnnouncementBonusStyle(char szName[128], char szSteamId64
 	}
 	else
 	{
-		char webhook[1024], webhookN[1024], webhookName[1024];
-		GetConVarString(g_hRecordAnnounceDiscordStyle, webhookN, 1024);
+		char webhook[1024], webhookName[1024];
 		GetConVarString(g_hRecordAnnounceDiscordBonusStyle, webhook, 1024);
 		GetConVarString(g_dcBonusRecordName, webhookName, 1024);
 		if (StrEqual(webhook, ""))
-			if (StrEqual(webhookN, ""))
-				return;
-			else
-				webhook = webhookN;
-
-
+			return;
+			
 	 	// Send Discord Announcement
 		DiscordWebHook hook = new DiscordWebHook(webhook);
 		hook.SlackMode = true;
