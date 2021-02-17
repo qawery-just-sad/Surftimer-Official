@@ -4462,6 +4462,19 @@ public void sendDiscordAnnouncement(char szName[128], char szSteamId64[64], char
 
 public void sendDiscordAnnouncementStyle(char szName[128], char szSteamId64[64], char szMapName[128], char szTime[32], char szRecordDiff[32], int style)
 {
+	//Format player style
+	char szPlayerStyle[32];
+	switch (style)
+	{
+		case 1: Format(szPlayerStyle, 128, "Sideways %s", szPlayerStyle);
+		case 2: Format(szPlayerStyle, 128, "Half Sideways %s", szPlayerStyle);
+		case 3: Format(szPlayerStyle, 128, "Backwards %s", szPlayerStyle);
+		case 4: Format(szPlayerStyle, 128, "Low Gravity %s", szPlayerStyle);
+		case 5: Format(szPlayerStyle, 128, "Slow Motion %s", szPlayerStyle);
+		case 6: Format(szPlayerStyle, 128, "Fast Forward %s", szPlayerStyle);
+		case 7: Format(szPlayerStyle, 128, "Free Style %s", szPlayerStyle);
+	}
+	
 	//Test which style to use
 	if (!GetConVarBool(g_dcKSFStyle))
 	{
@@ -4487,19 +4500,6 @@ public void sendDiscordAnnouncementStyle(char szName[128], char szSteamId64[64],
 		GetConVarString(g_dcTitle, szTitle, 256);
 		ReplaceString(szTitle, sizeof(szTitle), "{Server_Name}", g_sServerName);
 		
-		//Format player style
-		char szPlayerStyle[32];
-		switch (style)
-		{
-			case 1: Format(szPlayerStyle, 128, "Sideways %s", szPlayerStyle);
-			case 2: Format(szPlayerStyle, 128, "Half Sideways %s", szPlayerStyle);
-			case 3: Format(szPlayerStyle, 128, "Backwards %s", szPlayerStyle);
-			case 4: Format(szPlayerStyle, 128, "Low Gravity %s", szPlayerStyle);
-			case 5: Format(szPlayerStyle, 128, "Slow Motion %s", szPlayerStyle);
-			case 6: Format(szPlayerStyle, 128, "Fast Forward %s", szPlayerStyle);
-			case 7: Format(szPlayerStyle, 128, "Free Style %s", szPlayerStyle);
-		}
-
 		//Create the embed message
 		MessageEmbed Embed = new MessageEmbed();
 
@@ -4564,7 +4564,7 @@ public void sendDiscordAnnouncementStyle(char szName[128], char szSteamId64[64],
 		// Format The Message
 		char szMessage[256];
 
-		Format(szMessage, sizeof(szMessage), "```md\n# New Server Record on %s #\n\n[%s] beat the server record on < %s > with a time of < %s (%s) > ]:```", g_sServerName, szName, szMapName, szTime, szRecordDiff);
+		Format(szMessage, sizeof(szMessage), "```md\n# New Server Record on %s #\n\n[%s] beat the %s server record on < %s > with a time of < %s (%s) > ]:```", g_sServerName, szName, szPlayerStyle, szMapName, szTime, szRecordDiff);
 
 		hook.SetContent(szMessage);
 		hook.Send();
@@ -4679,6 +4679,19 @@ public void sendDiscordAnnouncementBonus(char szName[128], char szSteamId64[64],
 
 public void sendDiscordAnnouncementBonusStyle(char szName[128], char szSteamId64[64], char szMapName[128], char szTime[32], int zGroup, char szRecordDiff[54], int style)
 {
+	//Format player style
+	char szPlayerStyle[32];
+	switch (style)
+	{
+		case 1: Format(szPlayerStyle, 128, "Sideways %s", szPlayerStyle);
+		case 2: Format(szPlayerStyle, 128, "Half Sideways %s", szPlayerStyle);
+		case 3: Format(szPlayerStyle, 128, "Backwards %s", szPlayerStyle);
+		case 4: Format(szPlayerStyle, 128, "Low Gravity %s", szPlayerStyle);
+		case 5: Format(szPlayerStyle, 128, "Slow Motion %s", szPlayerStyle);
+		case 6: Format(szPlayerStyle, 128, "Fast Forward %s", szPlayerStyle);
+		case 7: Format(szPlayerStyle, 128, "Free Style %s", szPlayerStyle);
+	}
+	
 	//Test which style to use
 	if (!GetConVarBool(g_dcKSFStyle))
 	{
@@ -4703,19 +4716,6 @@ public void sendDiscordAnnouncementBonusStyle(char szName[128], char szSteamId64
 		char szTitle[256];
 		GetConVarString(g_dcTitleBonus, szTitle, 256);
 		ReplaceString(szTitle, sizeof(szTitle), "{Server_Name}", g_sServerName);
-
-		//Format player style
-		char szPlayerStyle[32];
-		switch (style)
-		{
-			case 1: Format(szPlayerStyle, 128, "Sideways %s", szPlayerStyle);
-			case 2: Format(szPlayerStyle, 128, "Half Sideways %s", szPlayerStyle);
-			case 3: Format(szPlayerStyle, 128, "Backwards %s", szPlayerStyle);
-			case 4: Format(szPlayerStyle, 128, "Low Gravity %s", szPlayerStyle);
-			case 5: Format(szPlayerStyle, 128, "Slow Motion %s", szPlayerStyle);
-			case 6: Format(szPlayerStyle, 128, "Fast Forward %s", szPlayerStyle);
-			case 7: Format(szPlayerStyle, 128, "Free Style %s", szPlayerStyle);
-		}
 
 		//Create the embed message
 		MessageEmbed Embed = new MessageEmbed();
@@ -4787,7 +4787,7 @@ public void sendDiscordAnnouncementBonusStyle(char szName[128], char szSteamId64
 		// Format The Message
 		char szMessage[256];
 
-		Format(szMessage, sizeof(szMessage), "```md\n# New Bonus Server Record on %s #\n\n[%s] beat the bonus %i server record on < %s > with a time of < %s (%s) > ]:```", g_sServerName, szName, zGroup, szMapName, szTime, szRecordDiff);
+		Format(szMessage, sizeof(szMessage), "```md\n# New Bonus Server Record on %s #\n\n[%s] beat the %s bonus %i server record on < %s > with a time of < %s (%s) > ]:```", g_sServerName, szName, szPlayerStyle, zGroup, szMapName, szTime, szRecordDiff);
 
 		hook.SetContent(szMessage);
 		hook.Send();
