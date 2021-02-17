@@ -4046,7 +4046,7 @@ stock void StyleFinishedMsgs(int client, int style)
 			char buffer[1024];
 			GetConVarString(g_hRecordAnnounceDiscordStyle, buffer, 1024);
 			if (!StrEqual(buffer, ""))
-				sendDiscordAnnouncementStyle(szName, szSteamId64, g_szMapName, g_szFinalTime[client], szRecordDiff, client);
+				sendDiscordAnnouncementStyle(szName, szSteamId64, g_szMapName, g_szFinalTime[client], szRecordDiff, style);
 		}
 
 		CalculatePlayerRank(client, style);
@@ -4120,7 +4120,7 @@ stock void PrintChatBonusStyle (int client, int zGroup, int style, int rank = 0)
 		GetConVarString(g_hRecordAnnounceDiscordStyle, buffer, 1024);
 		GetConVarString(g_hRecordAnnounceDiscordBonusStyle, buffer1, 1024);
 		if (!StrEqual(buffer, "") && !StrEqual(buffer1, ""))
-			sendDiscordAnnouncementBonusStyle(szName, szSteamId64, g_szMapName, g_szFinalTime[client], zGroup, szRecordDiff, client);
+			sendDiscordAnnouncementBonusStyle(szName, szSteamId64, g_szMapName, g_szFinalTime[client], zGroup, szRecordDiff, style);
 	}
 
 	CalculatePlayerRank(client, style);
@@ -4460,7 +4460,7 @@ public void sendDiscordAnnouncement(char szName[128], char szSteamId64[64], char
 	}
 }
 
-public void sendDiscordAnnouncementStyle(char szName[128], char szSteamId64[64], char szMapName[128], char szTime[32], char szRecordDiff[32], int client)
+public void sendDiscordAnnouncementStyle(char szName[128], char szSteamId64[64], char szMapName[128], char szTime[32], char szRecordDiff[32], int style)
 {
 	//Test which style to use
 	if (!GetConVarBool(g_dcKSFStyle))
@@ -4489,7 +4489,7 @@ public void sendDiscordAnnouncementStyle(char szName[128], char szSteamId64[64],
 		
 		//Format player style
 		char szPlayerStyle[32];
-		switch (g_iCurrentStyle[client])
+		switch (style)
 		{
 			case 1: Format(szPlayerStyle, 128, "Sideways %s", szPlayerStyle);
 			case 2: Format(szPlayerStyle, 128, "Half Sideways %s", szPlayerStyle);
@@ -4677,7 +4677,7 @@ public void sendDiscordAnnouncementBonus(char szName[128], char szSteamId64[64],
 	}
 }
 
-public void sendDiscordAnnouncementBonusStyle(char szName[128], char szSteamId64[64], char szMapName[128], char szTime[32], int zGroup, char szRecordDiff[54], int client)
+public void sendDiscordAnnouncementBonusStyle(char szName[128], char szSteamId64[64], char szMapName[128], char szTime[32], int zGroup, char szRecordDiff[54], int style)
 {
 	//Test which style to use
 	if (!GetConVarBool(g_dcKSFStyle))
@@ -4706,7 +4706,7 @@ public void sendDiscordAnnouncementBonusStyle(char szName[128], char szSteamId64
 
 		//Format player style
 		char szPlayerStyle[32];
-		switch (g_iCurrentStyle[client])
+		switch (style)
 		{
 			case 1: Format(szPlayerStyle, 128, "Sideways %s", szPlayerStyle);
 			case 2: Format(szPlayerStyle, 128, "Half Sideways %s", szPlayerStyle);
