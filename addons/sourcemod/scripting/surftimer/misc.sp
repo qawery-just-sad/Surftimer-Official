@@ -4072,6 +4072,15 @@ stock void PrintChatBonusStyle (int client, int zGroup, int style, int rank = 0)
 		RecordDiff = g_fStyleOldBonusRecordTime[style][zGroup] - g_fFinalTime[client];
 		FormatTimeFloat(client, RecordDiff, 3, szRecordDiff, 54);
 		Format(szRecordDiff, 54, "-%s", szRecordDiff);
+		
+		// Send Announcements
+		char szSteamId64[64];
+		GetClientAuthId(client, AuthId_SteamID64, szSteamId64, sizeof(szSteamId64), true);
+
+		char buffer1[1024];
+		GetConVarString(g_hRecordAnnounceDiscordBonusStyle, buffer1, 1024);
+		if (!StrEqual(buffer1, ""))
+			sendDiscordAnnouncementBonusStyle(szName, szSteamId64, g_szMapName, g_szFinalTime[client], zGroup, szRecordDiff, style);
 	}
 	if (g_bBonusFirstRecord[client] && g_bBonusSRVRecord[client])
 	{
@@ -4104,22 +4113,6 @@ stock void PrintChatBonusStyle (int client, int zGroup, int style, int rank = 0)
 
 	if (rank == 9999999 && IsValidClient(client))
 		CPrintToChat(client, "%t", "Misc19", g_szChatPrefix);
-
-	// Send Announcements
-	if (g_bBonusSRVRecord[client])
-	{
-		RecordDiff = g_fStyleOldBonusRecordTime[style][zGroup] - g_fFinalTime[client];
-		FormatTimeFloat(client, RecordDiff, 3, szRecordDiff, 54);
-		Format(szRecordDiff, 54, "-%s", szRecordDiff);
-		
-		char szSteamId64[64];
-		GetClientAuthId(client, AuthId_SteamID64, szSteamId64, sizeof(szSteamId64), true);
-
-		char buffer1[1024];
-		GetConVarString(g_hRecordAnnounceDiscordBonusStyle, buffer1, 1024);
-		if (!StrEqual(buffer1, ""))
-			sendDiscordAnnouncementBonusStyle(szName, szSteamId64, g_szMapName, g_szFinalTime[client], zGroup, szRecordDiff, style);
-	}
 
 	CalculatePlayerRank(client, style);
 	return;
