@@ -482,17 +482,17 @@ public void db_deleteSpawnLocations(int zGrp, int teleside)
 }
 
 
-public void db_updateSpawnLocations(float position[3], float angle[3], float vel[3], int zGrp, int teleside)
+public void db_updateSpawnLocations(float position[3], float angle[3], float vel[3], int zGrp, int stage, int teleside)
 {
 	char szQuery[512];
-	Format(szQuery, 512, sql_updateSpawnLocations, position[0], position[1], position[2], angle[0], angle[1], angle[2], vel[0], vel[1], vel[2], g_szMapName, zGrp, teleside);
+	Format(szQuery, 512, sql_updateSpawnLocations, position[0], position[1], position[2], angle[0], angle[1], angle[2], vel[0], vel[1], vel[2], g_szMapName, zGrp, stage, teleside);
 	SQL_TQuery(g_hDb, db_editSpawnLocationsCallback, szQuery, zGrp, DBPrio_Low);
 }
 
-public void db_insertSpawnLocations(float position[3], float angle[3], float vel[3], int zGrp, int teleside)
+public void db_insertSpawnLocations(float position[3], float angle[3], float vel[3], int zGrp, int stage, int teleside)
 {
 	char szQuery[512];
-	Format(szQuery, 512, sql_insertSpawnLocations, g_szMapName, position[0], position[1], position[2], angle[0], angle[1], angle[2], vel[0], vel[1], vel[2], zGrp, teleside);
+	Format(szQuery, 512, sql_insertSpawnLocations, g_szMapName, position[0], position[1], position[2], angle[0], angle[1], angle[2], vel[0], vel[1], vel[2], zGrp, stage, teleside);
 	SQL_TQuery(g_hDb, db_editSpawnLocationsCallback, szQuery, zGrp, DBPrio_Low);
 }
 

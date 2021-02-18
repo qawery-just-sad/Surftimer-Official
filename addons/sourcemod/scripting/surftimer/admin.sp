@@ -117,12 +117,12 @@ public void InsertSpawnLocation(int client, int teleside)
 
 	if (g_bGotSpawnLocation[g_iClientInZone[client][2]][1][teleside])
 	{
-		db_updateSpawnLocations(SpawnLocation, SpawnAngle, Velocity, g_iClientInZone[client][2], teleside);
+		db_updateSpawnLocations(SpawnLocation, SpawnAngle, Velocity, g_iClientInZone[client][2], g_Stage[g_iClientInZone[client][2]][client], teleside);
 		CPrintToChat(client, "%t", "Admin7", g_szChatPrefix);
 	}
 	else
 	{
-		db_insertSpawnLocations(SpawnLocation, SpawnAngle, Velocity, g_iClientInZone[client][2], teleside);
+		db_insertSpawnLocations(SpawnLocation, SpawnAngle, Velocity, g_iClientInZone[client][2], g_Stage[g_iClientInZone[client][2]][client], teleside);
 		CPrintToChat(client, "%t", "SpawnAdded", g_szChatPrefix);
 	}
 	

@@ -4129,8 +4129,8 @@ public Action Admin_FixBot(int client, int args)
 		return Plugin_Handled;
 
 	CReplyToCommand(client, "%t", "Commands52", g_szChatPrefix);
-	CreateTimer(5.0, FixBot_Off, _, TIMER_FLAG_NO_MAPCHANGE);
-	CreateTimer(10.0, FixBot_On, _, TIMER_FLAG_NO_MAPCHANGE);
+	CreateTimer(1.0, FixBot_Off, _, TIMER_FLAG_NO_MAPCHANGE);
+	CreateTimer(6.0, FixBot_On, _, TIMER_FLAG_NO_MAPCHANGE);
 
 	return Plugin_Handled;
 }
