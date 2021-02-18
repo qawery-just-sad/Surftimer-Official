@@ -357,7 +357,6 @@ public void CL_OnEndTimerPress(int client)
 		}
 		else if (style != 0)
 		{
-			g_fOldRecordStyleMapTime[style] = g_fRecordStyleMapTime[style];
 
 			// Make a new record bot?
 			if (GetConVarBool(g_hReplaceReplayTime) && (g_fFinalTime[client] < g_fReplayTimes[0][style] || g_fReplayTimes[0][style] == 0.0))
@@ -394,6 +393,7 @@ public void CL_OnEndTimerPress(int client)
 			// If the server already has a record
 			if (g_StyleMapTimesCount[style] > 0)
 			{
+				g_fOldRecordStyleMapTime[style] = g_fRecordStyleMapTime[style];
 				if (g_fFinalTime[client] < g_fRecordStyleMapTime[style])
 				{
 					// New fastest time in map
@@ -426,10 +426,13 @@ public void CL_OnEndTimerPress(int client)
 				}
 
 				// Has to be the new record, since it is the first completion
+				g_fOldRecordStyleMapTime[style] = g_fRecordStyleMapTime[style];
 				g_bStyleMapSRVRecord[style][client] = true;
 				g_fRecordStyleMapTime[style] = g_fFinalTime[client];
 				Format(g_szRecordStylePlayer[style], 128, "%s", szName);
 				FormatTimeFloat(1, g_fRecordStyleMapTime[style], 3, g_szRecordStyleMapTime[style], 128);
+
+				g_fOldRecordStyleMapTime[style] = g_fRecordStyleMapTime[style];
 			}
 
 
