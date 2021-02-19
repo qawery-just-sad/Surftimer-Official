@@ -583,6 +583,9 @@ public void sql_selectPlayerProCountCallback(Handle owner, Handle hndl, const ch
 
 	int style;
 	int count;
+	for (int i = 0; i < MAX_STYLES; i++)
+			g_StyleMapTimesCount[i] = 0;
+
 	if (SQL_HasResultSet(hndl))
 	{
 		while (SQL_FetchRow(hndl))
@@ -591,15 +594,14 @@ public void sql_selectPlayerProCountCallback(Handle owner, Handle hndl, const ch
 			count = SQL_FetchInt(hndl, 1);
 			if (style == 0)
 				g_MapTimesCount = count;
-			else
-				g_StyleMapTimesCount[style] = count;
+			g_StyleMapTimesCount[style] = count;
 		}
 	}
 	else
 	{
 		g_MapTimesCount = 0;
-		for (int i = 1; i < MAX_STYLES; i++)
-			g_StyleMapTimesCount[style] = 0;
+		for (int i = 0; i < MAX_STYLES; i++)
+			g_StyleMapTimesCount[i] = 0;
 	}
 
 	if (!g_bServerDataLoaded)
@@ -6842,24 +6844,24 @@ public void sql_selectStyleRecordCallback(Handle owner, Handle hndl, const char[
 		}
 	}
 	else
-	{ // No record found from database - Let's insert
+	{ 	// No record found from database - Let's insert
 
-	// Escape name for SQL injection protection
-	char szName[MAX_NAME_LENGTH * 2 + 1], szUName[MAX_NAME_LENGTH];
-	GetClientName(data, szUName, MAX_NAME_LENGTH);
-	SQL_EscapeString(g_hDb, szUName, szName, MAX_NAME_LENGTH);
+		// Escape name for SQL injection protection
+		char szName[MAX_NAME_LENGTH * 2 + 1], szUName[MAX_NAME_LENGTH];
+		GetClientName(data, szUName, MAX_NAME_LENGTH);
+		SQL_EscapeString(g_hDb, szUName, szName, MAX_NAME_LENGTH);
 
-	// Move required information in datapack
-	Handle pack = CreateDataPack();
-	WritePackFloat(pack, g_fFinalTime[data]);
-	WritePackCell(pack, data);
-	WritePackCell(pack, style);
+		// Move required information in datapack
+		Handle pack = CreateDataPack();
+		WritePackFloat(pack, g_fFinalTime[data]);
+		WritePackCell(pack, data);
+		WritePackCell(pack, style);
 
-	g_StyleMapTimesCount[style]++;
+		g_StyleMapTimesCount[style]++;
 
-	Format(szQuery, 512, "INSERT INTO ck_playertimes (steamid, mapname, name, runtimepro, style) VALUES ('%s', '%s', '%s', '%f', %i)", g_szSteamID[data], g_szMapName, szName, g_fFinalTime[data], style);
-	SQL_TQuery(g_hDb, SQL_UpdateStyleRecordCallback, szQuery, pack, DBPrio_Low);
-}
+		Format(szQuery, 512, "INSERT INTO ck_playertimes (steamid, mapname, name, runtimepro, style) VALUES ('%s', '%s', '%s', '%f', %i)", g_szSteamID[data], g_szMapName, szName, g_fFinalTime[data], style);
+		SQL_TQuery(g_hDb, SQL_UpdateStyleRecordCallback, szQuery, pack, DBPrio_Low);
+	}
 }
 
 // If latest record was faster than old - Update time
