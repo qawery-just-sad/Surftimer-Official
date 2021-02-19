@@ -3873,7 +3873,11 @@ public void SQL_selectBonusTotalCountCallback(Handle owner, Handle hndl, const c
 	}
 
 	for (int i = 1; i < MAXZONEGROUPS; i++)
-	g_iBonusCount[i] = 0;
+	{
+		g_iBonusCount[i] = 0;
+		for (int j=0; j<MAX_STYLES;j++)
+			g_iStyleBonusCount[j][i]=0;
+	}
 
 	if (SQL_HasResultSet(hndl))
 	{
@@ -3885,8 +3889,7 @@ public void SQL_selectBonusTotalCountCallback(Handle owner, Handle hndl, const c
 			style = SQL_FetchInt(hndl, 1);
 			if (style == 0)
 				g_iBonusCount[zonegroup] = SQL_FetchInt(hndl, 2);
-			else
-				g_iStyleBonusCount[style][zonegroup] = SQL_FetchInt(hndl, 2);
+			g_iStyleBonusCount[style][zonegroup] = SQL_FetchInt(hndl, 2);
 		}
 	}
 
