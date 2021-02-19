@@ -393,7 +393,6 @@ public void CL_OnEndTimerPress(int client)
 			// If the server already has a record
 			if (g_StyleMapTimesCount[style] > 0)
 			{
-				g_fOldRecordStyleMapTime[style] = g_fRecordStyleMapTime[style];
 				if (g_fFinalTime[client] < g_fRecordStyleMapTime[style])
 				{
 					// New fastest time in map
@@ -401,6 +400,7 @@ public void CL_OnEndTimerPress(int client)
 					g_fRecordStyleMapTime[style] = g_fFinalTime[client];
 					Format(g_szRecordStylePlayer[style], 128, "%s", szName);
 					FormatTimeFloat(1, g_fRecordStyleMapTime[style], 3, g_szRecordStyleMapTime[style], 64);
+					g_fOldRecordStyleMapTime[style] = g_fRecordStyleMapTime[style];
 
 					if (GetConVarBool(g_hReplayBot) && !g_bPositionRestored[client] && !g_bNewReplay[client])
 					{
@@ -654,10 +654,10 @@ public void CL_OnEndTimerPress(int client)
 				if (g_fFinalTime[client] < g_fStyleBonusFastest[style][zGroup])
 				{
 					// New fastest time in current bonus
-					g_fStyleOldBonusRecordTime[style][zGroup] = g_fStyleBonusFastest[style][zGroup];
 					g_fStyleBonusFastest[style][zGroup] = g_fFinalTime[client];
 					Format(g_szStyleBonusFastest[style][zGroup], 128, "%s", szName); // fluffys come back stopped here
 					FormatTimeFloat(1, g_fStyleBonusFastest[style][zGroup], 3, g_szStyleBonusFastestTime[style][zGroup], 128);
+					g_fStyleOldBonusRecordTime[style][zGroup] = g_fStyleBonusFastest[style][zGroup];
 
 					g_bBonusSRVRecord[client] = true;
 					if (GetConVarBool(g_hBonusBot) && !g_bPositionRestored[client] && !g_bNewBonus[client])
