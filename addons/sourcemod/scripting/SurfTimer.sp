@@ -35,7 +35,7 @@
 #pragma semicolon 1
 
 // Plugin Info
-#define VERSION "IDK I ran out of numbers"
+#define VERSION "3.0.1"
 
 // Database Definitions
 #define MYSQL 0

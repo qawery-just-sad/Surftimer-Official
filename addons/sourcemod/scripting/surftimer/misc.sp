@@ -4617,9 +4617,20 @@ public void sendDiscordAnnouncementBonus(char szName[128], char szSteamId64[64],
 		GetConVarString(g_dcUrl_main, szUrlMain, 1024);
 		if (!StrEqual(szUrlMain, ""))
 		{
-			StrCat(szUrlMain, sizeof(szUrlMain), szMapName);
-			StrCat(szUrlMain, sizeof(szUrlMain), ".jpg");
-			Embed.SetImage(szUrlMain);
+			if(GetConVarBool(g_dcBonusImage))
+			{
+				StrCat(szUrlMain, sizeof(szUrlMain), szMapName);
+				StrCat(szUrlMain, sizeof(szUrlMain), "_b");
+				StrCat(szUrlMain, sizeof(szUrlMain), szGroup);
+				StrCat(szUrlMain, sizeof(szUrlMain), ".jpg");
+				Embed.SetImage(szUrlMain);
+			}
+			else
+			{
+				StrCat(szUrlMain, sizeof(szUrlMain), szMapName);
+				StrCat(szUrlMain, sizeof(szUrlMain), ".jpg");
+				Embed.SetImage(szUrlMain);
+			}
 		}
 
 		//Send the thumb image of the map
@@ -4730,9 +4741,20 @@ public void sendDiscordAnnouncementBonusStyle(char szName[128], char szSteamId64
 		GetConVarString(g_dcUrl_main, szUrlMain, 1024);
 		if (!StrEqual(szUrlMain, ""))
 		{
-			StrCat(szUrlMain, sizeof(szUrlMain), szMapName);
-			StrCat(szUrlMain, sizeof(szUrlMain), ".jpg");
-			Embed.SetImage(szUrlMain);
+			if(GetConVarBool(g_dcBonusImage))
+			{
+				StrCat(szUrlMain, sizeof(szUrlMain), szMapName);
+				StrCat(szUrlMain, sizeof(szUrlMain), "_b");
+				StrCat(szUrlMain, sizeof(szUrlMain), szGroup);
+				StrCat(szUrlMain, sizeof(szUrlMain), ".jpg");
+				Embed.SetImage(szUrlMain);
+			}
+			else
+			{
+				StrCat(szUrlMain, sizeof(szUrlMain), szMapName);
+				StrCat(szUrlMain, sizeof(szUrlMain), ".jpg");
+				Embed.SetImage(szUrlMain);
+			}
 		}
 
 		//Send the thumb image of the map

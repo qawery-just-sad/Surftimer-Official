@@ -127,6 +127,7 @@ ConVar g_dcKSFStyle = null;
 ConVar g_dcTest = null;
 ConVar g_dcUrl_main = null;
 ConVar g_dcUrl_thumb = null;
+ConVar g_dcBonusImage = null;											// Use induvidual images for bonus records on discord embeds
 
 void CreateConVars()
 {
@@ -348,7 +349,8 @@ void CreateConVars()
 	g_dcTest = CreateConVar("ck_discord_test", "0", "Wether or not discord testing is enabled. If it is, type !ck_discord_test to test it.", FCVAR_NOTIFY);
 	g_dcUrl_main = CreateConVar("ck_discord_url_main", "", "The base url of where the Discord main images are stored. Leave blank to disable.");
 	g_dcUrl_thumb = CreateConVar("ck_discord_url_thumb", "https://image.gametracker.com/images/maps/160x120/csgo/", "The base url of where the Discord thumb images are stored. Leave blank to disable.");
-	
+	g_dcBonusImage = CreateConVar("ck_discord_bonus_image", "0", "Wether or not to display differnt images for bonus records on discord embeds. Image name must be suffixed by _b and corresponding bonus number eg. _b1 / _b2 ");
+
 	HookConVarChange(g_hEnforceDefaultTitles, OnSettingChanged);
 
 	// WRCP Points
