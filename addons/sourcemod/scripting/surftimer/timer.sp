@@ -600,15 +600,33 @@ public Action AnnouncementTimer(Handle timer)
 
 public Action CenterSpeedDisplayTimer(Handle timer, any client)
 {
+	int red[4] = {255, 100, 100, 0}, green[4] = {100, 255, 100, 0}, white[4] = {220, 220, 220, 0}, color1[4], color2[4] = {255,255,255, 0};
+	char szSpeed[128];
+
 	if (IsValidClient(client) && !IsFakeClient(client) && g_bCenterSpeedDisplay[client])
 	{
-		char szSpeed[128];
 		if (IsPlayerAlive(client))
 			Format(szSpeed, sizeof(szSpeed), "%i", RoundToNearest(g_fLastSpeed[client]));
 		else if (g_SpecTarget[client] != -1)
 			Format(szSpeed, sizeof(szSpeed), "%i", RoundToNearest(g_fLastSpeed[g_SpecTarget[client]]));
-
+		
+		if(g_iOldSpeed[client] == RoundToNearest(g_fLastSpeed[client]))
+		{
+			color1 = white;
+		}
+		else if(g_iOldSpeed[client] < RoundToNearest(g_fLastSpeed[client]))
+		{
+			color1 = green;
+		}
+		else if(g_iOldSpeed[client] > RoundToNearest(g_fLastSpeed[client]))
+		{
+			color1 = red;
+		}
+		
+		g_iOldSpeed[client] = RoundToNearest(g_fLastSpeed[client]);
+		
 		ShowHudText(client, 2, szSpeed);
+		SetHudTextParamsEx(-1.0, 0.30, 1.0, color1, color2, 0, 0.25, 0.0, 0.0);
 	}
 	else
 		return Plugin_Stop;
