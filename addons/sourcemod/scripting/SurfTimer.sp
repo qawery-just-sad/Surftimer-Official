@@ -25,6 +25,7 @@
 #include <mapchooser>
 #include <discord>
 #include <surftimer>
+#include <autoexecconfig>
 
 /*===================================
 =            Definitions            =
@@ -2590,9 +2591,6 @@ public void OnPluginStart()
 
 	db_setupDatabase();
 	CreateCommandsNewMap();
-
-	// exec surftimer.cfg
-	AutoExecConfig(true, "surftimer");
 
 	// mic
 	g_ownerOffset = FindSendPropInfo("CBaseCombatWeapon", "m_hOwnerEntity");
