@@ -30,7 +30,6 @@ Yes
 * [SourceMod Includes](https://www.sourcemod.net/downloads.php?branch=stable)
 * [Sourcemod-Discord API](https://github.com/Deathknife/sourcemod-discord)
 * [SteamWorks](https://forums.alliedmods.net/showthread.php?t=229556)
-* [colorvariables](https://github.com/olokos/Chat-Processor/blob/master/scripting/include/colorvariables.inc)
 * [AutoExecConfig](https://github.com/Impact123/AutoExecConfig)
 
 ## Credits
