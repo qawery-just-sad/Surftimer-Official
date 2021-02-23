@@ -646,10 +646,10 @@ public Action CenterSpeedDisplayTimer(Handle timer, any client)
 			}
 			else if (g_SpeedGradient[client] == 2) // Rainbow
 			{
-				pos = RoundToFloor(speed / 500.0);
-				if (pos > 7)
+				pos = RoundToFloor(speed / 476.0);
+				if (pos > 21)
 				{
-					pos = 7;
+					pos = 21;
 				}		
 				color1 = g_szRainbowGradientRGB[pos];
 			}
@@ -667,10 +667,10 @@ public Action CenterSpeedDisplayTimer(Handle timer, any client)
 			}
 			else if (g_SpeedGradient[client] == 2) // Rainbow
 			{
-				pos = RoundToFloor(speed / 500.0);
-				if (pos > 7)
+				pos = RoundToFloor(speed / 166.0);
+				if (pos > 21)
 				{	
-					pos = 7;
+					pos = 21;
 				}
 				color1 = g_szRainbowGradientRGB[pos];
 			}

@@ -4148,9 +4148,9 @@ public void GetSpeedColour(int client, int speed, int type)
 		}
 		else if (type == 2 && g_SpeedMode[client] == 0) // rainbow
 		{
-			pos = RoundToFloor(speed / 500.0);
-			if (pos > 7)
-				pos = 7;
+			pos = RoundToFloor(speed / 476.0);
+			if (pos > 21)
+				pos = 21;
 			Format(g_szSpeedColour[client], sizeof(g_szSpeedColour), g_szRainbowGradient[pos]);
 		}
 		else if (type == 3 && g_SpeedMode[client] == 0) // gain/loss
@@ -4178,9 +4178,9 @@ public void GetSpeedColour(int client, int speed, int type)
 		}
 		else if (type == 2 && g_SpeedMode[client] == 0) // rainbow
 		{
-			pos = RoundToFloor(speed / 500.0);
-			if (pos > 7)
-				pos = 7;
+			pos = RoundToFloor(speed / 166.0);
+			if (pos > 21)
+				pos = 21;
 
 			Format(g_szSpeedColour[client], sizeof(g_szSpeedColour), g_szRainbowGradient[pos]);
 		}
