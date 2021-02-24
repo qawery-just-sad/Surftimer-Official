@@ -62,9 +62,13 @@ public void db_setupDatabase()
 		{
 			db_upgradeDatabase(2);
 		}
-		else if (!SQL_FastQuery(g_hDb, "SELECT teleside FROM ck_playeroptions LIMIT 1"))
+		else if (!SQL_FastQuery(g_hDb, "SELECT teleside FROM ck_playeroptions2 LIMIT 1"))
 		{
 			db_upgradeDatabase(3);
+		}
+		else if (!SQL_FastQuery(g_hDb, "SELECT style FROM ck_announcements LIMIT 1;"))
+		{
+			db_upgradeDatabase(4);
 		}
 	}
 
@@ -186,6 +190,10 @@ public void db_upgradeDatabase(int ver)
   {
 	  SQL_FastQuery(g_hDb, "ALTER TABLE ck_playeroptions2 ADD COLUMN teleside INT(11) NOT NULL DEFAULT 0 AFTER centrehud;");
 	  SQL_FastQuery(g_hDb, "ALTER TABLE ck_spawnlocations DROP PRIMARY KEY, ADD COLUMN teleside INT(11) NOT NULL DEFAULT 0 AFTER stage, ADD PRIMARY KEY (mapname, zonegroup, stage, teleside);");
+  }
+  else if (ver == 4)
+  {
+	  SQL_FastQuery(g_hDb, "ALTER TABLE ck_announcements ADD COLUMN style INT(11) NOT NULL DEFAULT 0;");
   }
   
   SQL_UnlockDatabase(g_hDb);
@@ -9453,7 +9461,7 @@ public void SQL_SelectAnnouncementsCallback(Handle owner, Handle hndl, const cha
 	} 
 }
 
-public void db_insertAnnouncement(char szName[128], char szMapName[128], int szMode, char szTime[32], int szGroup)
+public void db_insertAnnouncement(char szName[128], char szMapName[128], int szMode, char szTime[32], int szGroup, int style)
 {
 	if (g_iServerID == -1)
 		return;
@@ -9461,7 +9469,7 @@ public void db_insertAnnouncement(char szName[128], char szMapName[128], int szM
 	char szQuery[512];
 	char szEscServerName[128];
 	SQL_EscapeString(g_hDb, g_sServerName, szEscServerName, sizeof(szEscServerName));
-	Format(szQuery, 512, "INSERT INTO `ck_announcements` (`server`, `name`, `mapname`, `mode`, `time`, `group`) VALUES ('%s', '%s', '%s', '%i', '%s', '%i');", szEscServerName, szName, szMapName, szMode, szTime, szGroup);
+	Format(szQuery, 512, "INSERT INTO `ck_announcements` (`server`, `name`, `mapname`, `mode`, `time`, `group`, `style`) VALUES ('%s', '%s', '%s', '%i', '%s', '%i', '%i');", szEscServerName, szName, szMapName, szMode, szTime, szGroup, style);
 	SQL_TQuery(g_hDb, SQL_CheckCallback, szQuery, 1, DBPrio_Low);
 }
 
@@ -9470,7 +9478,7 @@ public void db_checkAnnouncements()
 	char szQuery[512];
 	char szEscServerName[128];
 	SQL_EscapeString(g_hDb, g_sServerName, szEscServerName, sizeof(szEscServerName));
-	Format(szQuery, 512, "SELECT `id`, `server`, `name`, `mapname`, `mode`, `time`, `group` FROM `ck_announcements` WHERE `server` != '%s' AND `id` > %d;", szEscServerName, g_iLastID);
+	Format(szQuery, 512, "SELECT `id`, `server`, `name`, `mapname`, `mode`, `time`, `group`, `style` FROM `ck_announcements` WHERE `server` != '%s' AND `id` > %d;", szEscServerName, g_iLastID);
 	SQL_TQuery(g_hDb, SQL_CheckAnnouncementsCallback, szQuery, 1, DBPrio_Low);
 }
 
@@ -9489,6 +9497,7 @@ public void SQL_CheckAnnouncementsCallback(Handle owner, Handle hndl, const char
 			int id = SQL_FetchInt(hndl, 0);
 			int mode = SQL_FetchInt(hndl, 4);
 			int group = SQL_FetchInt(hndl, 6);
+			int style = SQL_FetchInt(hndl, 7);
 			char szServerName[256], szName[128], szMapName[128], szTime[32];
 			SQL_FetchString(hndl, 1, szServerName, sizeof(szServerName));
 			SQL_FetchString(hndl, 2, szName, sizeof(szName));
@@ -9497,13 +9506,50 @@ public void SQL_CheckAnnouncementsCallback(Handle owner, Handle hndl, const char
 
 			if (id > g_iLastID)
 			{
+				//Format player style
+				char szPlayerStyle[32];
+				if(GetConVarBool(g_hRecordAnnounceStyleType))
+				{
+					switch (style)
+					{
+						case 1: Format(szPlayerStyle, 128, "Sideways %s", szPlayerStyle);
+						case 2: Format(szPlayerStyle, 128, "Half Sideways %s", szPlayerStyle);
+						case 3: Format(szPlayerStyle, 128, "Backwards %s", szPlayerStyle);
+					}
+				}
+				else
+				{
+					switch (style)
+					{
+						case 1: Format(szPlayerStyle, 128, "Sideways %s", szPlayerStyle);
+						case 2: Format(szPlayerStyle, 128, "Half Sideways %s", szPlayerStyle);
+						case 3: Format(szPlayerStyle, 128, "Backwards %s", szPlayerStyle);
+						case 4: Format(szPlayerStyle, 128, "Low Gravity %s", szPlayerStyle);
+						case 5: Format(szPlayerStyle, 128, "Slow Motion %s", szPlayerStyle);
+						case 6: Format(szPlayerStyle, 128, "Fast Forward %s", szPlayerStyle);
+						case 7: Format(szPlayerStyle, 128, "Free Style %s", szPlayerStyle);
+					}
+				}
+				
 				// Send Server Announcement
 				g_iLastID = id;
 				CPrintToChatAll("%t", "SQLTwo4.1");
 				if (mode == 0)
+				{
 					CPrintToChatAll("%t", "SQLTwo4.2", g_szChatPrefix, szName, szMapName, szServerName, szTime);
+				}
 				else if (mode == 1)
+				{
 					CPrintToChatAll("%t", "SQLTwo4.2Bonus", g_szChatPrefix, szName, szMapName, group, szServerName, szTime);
+				}
+				else if (mode == 2)
+				{
+					CPrintToChatAll("%t", "SQLTwo4.4", g_szChatPrefix, szName, szMapName, szPlayerStyle, szServerName, szTime);
+				}
+				else if (mode == 3)
+				{
+					CPrintToChatAll("%t", "SQLTwo4.4Bonus", g_szChatPrefix, szName, szMapName, szPlayerStyle, group, szServerName, szTime);
+				}
 				CPrintToChatAll("%t", "SQLTwo4.3");
 			}
 		}
