@@ -4296,11 +4296,30 @@ stock void PrintChatBonusStyle (int client, int zGroup, int style, int rank = 0)
 		CPrintToChat(client, "%t", "StyleBonusFinished5", g_szChatPrefix, szName, g_szZoneGroupName[zGroup], g_szStyleRecordPrint[style], g_szFinalTime[client], szRecordDiff, g_szBonusTimeDifference[client], g_StyleMapRankBonus[style][zGroup][client], g_iStyleBonusCount[style][zGroup]);
 		PrintToConsole(client, "Surftimer | %s finished %s %s in %s [SR %s | PB %s | Rank #%i/%i]", szName, g_szZoneGroupName[zGroup], g_szStyleRecordPrint[style], g_szFinalTime[client], szRecordDiff, g_szBonusTimeDifference[client], g_StyleMapRankBonus[style][zGroup][client], g_iStyleBonusCount[style][zGroup]);
 	}
-
+	
 	CheckBonusStyleRanks(client, zGroup, style);
 
 	if (rank == 9999999 && IsValidClient(client))
 		CPrintToChat(client, "%t", "FailedSaveData", g_szChatPrefix);
+
+	// Send Announcements
+	if (g_bBonusSRVRecord[client])
+	{
+		char szSteamId64[64];
+		GetClientAuthId(client, AuthId_SteamID64, szSteamId64, sizeof(szSteamId64), true);
+
+		if (GetConVarBool(g_hRecordAnnounceStyle)) //Check if cross server announcement for style is enabled
+		{
+			db_insertAnnouncement(szName, g_szMapName, 3, g_szFinalTime[client], zGroup, style);
+		}
+
+		char buffer1[1024];
+		GetConVarString(g_hRecordAnnounceDiscordBonusStyle, buffer1, 1024);
+		if (!StrEqual(buffer1, ""))
+		{
+			sendDiscordAnnouncementBonusStyle(szName, szSteamId64, g_szMapName, g_szFinalTime[client], zGroup, szRecordDiff, style);
+		}
+	}
 
 	CalculatePlayerRank(client, style);
 	return;
