@@ -1,4 +1,23 @@
 # Changelog
+
+[2012-03-01 - Version 3.0.2]
+---
+- New Discord announcemnets with embeds Thanks to @Sarrus1, improved with style by @Kyli3Boi, added steam profiles by @qawery-just-sad
+- Added style shortcut commands
+- Fixed missing speed after completing a stage by making HUD bigger
+- When checking profiles rank is displayed correctly
+- Fixed all stages displaying double the amount Thanks to @KristianP26 for noticing this
+- Removed Vote Extend
+- Fix for styles being set back to default movement Thanks to @LubricantJam
+- Fixed db mapcycle Thanks to @fluffyst
+- Fixed sspec Thanks to @LubricantJam
+- Changed noclipspeed to be per player Thanks to @qawery-just-sad
+- Added delete records by STEAMID Thanks to @Bara, @dPexxIAM
+- Added Telefinder by marcowmadeira
+- Fix for Knife spam Thanks to @Kyli3Boi
+- Added AutoExecConfig Thanks to @Kyli3Boi, @Bara
+- And many more bug fixes, optimalisations Thanks to @Bara, @LubricantJam, @PwnK, @sneak-it, @dPexxIAM, @qawery-just-sad
+
 [2020-04-24 - Version 285]
 ---
 - Created and updated the changelog to version 285. @olokos

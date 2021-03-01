@@ -357,7 +357,7 @@ void CreateConVars()
 	g_dcKSFStyle = AutoExecConfig_CreateConVar("ck_discord_ksf_style", "0", "Wether or not to use the KSF style for discord announcements. Set to 1 for KSF style.", FCVAR_NOTIFY);
 	g_dcTest = AutoExecConfig_CreateConVar("ck_discord_test", "0", "Wether or not discord testing is enabled. If it is, type !ck_discord_test to test it.", FCVAR_NOTIFY);
 	g_dcUrl_main = AutoExecConfig_CreateConVar("ck_discord_url_main", "", "The base url of where the Discord main images are stored. Leave blank to disable.");
-	g_dcUrl_thumb = AutoExecConfig_CreateConVar("ck_discord_url_thumb", "https://image.gametracker.com/images/maps/160x120/csgo/", "The base url of where the Discord thumb images are stored. Leave blank to disable.");
+	g_dcUrl_thumb = AutoExecConfig_CreateConVar("ck_discord_url_thumb", "https://raw.githubusercontent.com/qawery-just-sad/SurfMapPics/master/csgo/", "The base url of where the Discord thumb images are stored. Leave blank to disable.");
 	g_dcBonusImage = AutoExecConfig_CreateConVar("ck_discord_bonus_image", "0", "Wether or not to display differnt images for bonus records on discord embeds. Image name must be suffixed by _b and corresponding bonus number eg. _b1 / _b2 ");
 
 	HookConVarChange(g_hEnforceDefaultTitles, OnSettingChanged);
