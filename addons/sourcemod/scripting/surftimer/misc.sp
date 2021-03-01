@@ -4477,16 +4477,28 @@ public void sendDiscordAnnouncementStyle(char szName[128], char szSteamId64[64],
 {
 	//Format player style
 	char szPlayerStyle[32];
-	switch (style)
-	{
-		case 1: Format(szPlayerStyle, 128, "Sideways %s", szPlayerStyle);
-		case 2: Format(szPlayerStyle, 128, "Half Sideways %s", szPlayerStyle);
-		case 3: Format(szPlayerStyle, 128, "Backwards %s", szPlayerStyle);
-		case 4: Format(szPlayerStyle, 128, "Low Gravity %s", szPlayerStyle);
-		case 5: Format(szPlayerStyle, 128, "Slow Motion %s", szPlayerStyle);
-		case 6: Format(szPlayerStyle, 128, "Fast Forward %s", szPlayerStyle);
-		case 7: Format(szPlayerStyle, 128, "Free Style %s", szPlayerStyle);
-	}
+	if(GetConVarBool(g_hRecordAnnounceDiscordStyleType))
+    {
+        switch (style)
+        {
+            case 1: Format(szPlayerStyle, 128, "Sideways %s", szPlayerStyle);
+            case 2: Format(szPlayerStyle, 128, "Half Sideways %s", szPlayerStyle);
+            case 3: Format(szPlayerStyle, 128, "Backwards %s", szPlayerStyle);
+        }
+    }
+    else
+    {
+        switch (style)
+        {
+            case 1: Format(szPlayerStyle, 128, "Sideways %s", szPlayerStyle);
+            case 2: Format(szPlayerStyle, 128, "Half Sideways %s", szPlayerStyle);
+            case 3: Format(szPlayerStyle, 128, "Backwards %s", szPlayerStyle);
+            case 4: Format(szPlayerStyle, 128, "Low Gravity %s", szPlayerStyle);
+            case 5: Format(szPlayerStyle, 128, "Slow Motion %s", szPlayerStyle);
+            case 6: Format(szPlayerStyle, 128, "Fast Forward %s", szPlayerStyle);
+            case 7: Format(szPlayerStyle, 128, "Free Style %s", szPlayerStyle);
+        }
+    }
 	
 	//Test which style to use
 	if (!GetConVarBool(g_dcKSFStyle))
@@ -4700,16 +4712,28 @@ public void sendDiscordAnnouncementBonusStyle(char szName[128], char szSteamId64
 {
 	//Format player style
 	char szPlayerStyle[32];
-	switch (style)
-	{
-		case 1: Format(szPlayerStyle, 128, "Sideways %s", szPlayerStyle);
-		case 2: Format(szPlayerStyle, 128, "Half Sideways %s", szPlayerStyle);
-		case 3: Format(szPlayerStyle, 128, "Backwards %s", szPlayerStyle);
-		case 4: Format(szPlayerStyle, 128, "Low Gravity %s", szPlayerStyle);
-		case 5: Format(szPlayerStyle, 128, "Slow Motion %s", szPlayerStyle);
-		case 6: Format(szPlayerStyle, 128, "Fast Forward %s", szPlayerStyle);
-		case 7: Format(szPlayerStyle, 128, "Free Style %s", szPlayerStyle);
-	}
+	if(GetConVarBool(g_hRecordAnnounceDiscordStyleType))
+    {
+        switch (style)
+        {
+            case 1: Format(szPlayerStyle, 128, "Sideways %s", szPlayerStyle);
+            case 2: Format(szPlayerStyle, 128, "Half Sideways %s", szPlayerStyle);
+            case 3: Format(szPlayerStyle, 128, "Backwards %s", szPlayerStyle);
+        }
+    }
+    else
+    {
+        switch (style)
+        {
+            case 1: Format(szPlayerStyle, 128, "Sideways %s", szPlayerStyle);
+            case 2: Format(szPlayerStyle, 128, "Half Sideways %s", szPlayerStyle);
+            case 3: Format(szPlayerStyle, 128, "Backwards %s", szPlayerStyle);
+            case 4: Format(szPlayerStyle, 128, "Low Gravity %s", szPlayerStyle);
+            case 5: Format(szPlayerStyle, 128, "Slow Motion %s", szPlayerStyle);
+            case 6: Format(szPlayerStyle, 128, "Fast Forward %s", szPlayerStyle);
+            case 7: Format(szPlayerStyle, 128, "Free Style %s", szPlayerStyle);
+        }
+    }
 	
 	//Test which style to use
 	if (!GetConVarBool(g_dcKSFStyle))

@@ -93,6 +93,7 @@ ConVar g_hRecordAnnounceDiscord = null;							// Web hook link to announce recor
 ConVar g_hRecordAnnounceDiscordStyle = null;					// Web hook link to announce style records to discord
 ConVar g_hRecordAnnounceDiscordBonus = null;					// Web hook link to announce bonus records to discord
 ConVar g_hRecordAnnounceDiscordBonusStyle = null;				// Web hook link to announce bonus style records to discord
+ConVar g_hRecordAnnounceDiscordStyleType = null;                // Select type of discord announcements for styles
 ConVar g_hReportBugsDiscord = null;								// Web hook link to report bugs to discord
 ConVar g_hCalladminDiscord = null;								// Web hook link to allow players to call admin to discord
 ConVar g_hSidewaysBlockKeys = null;
@@ -336,7 +337,6 @@ void CreateConVars()
 	g_hRecordAnnounce = AutoExecConfig_CreateConVar("ck_announce_records", "0", "Enables/Disables cross-server announcements");
 	g_hRecordAnnounceStyle = AutoExecConfig_CreateConVar("ck_announce_records_style", "0", "Enables/Disables cross-server announcements for styles");
 	g_hRecordAnnounceStyleType = AutoExecConfig_CreateConVar("ck_announce_records_style_type", "0", "Select which type of cross-server announcements for styles to use, 0 Ranked styles only, 1 All styles");
-
 	g_hServerID = AutoExecConfig_CreateConVar("ck_server_id", "-1", "Sets the server ID, each server needs a valid id that is UNIQUE");
 	HookConVarChange(g_hServerID, OnSettingChanged);
 
@@ -345,6 +345,7 @@ void CreateConVars()
 	g_hRecordAnnounceDiscordStyle = AutoExecConfig_CreateConVar("ck_announce_style_records_discord", "", "Web hook link to announce style records to discord, keep empty to disable");
 	g_hRecordAnnounceDiscordBonus = AutoExecConfig_CreateConVar("ck_announce_bonus_records_discord", "", "Web hook link to announce bonus records to discord, keep empty to disable");	
 	g_hRecordAnnounceDiscordBonusStyle = AutoExecConfig_CreateConVar("ck_announce_bonus_style_records_discord", "", "Web hook link to announce bonus style records to discord, keep empty to disable");
+    g_hRecordAnnounceDiscordStyleType = AutoExecConfig_CreateConVar("ck_announce_records_style_type", "0", "Select which type of discord announcements for styles to use, 0 Ranked styles only, 1 All styles");
 	g_hReportBugsDiscord = AutoExecConfig_CreateConVar("ck_report_discord", "", "Web hook link to report bugs to discord, keep empty to disable");
 	g_hCalladminDiscord = AutoExecConfig_CreateConVar("ck_calladmin_discord", "", "Web hook link to allow players to call admin to discord, keep empty to disable");
 	g_hSidewaysBlockKeys = AutoExecConfig_CreateConVar("ck_sideways_block_keys", "0", "Changes the functionality of sideways, 1 will block keys, 0 will change the clients style to normal if not surfing sideways");
