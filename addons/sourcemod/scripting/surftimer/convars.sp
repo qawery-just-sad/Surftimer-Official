@@ -87,6 +87,8 @@ ConVar g_hPrestigeVip = null;
 ConVar g_hOneJumpLimit = null;									// Only allows players to jump once inside a start or stage zone
 ConVar g_hServerID = null;										// Sets the servers id for cross-server announcements
 ConVar g_hRecordAnnounce = null;								// Enable/Disable cross-server announcements
+ConVar g_hRecordAnnounceStyle = null;							// Enable/Disable cross-server announcements for styles
+ConVar g_hRecordAnnounceStyleType = null;						// Select type of cross-server announcements for styles
 ConVar g_hRecordAnnounceDiscord = null;							// Web hook link to announce records to discord
 ConVar g_hRecordAnnounceDiscordStyle = null;					// Web hook link to announce style records to discord
 ConVar g_hRecordAnnounceDiscordBonus = null;					// Web hook link to announce bonus records to discord
@@ -332,6 +334,8 @@ void CreateConVars()
 
 	// Cross Server Announcements
 	g_hRecordAnnounce = AutoExecConfig_CreateConVar("ck_announce_records", "0", "Enables/Disables cross-server announcements");
+	g_hRecordAnnounceStyle = AutoExecConfig_CreateConVar("ck_announce_records_style", "0", "Enables/Disables cross-server announcements for styles");
+	g_hRecordAnnounceStyleType = AutoExecConfig_CreateConVar("ck_announce_records_style_type", "0", "Select which type of cross-server announcements for styles to use, 0 Ranked styles only, 1 All styles");
 
 	g_hServerID = AutoExecConfig_CreateConVar("ck_server_id", "-1", "Sets the server ID, each server needs a valid id that is UNIQUE");
 	HookConVarChange(g_hServerID, OnSettingChanged);

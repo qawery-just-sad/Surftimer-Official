@@ -1865,12 +1865,17 @@ stock void MapFinishedMsgs(int client, int rankThisRun = 0)
 			char szSteamId64[64];
 			GetClientAuthId(client, AuthId_SteamID64, szSteamId64, sizeof(szSteamId64), true);
 
-			if (GetConVarBool(g_hRecordAnnounce))
-				db_insertAnnouncement(szName, g_szMapName, 0, g_szFinalTime[client], 0);
+			if (GetConVarBool(g_hRecordAnnounce)) // Check if cross server announcements are enabled
+			{
+				db_insertAnnouncement(szName, g_szMapName, 0, g_szFinalTime[client], 0, 0);
+			}
+			
 			char buffer[1024];
 			GetConVarString(g_hRecordAnnounceDiscord, buffer, 1024);
 			if (!StrEqual(buffer, ""))
+			{
 				sendDiscordAnnouncement(szName, szSteamId64, g_szMapName, g_szFinalTime[client], szRecordDiff);
+			}
 		}
 
 		if (g_bTop10Time[client])
@@ -2011,12 +2016,17 @@ stock void PrintChatBonus (int client, int zGroup, int rank = 0)
 		char szSteamId64[64];
 		GetClientAuthId(client, AuthId_SteamID64, szSteamId64, sizeof(szSteamId64), true);
 
-		if (GetConVarBool(g_hRecordAnnounce))
-			db_insertAnnouncement(szName, g_szMapName, 1, g_szFinalTime[client], zGroup);
+		if (GetConVarBool(g_hRecordAnnounce)) // Check if cross server announcements are enabled
+		{
+			db_insertAnnouncement(szName, g_szMapName, 1, g_szFinalTime[client], zGroup, 0);
+		}
+		
 		char buffer1[1024];
 		GetConVarString(g_hRecordAnnounceDiscordBonus, buffer1, 1024);
 		if (!StrEqual(buffer1, ""))
+		{
 			sendDiscordAnnouncementBonus(szName, szSteamId64, g_szMapName, g_szFinalTime[client], zGroup, szRecordDiff);
+		}
 	}
 
 	/* Start function call */
@@ -4041,11 +4051,18 @@ stock void StyleFinishedMsgs(int client, int style)
 			Format(szRecordDiff, 32, "-%s", szRecordDiff);
 			char szSteamId64[64];
 			GetClientAuthId(client, AuthId_SteamID64, szSteamId64, sizeof(szSteamId64), true);
-
+			
+			if (GetConVarBool(g_hRecordAnnounceStyle)) //Check if cross server announcement for style is enabled
+			{	
+				db_insertAnnouncement(szName, g_szMapName, 2, g_szFinalTime[client], 0, style);
+			}
+			
 			char buffer[1024];
 			GetConVarString(g_hRecordAnnounceDiscordStyle, buffer, 1024);
 			if (!StrEqual(buffer, ""))
+			{
 				sendDiscordAnnouncementStyle(szName, szSteamId64, g_szMapName, g_szFinalTime[client], szRecordDiff, style);
+			}
 		}
 
 		CalculatePlayerRank(client, style);
@@ -4076,7 +4093,12 @@ stock void PrintChatBonusStyle (int client, int zGroup, int style, int rank = 0)
 		// Send Announcements
 		char szSteamId64[64];
 		GetClientAuthId(client, AuthId_SteamID64, szSteamId64, sizeof(szSteamId64), true);
-
+		
+		if (GetConVarBool(g_hRecordAnnounceStyle)) //Check if cross server announcement for style is enabled
+		{
+			db_insertAnnouncement(szName, g_szMapName, 3, g_szFinalTime[client], zGroup, style);
+		}
+		
 		char buffer1[1024];
 		GetConVarString(g_hRecordAnnounceDiscordBonusStyle, buffer1, 1024);
 		if (!StrEqual(buffer1, ""))

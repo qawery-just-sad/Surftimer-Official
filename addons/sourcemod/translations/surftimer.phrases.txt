@@ -853,6 +853,16 @@
 	{
 		"en"		"{darkred}----------------------------------------------------------"
 	}
+	"SQLTwo4.4"
+	{
+		"#format"	"{1:s},{2:s},{3:s},{4:s}{5:s},{6:s}"
+		"en"		"{1} {yellow}{2} {default}beat the {blue}{3} {darkred}{4} {default}map record in the {lime}{5} {default}server with a time of {lime}{6}"
+	}
+	"SQLTwo4.4Bonus"
+	{
+		"#format"	"{1:s},{2:s},{3:s},{4:s},{5:i},{6:s},{7:s}"
+		"en"		"{1} {yellow}{2} {default}beat the {blue}{3} {darkred}{4} {default}bonus {yellow}{5} {default}record in the {lime}{6} {default}server with a time of {lime}{7}"
+	}
 	"SQLTwo5"
 	{
 		"#format"	"{1:s}"
