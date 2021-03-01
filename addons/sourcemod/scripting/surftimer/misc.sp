@@ -4317,7 +4317,7 @@ stock void PrintChatBonusStyle (int client, int zGroup, int style, int rank = 0)
 		GetConVarString(g_hRecordAnnounceDiscordBonusStyle, buffer1, 1024);
 		if (!StrEqual(buffer1, ""))
 		{
-			sendDiscordAnnouncementBonusStyle(szName, szSteamId64, g_szMapName, g_szFinalTime[client], zGroup, szRecordDiff, style);
+			sendDiscordAnnouncementBonusStyle(szName, szSteamId64, g_szMapName, g_szFinalTime[client], zGroup, szRecordDiff2, style);
 		}
 	}
 
