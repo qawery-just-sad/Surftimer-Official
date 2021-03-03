@@ -1841,7 +1841,7 @@ stock void MapFinishedMsgs(int client, int rankThisRun = 0)
 					{
 						if (szGroup[client] == 0) // No group available
 						{	
-							CPrintToChat(i,"%t", "MapFinished3", g_szChatPrefix, szName, g_szFinalTime[client], szRecordDiff, g_StyleMapRank[0][client], count);
+							CPrintToChat(i,"%t", "MapFinished3", g_szChatPrefix, szName, g_szFinalTime[client], szRecordDiff, g_MapRank[client], count);
 							PrintToConsole(client, "Surftimer | %s set a PB of %s [SR %s | Rank #%i/%i]", szName, g_szFinalTime[client], szRecordDiff, g_MapRank[client], count);
 						}
 						if (szGroup[client] > 0) // Group available
@@ -2005,11 +2005,11 @@ stock void PrintChatBonus (int client, int zGroup, int rank = 0)
 	FormatTimeFloat(client, RecordDiff2, 3, szRecordDiff2, 54);
 	if (RecordDiff2 > 0.0)
 	{
-		Format(szRecordDiff2, 54, "+%s", szRecordDiff2);
+		Format(szRecordDiff2, 54, "-%s", szRecordDiff2);
 	}
 	else
 	{
-		Format(szRecordDiff2, 54, "-%s", szRecordDiff2);
+		Format(szRecordDiff2, 54, "+%s", szRecordDiff2);
 
 	}
 
@@ -2052,7 +2052,7 @@ stock void PrintChatBonus (int client, int zGroup, int rank = 0)
 		}
 		else if (!g_bBonusSRVRecord[client] && !g_bBonusFirstRecord[client] && !g_bBonusPBRecord[client]) // Player did not beat bonus record nor set 1st bonus time nor beat bonus PB
 		{
-			CPrintToChatAll("%t", "BonusFinished6", g_szChatPrefix, szName, g_szZoneGroupName[zGroup], g_szFinalTime[client], szRecordDiff, g_szBonusTimeDifference[client], g_StyleMapRankBonus[0][zGroup][client], g_iStyleBonusCount[0][zGroup]);
+			CPrintToChatAll("%t", "BonusFinished6", g_szChatPrefix, szName, g_szZoneGroupName[zGroup], g_szFinalTime[client], szRecordDiff, g_szBonusTimeDifference[client], g_MapRankBonus[zGroup][client], g_iBonusCount[zGroup]);
 			PrintToConsole(client, "Surftimer | %s finished %s in %s [SR %s | PB %s | Rank #%i/%i]", szName, g_szZoneGroupName[zGroup], g_szFinalTime[client], szRecordDiff, g_szBonusTimeDifference[client], g_MapRankBonus[zGroup][client], g_iBonusCount[zGroup]);
 		}
 	}
@@ -2091,7 +2091,7 @@ stock void PrintChatBonus (int client, int zGroup, int rank = 0)
 		}
 		else if (!g_bBonusSRVRecord[client] && !g_bBonusFirstRecord[client] && !g_bBonusPBRecord[client]) // Player did not beat bonus record nor set 1st bonus time nor beat bonus PB
 		{
-			CPrintToChat(client, "%t", "BonusFinished6", g_szChatPrefix, szName, g_szZoneGroupName[zGroup], g_szFinalTime[client], szRecordDiff, g_szBonusTimeDifference[client], g_StyleMapRankBonus[0][zGroup][client], g_iStyleBonusCount[0][zGroup]);
+			CPrintToChat(client, "%t", "BonusFinished6", g_szChatPrefix, szName, g_szZoneGroupName[zGroup], g_szFinalTime[client], szRecordDiff, g_szBonusTimeDifference[client], g_MapRankBonus[zGroup][client], g_iBonusCount[zGroup]);
 			PrintToConsole(client, "Surftimer | %s finished %s in %s [SR %s | PB %s | Rank #%i/%i]", szName, g_szZoneGroupName[zGroup], g_szFinalTime[client], szRecordDiff, g_szBonusTimeDifference[client], g_MapRankBonus[zGroup][client], g_iBonusCount[zGroup]);
 		}
 	}
