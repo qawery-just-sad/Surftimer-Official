@@ -1461,18 +1461,21 @@ public void PlayRecordSound(int iRecordtype, int client)
 	}
 	else if (iRecordtype == 2) // SR
 	{
-		if (IsValidClient(client) && !IsFakeClient(client) && g_bEnableQuakeSounds[client] == true)
-		{
-			Format(buffer, sizeof(buffer), "play %s", g_szRelativeSoundPathWR);
+		Format(buffer, sizeof(buffer), "play %s", g_szRelativeSoundPathWR);
 
-			if (GetConVarInt(g_hAnnounceRecordSound) == 0 || GetConVarInt(g_hAnnounceRecordSound) == 1)
-			{
-				for (int i = 1; i <= MaxClients; i++)
-				{	
+		if (GetConVarInt(g_hAnnounceRecordSound) == 0 || GetConVarInt(g_hAnnounceRecordSound) == 1)
+		{
+			for (int i = 1; i <= MaxClients; i++)
+			{	
+				if (IsValidClient(i) && !IsFakeClient(i) && g_bEnableQuakeSounds[i] == true)
+				{
 					ClientCommand(i, buffer);
 				}
 			}
-			else
+		}
+		else
+		{
+			if (IsValidClient(client) && !IsFakeClient(client) && g_bEnableQuakeSounds[client] == true)
 			{
 				ClientCommand(client, buffer);
 			}
@@ -1480,18 +1483,21 @@ public void PlayRecordSound(int iRecordtype, int client)
 	}
 	else if (iRecordtype == 3) // top10
 	{
-		if (IsValidClient(client) && !IsFakeClient(client) && g_bEnableQuakeSounds[client] == true)
-		{
-			Format(buffer, sizeof(buffer), "play %s", g_szRelativeSoundPathTop);
-		
-			if (GetConVarInt(g_hAnnounceRecordSound) == 0)
-			{	
-				for (int i = 1; i <= MaxClients; i++)
+		Format(buffer, sizeof(buffer), "play %s", g_szRelativeSoundPathTop);
+
+		if (GetConVarInt(g_hAnnounceRecordSound) == 0)
+		{	
+			for (int i = 1; i <= MaxClients; i++)
+			{
+				if (IsValidClient(i) && !IsFakeClient(i) && g_bEnableQuakeSounds[i] == true)
 				{
 					ClientCommand(i, buffer);
 				}
 			}
-			else
+		}
+		else
+		{
+			if (IsValidClient(client) && !IsFakeClient(client) && g_bEnableQuakeSounds[client] == true)
 			{
 				ClientCommand(client, buffer);
 			}
