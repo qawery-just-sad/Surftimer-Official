@@ -71,6 +71,7 @@ int g_BonusBotColor[3];
 ConVar g_hDoubleRestartCommand;									// Double !r restart
 ConVar g_hSoundEnabled = null;									// Enable timer start sound
 ConVar g_hSoundPath = null;										// Define start sound
+ConVar g_hAnnounceRecordSound = null;							// Record sounds are played to: 0 - SR/Top10 All, PB Player only | 1 - SR All, PB/Top10 Player only | 2 - SR/PB/Top10 Player only
 // char sSoundPath[64];
 ConVar g_hSpawnToStartZone = null;								// Teleport on spawn to start zone
 ConVar g_hAnnounceRank = null;									// Min rank to announce in chat
@@ -165,6 +166,7 @@ void CreateConVars()
 	g_hSoundPath = AutoExecConfig_CreateConVar("ck_startzone_sound_path", "buttons\\button3.wav", "The path to the sound file that plays after the client leaves the start zone..", FCVAR_NOTIFY);
 	g_hAnnounceRank = AutoExecConfig_CreateConVar("ck_min_rank_announce", "0", "Higher ranks than this won't be announced to the everyone on the server. 0 = Announce all records.", FCVAR_NOTIFY, true, 0.0);
 	g_hAnnounceRecord = AutoExecConfig_CreateConVar("ck_chat_record_type", "0", "0: Announce all times to chat, 1: Only announce PB's to chat, 2: Only announce SR's to chat", FCVAR_NOTIFY, true, 0.0, true, 2.0);
+	g_hAnnounceRecordSound = AutoExecConfig_CreateConVar("ck_sound_record_type", "0", "Record sounds are played to: 0 - SR/Top10 All, PB Player only | 1 - SR All, PB/Top10 Player only | 2 - SR/PB/Top10 Player only", FCVAR_NOTIFY, true, 0.0, true, 2.0);
 	g_hForceCT = AutoExecConfig_CreateConVar("ck_force_players_ct", "0", "Forces all players to join the CT team.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
 	g_hChatSpamFilter = AutoExecConfig_CreateConVar("ck_chat_spamprotection_time", "1.0", "The frequency in seconds that players are allowed to send chat messages. 0.0 = No chat cap.", FCVAR_NOTIFY, true, 0.0);
 	g_henableChatProcessing = AutoExecConfig_CreateConVar("ck_chat_enable", "1", "(1 / 0) Enable or disable SurfTimers chat processing.", FCVAR_NOTIFY);
