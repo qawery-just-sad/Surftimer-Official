@@ -1445,10 +1445,10 @@ public void SetCashState()
 	}
 }
 
-public void PlayRecordSound(int iRecordtype)
+public void PlayRecordSound(int iRecordtype, int client)
 {
 	char buffer[PLATFORM_MAX_PATH];
-	if (iRecordtype == 1)
+	if (iRecordtype == 1) // NOT BEING USED?
 	{
 		for (int i = 1; i <= MaxClients; i++)
 		{
@@ -1459,29 +1459,51 @@ public void PlayRecordSound(int iRecordtype)
 			}
 		}
 	}
-	else if (iRecordtype == 2)
+	else if (iRecordtype == 2) // SR
 	{
-		for (int i = 1; i <= MaxClients; i++)
+		Format(buffer, sizeof(buffer), "play %s", g_szRelativeSoundPathWR);
+
+		if (GetConVarInt(g_hAnnounceRecordSound) == 0 || GetConVarInt(g_hAnnounceRecordSound) == 1)
 		{
-			if (IsValidClient(i) && !IsFakeClient(i) && g_bEnableQuakeSounds[i] == true)
+			for (int i = 1; i <= MaxClients; i++)
+			{	
+				if (IsValidClient(i) && !IsFakeClient(i) && g_bEnableQuakeSounds[i] == true)
+				{
+					ClientCommand(i, buffer);
+				}
+			}
+		}
+		else
+		{
+			if (IsValidClient(client) && !IsFakeClient(client) && g_bEnableQuakeSounds[client] == true)
 			{
-				Format(buffer, sizeof(buffer), "play %s", g_szRelativeSoundPathWR);
-				ClientCommand(i, buffer);
+				ClientCommand(client, buffer);
 			}
 		}
 	}
 	else if (iRecordtype == 3) // top10
 	{
-		for (int i = 1; i <= MaxClients; i++)
-		{
-			if (IsValidClient(i) && !IsFakeClient(i) && g_bEnableQuakeSounds[i] == true)
+		Format(buffer, sizeof(buffer), "play %s", g_szRelativeSoundPathTop);
+
+		if (GetConVarInt(g_hAnnounceRecordSound) == 0)
+		{	
+			for (int i = 1; i <= MaxClients; i++)
 			{
-				Format(buffer, sizeof(buffer), "play %s", g_szRelativeSoundPathTop);
-				ClientCommand(i, buffer);
+				if (IsValidClient(i) && !IsFakeClient(i) && g_bEnableQuakeSounds[i] == true)
+				{
+					ClientCommand(i, buffer);
+				}
+			}
+		}
+		else
+		{
+			if (IsValidClient(client) && !IsFakeClient(client) && g_bEnableQuakeSounds[client] == true)
+			{
+				ClientCommand(client, buffer);
 			}
 		}
 	}
-	else if (iRecordtype == 4) // Discotime
+	else if (iRecordtype == 4) // Discotime (NOT BEING USED?)
 	{
 		for (int i = 1; i <= MaxClients; i++)
 		{
@@ -1819,7 +1841,7 @@ stock void MapFinishedMsgs(int client, int rankThisRun = 0)
 				{
 					if(g_bMapFirstRecord[client] && g_fFinalTime[client] == g_fOldRecordStyleMapTime[0]) // Player sets 1st Server Record
 					{
-						PlayRecordSound(2);
+						PlayRecordSound(2, client);
 
 						CPrintToChat(i,"%t", "FirstMapRecord", g_szChatPrefix, szName);
 						PrintToConsole(client, "Surftimer | %s set the map record!", szName);
@@ -1829,8 +1851,8 @@ stock void MapFinishedMsgs(int client, int rankThisRun = 0)
 					}
 					else if(g_bMapSRVRecord[client]) // Player beat the Server Record
 					{
-						PlayRecordSound(2);								
-
+						PlayRecordSound(2, client);
+					
 						CPrintToChat(i,"%t", "NewMapRecord", g_szChatPrefix, szName);
 						PrintToConsole(client, "Surftimer | %s beat the map record!", szName);
 
@@ -1879,7 +1901,7 @@ stock void MapFinishedMsgs(int client, int rankThisRun = 0)
 			{
 				if(g_bMapFirstRecord[client] && g_fFinalTime[client] == g_fOldRecordStyleMapTime[0]) // Player sets 1st Server Record
 				{
-					PlayRecordSound(2);
+					PlayRecordSound(2, client);
 
 					CPrintToChat(client,"%t", "FirstMapRecord", g_szChatPrefix, szName);
 					PrintToConsole(client, "Surftimer | %s set the map record!", szName);
@@ -1943,7 +1965,7 @@ stock void MapFinishedMsgs(int client, int rankThisRun = 0)
 		}
 
 		if (g_bTop10Time[client])
-			PlayRecordSound(3);
+			PlayRecordSound(3, client);
 
 		if (g_MapRank[client] == 99999 && IsValidClient(client))
 			CPrintToChat(client, "%t", "FailedSaveData", g_szChatPrefix);
@@ -2021,7 +2043,7 @@ stock void PrintChatBonus (int client, int zGroup, int rank = 0)
 	{
 		if (g_bBonusSRVRecord[client] && g_fFinalTime[client] == g_fOldBonusRecordTime[zGroup]) // Player sets 1st bonus record)
 		{
-			PlayRecordSound(2);
+			PlayRecordSound(2, client);
 
 			CPrintToChatAll("%t", "FirstBonusRecord", g_szChatPrefix, szName, g_szZoneGroupName[zGroup]);
 			PrintToConsole(client, "Surftimer | %s set the %s record!", szName, g_szZoneGroupName[zGroup]);
@@ -2031,7 +2053,7 @@ stock void PrintChatBonus (int client, int zGroup, int rank = 0)
 		}
 		else if (g_bBonusSRVRecord[client]) // Player beats bonus record
 		{
-			PlayRecordSound(2);
+			PlayRecordSound(2, client);
 
 			CPrintToChatAll("%t", "NewBonusRecord", g_szChatPrefix, szName, g_szZoneGroupName[zGroup]);
 			PrintToConsole(client, "Surftimer | %s beat the %s record!", szName, g_szZoneGroupName[zGroup]);
@@ -2060,7 +2082,7 @@ stock void PrintChatBonus (int client, int zGroup, int rank = 0)
 	{
 		if (g_bBonusSRVRecord[client] && g_fFinalTime[client] == g_fOldBonusRecordTime[zGroup]) // Player sets 1st bonus record)
 		{
-			PlayRecordSound(2);
+			PlayRecordSound(2, client);
 
 			CPrintToChat(client, "%t", "FirstBonusRecord", g_szChatPrefix, szName, g_szZoneGroupName[zGroup]);
 			PrintToConsole(client, "Surftimer | %s set the %s record!", szName, g_szZoneGroupName[zGroup]);
@@ -2070,7 +2092,7 @@ stock void PrintChatBonus (int client, int zGroup, int rank = 0)
 		}
 		else if (g_bBonusSRVRecord[client]) // Player beats bonus record
 		{
-			PlayRecordSound(2);
+			PlayRecordSound(2, client);
 
 			CPrintToChat(client, "%t", "NewBonusRecord", g_szChatPrefix, szName, g_szZoneGroupName[zGroup]);
 			PrintToConsole(client, "Surftimer | %s beat the %s record!", szName, g_szZoneGroupName[zGroup]);
@@ -4119,7 +4141,7 @@ stock void StyleFinishedMsgs(int client, int style)
 				{
 					if (g_bStyleMapSRVRecord[style][client] && g_fFinalTime[client] == g_fOldRecordStyleMapTime[style]) // Player sets 1st Server Style Record
 					{
-						PlayRecordSound(2);
+						PlayRecordSound(2, client);
 						
 						CPrintToChat(i, "%t", "StyleFirstMapRecord", g_szChatPrefix, szName, g_szStyleRecordPrint[style]);
 						PrintToConsole(client, "Surftimer | %s set the %s map record!", szName, g_szStyleRecordPrint[style]);
@@ -4129,7 +4151,7 @@ stock void StyleFinishedMsgs(int client, int style)
 					}
 					else if (g_bStyleMapSRVRecord[style][client]) // Player beat the Server Style Record
 					{
-						PlayRecordSound(2);
+						PlayRecordSound(2, client);
 						
 						CPrintToChat(i, "%t", "StyleNewMapRecord", g_szChatPrefix, szName, g_szStyleRecordPrint[style]);
 						PrintToConsole(client, "Surftimer | %s beat the %s map record!", szName, g_szStyleRecordPrint[style]);
@@ -4160,7 +4182,7 @@ stock void StyleFinishedMsgs(int client, int style)
 			{
 				if (g_bStyleMapSRVRecord[style][client] && g_fFinalTime[client] == g_fOldRecordStyleMapTime[style]) // Player sets 1st Server Style Record
 				{
-					PlayRecordSound(2);
+					PlayRecordSound(2, client);
 					
 					CPrintToChat(i, "%t", "StyleFirstMapRecord", g_szChatPrefix, szName, g_szStyleRecordPrint[style]);
 					PrintToConsole(client, "Surftimer | %s set the %s map record!", szName, g_szStyleRecordPrint[style]);
@@ -4170,7 +4192,7 @@ stock void StyleFinishedMsgs(int client, int style)
 				}
 				else if (g_bStyleMapSRVRecord[style][client]) // Player beat the Server Style Record
 				{
-					PlayRecordSound(2);
+					PlayRecordSound(2, client);
 					
 					CPrintToChat(i, "%t", "StyleNewMapRecord", g_szChatPrefix, szName, g_szStyleRecordPrint[style]);
 					PrintToConsole(client, "Surftimer | %s beat the %s map record!", szName, g_szStyleRecordPrint[style]);
@@ -4261,7 +4283,7 @@ stock void PrintChatBonusStyle (int client, int zGroup, int style, int rank = 0)
 
 	if (g_bBonusSRVRecord[client] && g_fFinalTime[client] == g_fStyleOldBonusRecordTime[style][zGroup]) // Player sets 1st bonus style record
 	{
-		PlayRecordSound(2);
+		PlayRecordSound(2, client);
 
 		CPrintToChatAll("%t", "StyleFirstBonusRecord", g_szChatPrefix, szName, g_szZoneGroupName[zGroup], g_szStyleRecordPrint[style]);
 		PrintToConsole(client, "Surftimer | %s set the %s %s record!", szName, g_szZoneGroupName[zGroup], g_szStyleRecordPrint[style]);
@@ -4271,7 +4293,7 @@ stock void PrintChatBonusStyle (int client, int zGroup, int style, int rank = 0)
 	}
 	else if (g_bBonusSRVRecord[client]) // Player beats bonus style record
 	{
-		PlayRecordSound(2);
+		PlayRecordSound(2, client);
 		
 		CPrintToChatAll("%t", "StyleNewBonusRecord", g_szChatPrefix, szName, g_szZoneGroupName[zGroup], g_szStyleRecordPrint[style]);
 		PrintToConsole(client, "Surftimer | %s beat the %s %s record!", szName, g_szZoneGroupName[zGroup], g_szStyleRecordPrint[style]);
