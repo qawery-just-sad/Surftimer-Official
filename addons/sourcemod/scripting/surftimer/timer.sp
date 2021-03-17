@@ -603,8 +603,6 @@ public Action CenterSpeedDisplayTimer(Handle timer, any client)
 	int  pos, speed, color1[4], color2[4] = {255,255,255, 0};
 	char szSpeed[128];
 
-	speed = RoundToFloor(g_fLastSpeed[client]);
-
 	if (IsValidClient(client) && !IsFakeClient(client) && g_bCenterSpeedDisplay[client])
 	{
 		if (IsPlayerAlive(client))
@@ -633,6 +631,8 @@ public Action CenterSpeedDisplayTimer(Handle timer, any client)
 			}
 		}
 
+		speed = RoundToFloor(g_fLastSpeed[client]);
+		
 		if (g_fMaxVelocity == 10000.0)
 		{
 			if (g_SpeedGradient[client] == 1) // Green Gradient
@@ -678,8 +678,8 @@ public Action CenterSpeedDisplayTimer(Handle timer, any client)
 
 		g_iOldSpeed[client] = RoundToNearest(g_fLastSpeed[client]);
 		
-		ShowHudText(client, 2, szSpeed);
 		SetHudTextParamsEx(-1.0, 0.30, 1.0, color1, color2, 0, 0.25, 0.0, 0.0);
+		ShowHudText(client, 2, szSpeed);
 	}
 	else
 		return Plugin_Stop;
