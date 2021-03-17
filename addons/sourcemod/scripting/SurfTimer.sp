@@ -1530,10 +1530,22 @@ int g_szRainbowGradientRGB[][] =
 
 int g_szRGB[][] = 
 {
-	{255, 30, 30, 0}, // Red
-	{30, 255, 30, 0}, // Green
-	{30, 30, 255, 0}, // Blue
-	{225, 225, 225, 0} // White
+	{255, 30, 30, 0}, 		// 0 Red
+	{30, 255, 30, 0}, 		// 1 Green
+	{30, 30, 255, 0}, 		// 2 Blue
+	{225, 225, 225, 0}, 	// 3 Light grey
+	{0, 255, 238, 0}, 		// 4 Teal
+	{255, 60, 60, 0},		// 5 Light Red
+	{140, 255, 140, 0}, 	// 6 Light Green
+	{80, 80, 255, 0}, 		// 7 Light Blue
+	{238, 204, 136, 0},		// 8 Light Orange
+	{221, 136, 119, 0},		// 9 Red/Orange
+	{255, 51, 34, 0},		// 10 Lighter than Red but darker than Light Red
+	{136, 204, 221, 0},		// 11 Baby Blue
+	{85, 238, 85, 0},		// 12 Lime Green
+	{187, 136, 187, 0},		// 13 Light Purple
+	{218, 119, 221, 0},		// 14 Light Pink
+	{212, 175, 55, 0}		// 15 Gold
 };
 
 char UnallowedTitles[][] =
