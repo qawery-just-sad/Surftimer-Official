@@ -619,15 +619,15 @@ public Action CenterSpeedDisplayTimer(Handle timer, any client)
 		{
 			if(g_iOldSpeed[client] == RoundToNearest(g_fLastSpeed[client]))
 			{
-				color1 = g_szRGB[3];
+				color1 = g_szRGB[11];
 			}
 			else if(g_iOldSpeed[client] < RoundToNearest(g_fLastSpeed[client]))
 			{
-				color1 = g_szRGB[1];
+				color1 = g_szRGB[11];
 			}
 			else if(g_iOldSpeed[client] > RoundToNearest(g_fLastSpeed[client]))
 			{
-				color1 = g_szRGB[0];
+				color1 = g_szRGB[10];
 			}
 		}
 
