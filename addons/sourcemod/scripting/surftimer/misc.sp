@@ -1810,11 +1810,11 @@ stock void MapFinishedMsgs(int client, int rankThisRun = 0)
 		FormatTimeFloat(client, RecordDiff, 3, szRecordDiff, 32);
 		if (RecordDiff > 0.0)
 		{
-			Format(szRecordDiff, 32, "+%s", szRecordDiff);
+			Format(szRecordDiff, 32, "-%s", szRecordDiff);
 		}
 		else
 		{
-			Format(szRecordDiff, 32, "-%s", szRecordDiff);
+			Format(szRecordDiff, 32, "+%s", szRecordDiff);
 		}
 
 		// Player beat map SR, time difference formatting 
@@ -2015,11 +2015,11 @@ stock void PrintChatBonus (int client, int zGroup, int rank = 0)
 	FormatTimeFloat(client, RecordDiff, 3, szRecordDiff, 54);
 	if (RecordDiff > 0.0)
 	{
-		Format(szRecordDiff, 54, "+%s", szRecordDiff);
+		Format(szRecordDiff, 54, "-%s", szRecordDiff);
 	}
 	else
 	{
-		Format(szRecordDiff, 54, "-%s", szRecordDiff);
+		Format(szRecordDiff, 54, "+%s", szRecordDiff);
 	}
 
 	// Player beat bonus SR, time difference formatting 
@@ -4114,11 +4114,11 @@ stock void StyleFinishedMsgs(int client, int style)
 		FormatTimeFloat(client, RecordDiff, 3, szRecordDiff, 32);
 		if (RecordDiff > 0.0)
 		{
-			Format(szRecordDiff, 32, "+%s", szRecordDiff);
+			Format(szRecordDiff, 32, "-%s", szRecordDiff);
 		}
 		else
 		{
-			Format(szRecordDiff, 32, "-%s", szRecordDiff);
+			Format(szRecordDiff, 32, "+%s", szRecordDiff);
 		}
 
 		// Player beat map style SR, time difference formatting
