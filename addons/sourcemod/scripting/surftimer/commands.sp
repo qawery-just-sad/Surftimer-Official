@@ -107,9 +107,9 @@ void CreateCommands()
 	RegConsoleCmd("sm_noclipspeed", Command_NoclipSpeed, "[surftimer] [zoner] Changes the value of sv_noclipspeed");
 
 	// VIP Commands
-	RegAdminCmd("sm_fixbot", Admin_FixBot, g_VipFlag, "[surftimer] Toggles replay bots off and on");
-	RegAdminCmd("sm_fixbots", Admin_FixBot, g_VipFlag, "[surftimer] Toggles replay bots off and on");
-	RegAdminCmd("sm_fb", Admin_FixBot, g_VipFlag, "[surftimer] Toggles replay bots off and on");
+	RegAdminCmd("sm_fixbot", Admin_FixBot, ADMFLAG_GENERIC, "[surftimer] Toggles replay bots off and on");
+	RegAdminCmd("sm_fixbots", Admin_FixBot, ADMFLAG_GENERIC, "[surftimer] Toggles replay bots off and on");
+	RegAdminCmd("sm_fb", Admin_FixBot, ADMFLAG_GENERIC, "[surftimer] Toggles replay bots off and on");
 
 	RegConsoleCmd("sm_vip", Command_Vip, "[surftimer] [vip] Displays the VIP menu to client");
 	RegConsoleCmd("sm_mytitle", Command_PlayerTitle, "[surftimer] [vip] Displays a menu to the player showing their custom title and allowing them to change their colours");
@@ -4123,9 +4123,6 @@ public Action Command_Repeat(int client, int args)
 
 public Action Admin_FixBot(int client, int args)
 {
-	if (!g_bZoner[client] && !CheckCommandAccess(client, "", ADMFLAG_ROOT))
-		return Plugin_Handled;
-
 	CReplyToCommand(client, "%t", "Commands52", g_szChatPrefix);
 	CreateTimer(1.0, FixBot_Off, _, TIMER_FLAG_NO_MAPCHANGE);
 	CreateTimer(6.0, FixBot_On, _, TIMER_FLAG_NO_MAPCHANGE);
