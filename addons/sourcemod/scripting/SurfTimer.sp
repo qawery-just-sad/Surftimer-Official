@@ -26,6 +26,7 @@
 #include <discord>
 #include <surftimer>
 #include <autoexecconfig>
+#include <fuckzones>
 
 /*===================================
 =            Definitions            =
@@ -1648,6 +1649,7 @@ char RadioCMDS[][] =  // Disable radio commands
 #include "surftimer/mapsettings.sp"
 #include "surftimer/cvote.sp"
 #include "surftimer/vip.sp"
+#include "surftimer/fzhand.sp"
 
 /*====================================
 =               Events               =
