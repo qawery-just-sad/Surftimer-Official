@@ -787,6 +787,9 @@ char g_szBonusTimeDifference[MAXPLAYERS + 1];
 // Time when run was started
 float g_fStartTime[MAXPLAYERS + 1];
 
+// Time when PracMode run was started
+float g_fPracModeStartTime[MAXPLAYERS + 1];
+
 // Total time the run took
 float g_fFinalTime[MAXPLAYERS + 1];
 
@@ -801,6 +804,12 @@ float g_fStartPauseTime[MAXPLAYERS + 1];
 
 // Current runtime
 float g_fCurrentRunTime[MAXPLAYERS + 1];
+
+// PracticeMode saveloc runtime
+float g_fPlayerPracTimeSnap[MAXPLAYERS + 1][MAX_LOCS];
+
+// PracticeMode total time the run took in 00:00:00 format
+char g_szPracticeTime[MAXPLAYERS + 1][32];
 
 // Missed personal record time?
 bool g_bMissedMapBest[MAXPLAYERS + 1];
@@ -1247,6 +1256,7 @@ int g_iLastSaveLocIdClient[MAXPLAYERS + 1];
 float g_fLastCheckpointMade[MAXPLAYERS + 1];
 int g_iSaveLocUnix[MAX_LOCS]; // [loc id]
 int g_iMenuPosition[MAXPLAYERS + 1];
+int g_iPreviousSaveLoc[MAXPLAYERS + 1]; // The previous saveloc the client used
 
 char g_sServerName[256];
 ConVar g_hHostName = null;

@@ -1411,10 +1411,20 @@ public void SetClientDefaults(int client)
 public void GetcurrentRunTime(int client)
 {
 	float fGetGameTime = GetGameTime();
-	g_fCurrentRunTime[client] = fGetGameTime - g_fStartTime[client] - g_fPauseTime[client];
-
+	
+	if (g_bPracticeMode[client]) // If in PracMode then use normal CurrentRunTime + time from saveloc
+	{
+		g_fCurrentRunTime[client] = (fGetGameTime - g_fPracModeStartTime[client] - g_fPauseTime[client]) + g_fPlayerPracTimeSnap[client][g_iLastSaveLocIdClient[client]];
+	}
+	else // If not in PracMode then use normal CurrentRunTime
+	{
+		g_fCurrentRunTime[client] = fGetGameTime - g_fStartTime[client] - g_fPauseTime[client];
+	}
+	
 	if (g_bWrcpTimeractivated[client])
+	{
 		g_fCurrentWrcpRunTime[client] = fGetGameTime - g_fStartWrcpTime[client];
+	}
 }
 
 public float GetSpeed(int client)
@@ -3414,6 +3424,7 @@ public void CenterHudAlive(int client)
 				if (g_bTimerRunning[client])
 				{
 					FormatTimeFloat(client, g_fCurrentRunTime[client], 3, pAika, 128);
+					
 					if (g_bPause[client])
 					{
 						// Paused

@@ -678,23 +678,64 @@ public Action Command_createPlayerCheckpoint(int client, int args)
 	}
 
 	float time = GetGameTime();
-
+	
 	if ((time - g_fLastCheckpointMade[client]) < 1.0)
 		return Plugin_Handled;
 
 	if (g_iSaveLocCount < MAX_LOCS)
 	{
 		g_iSaveLocCount++;
+		
 		GetClientAbsOrigin(client, g_fSaveLocCoords[g_iSaveLocCount]);
 		GetClientEyeAngles(client, g_fSaveLocAngle[g_iSaveLocCount]);
 		GetEntPropVector(client, Prop_Data, "m_vecVelocity", g_fSaveLocVel[g_iSaveLocCount]);
 		GetEntPropString(client, Prop_Data, "m_iName", g_szSaveLocTargetname[g_iSaveLocCount], sizeof(g_szSaveLocTargetname));
+		
+		g_iPreviousSaveLoc[client] = g_iLastSaveLocIdClient[client];
 		g_iLastSaveLocIdClient[client] = g_iSaveLocCount;
+
+		if (g_bPracticeMode[client]) // If using saveloc when you are already in PracMode, we need to save players current time + the time from players previous saveloc
+		{
+			if (g_iPreviousSaveLoc[client] == g_iLastSaveLocIdClient[client]) // If you didnt TP to eariler saveloc
+			{
+				g_fPlayerPracTimeSnap[client][g_iLastSaveLocIdClient[client]] = (time - g_fPracModeStartTime[client] - g_fPauseTime[client]) + g_fPlayerPracTimeSnap[client][g_iLastSaveLocIdClient[client] - 1];	
+				CPrintToChat(client, "SnapTime: %f", g_fPlayerPracTimeSnap[client][g_iLastSaveLocIdClient[client]]);
+			}
+			else // If you did TP to eariler saveloc
+			{
+				g_fPlayerPracTimeSnap[client][g_iLastSaveLocIdClient[client]] = (time - g_fPracModeStartTime[client] - g_fPauseTime[client]) + g_fPlayerPracTimeSnap[client][g_iPreviousSaveLoc[client]];
+			}
+
+			g_fPracModeStartTime[client] = GetGameTime();
+		}		
+		else // If not in already in PracMode then just save players current time
+		{	
+			g_fPlayerPracTimeSnap[client][g_iLastSaveLocIdClient[client]] = time - g_fStartTime[client] - g_fPauseTime[client];
+		}
+
 		CPrintToChat(client, "%t", "Commands7", g_szChatPrefix, g_iSaveLocCount);
 
 		g_fLastCheckpointMade[client] = GetGameTime();
 		g_iSaveLocUnix[g_iSaveLocCount] = GetTime();
 		GetClientName(client, g_szSaveLocClientName[g_iSaveLocCount], MAX_NAME_LENGTH);
+
+		/* 	---------------------------------------------------------------------
+			-							TESTING ARRAY							-
+			-	g_fPlayerPracTimeSnap[client][g_iLastSaveLocIdClient[client]]	-
+			-	(uncomment code to display array values in client console 		-
+			-	when creating checkpoint)										-
+			--------------------------------------------------------------------- */
+		/*float result;
+		for (int i = g_iLastSaveLocIdClient[client]; i >= 0; i--)
+		{
+			result = g_fPlayerPracTimeSnap[client][i];
+			
+			PrintToConsole(client, "Index[%i] = %f", i, result);		
+		}
+		PrintToConsole(client, "_____________________");*/
+		/* 	---------------------------------------------------------------------
+			-							END TESTING								-
+			--------------------------------------------------------------------- */
 	}
 	else
 	{
