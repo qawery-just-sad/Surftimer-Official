@@ -1,6 +1,6 @@
 # SadSurftimer for CS:GO
 
-![lul](https://raw.githubusercontent.com/qawery-just-sad/Surftimer-Official/tree/alternate-universe/.github/lul.png)
+![lul](https://raw.githubusercontent.com/qawery-just-sad/Surftimer-Official/alternate-universe/.github/lul.png)
 
 ## Project Goals
 
