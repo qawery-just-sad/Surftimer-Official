@@ -1,4 +1,4 @@
-# SadSurftimer for CS:GO
+# SadSurfTimer for CS:GO
 
 ![lul](https://raw.githubusercontent.com/qawery-just-sad/Surftimer-Official/alternate-universe/.github/lul.png)
 
