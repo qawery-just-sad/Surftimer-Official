@@ -1,7 +1,6 @@
-# ~~Surftimer-olokos for CS:GO~~
+# SadSurftimer for CS:GO
 
-_[We](https://www.youtube.com/watch?v=U06jlgpMtQs) have renamed the repository to ~~Surftimer-olokos~~ just to make it obvious, that we're entering a new chapter in CS:GO surf community, a milestone._
-Gimme a good idea to rename this fork.
+![lul](https://raw.githubusercontent.com/qawery-just-sad/Surftimer-Official/tree/alternate-universe/.github/lul.png)
 
 ## Project Goals
 

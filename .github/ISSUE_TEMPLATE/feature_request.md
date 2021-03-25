@@ -1,8 +1,8 @@
 ---
-name: Suggestion Request
-about: Request a Suggestion to help us moving forwards
-title: "[Suggestion]"
-labels: enhancement
+name: Feature request
+about: Suggest an idea for this project
+title: "[ENHANCEMENT]"
+labels: enhancement, p-LOW
 ---
 
 **Is your feature request related to a problem? Please describe.**
