@@ -27,7 +27,7 @@ If applicable, add screenshots to help explain your problem.
 **System Information:**
  - OS: [e.g. Linux]
  - Plugins List: [use `sm plugins list`]
- - SurfTimer Version: [e.g. 285]
+ - SadSurfTimer Version: [e.g. 3.0.2]
 
 **Additional context**
 Add any other context about the problem here.
