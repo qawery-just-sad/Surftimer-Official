@@ -388,10 +388,37 @@ public void StartTouch(int client, int action[3])
 				g_bWrcpTimeractivated[client] = false;
 			}
 
-			if (g_bPracticeMode[client]) // If practice mode is on
+			// If practice mode is on
+			if (g_bPracticeMode[client]) 
 			{
 				// TODO:
 				// * Practice CPs
+				g_bSaveLocTele[client] = false;
+				
+				if (action[1] != lastCheckpoint[g_iClientInZone[client][2]][client] && g_iClientInZone[client][2] == action[2])
+				{
+					// Make sure the player is not going backwards
+					if ((action[1] + 2) < g_Stage[g_iClientInZone[client][2]][client])
+						g_bWrcpTimeractivated[client] = false;
+					else
+						g_bNewStage[client] = true;
+
+					g_Stage[g_iClientInZone[client][2]][client] = (action[1] + 2);
+
+					float time = g_fCurrentRunTime[client];
+					float time2 = g_fCurrentWrcpRunTime[client];
+					CL_OnEndWrcpTimerPress(client, time2);
+					
+					// Stage enforcer
+					g_iCheckpointsPassed[client]++;
+					if (g_iCheckpointsPassed[client] == g_TotalStages)
+						g_bIsValidRun[client] = true;
+
+					if (g_iCurrentStyle[client] == 0)
+						Checkpoint(client, action[1], g_iClientInZone[client][2], time);
+
+					lastCheckpoint[g_iClientInZone[client][2]][client] = action[1];
+				}
 			}
 			else
 			{ 

@@ -3626,7 +3626,32 @@ public void CenterHudAlive(int client)
 					}
 					else // map has stages
 					{
-						Format(module[i], 128, "Stage: %i / %i", g_Stage[g_iClientInZone[client][2]][client], (g_mapZonesTypeCount[g_iClientInZone[client][2]][3] + 1)); // less \t's to make lines align
+						if (g_bPracticeMode[client])
+						{
+							if (g_bSaveLocTele[client])
+							{
+								//if (g_iPreviousSaveLocIdClient[client] == g_iLastSaveLocIdClient[client])
+								//{
+									// If you didnt TP to eariler saveloc
+									Format(module[i], 128, "Stage: %i / %i", g_iSaveLocStage[client][g_iSaveLocStageIdClient[client]], (g_mapZonesTypeCount[g_iClientInZone[client][2]][3] + 1));
+								//}
+								//else
+								//{
+									// If you did TP to eariler saveloc
+								//	Format(module[i], 128, "Stage: %i / %i", g_iSaveLocStage[client][g_iPreviousSaveLocIdClient[client]], (g_mapZonesTypeCount[g_iClientInZone[client][2]][3] + 1));
+								//	CPrintToChat(client, "Prev = last: false");
+								//}
+							}
+							else
+							{
+								Format(module[i], 128, "Stage: %i / %i", g_Stage[g_iClientInZone[client][2]][client], (g_mapZonesTypeCount[g_iClientInZone[client][2]][3] + 1));
+							}
+							//Format(module[i], 128, "Stage: %i / %i", g_iSaveLocStage[client], (g_mapZonesTypeCount[g_iClientInZone[client][2]][3] + 1));
+						}
+						else
+						{
+							Format(module[i], 128, "Stage: %i / %i", g_Stage[g_iClientInZone[client][2]][client], (g_mapZonesTypeCount[g_iClientInZone[client][2]][3] + 1)); // less \t's to make lines align
+						}
 					}
 				}
 				else

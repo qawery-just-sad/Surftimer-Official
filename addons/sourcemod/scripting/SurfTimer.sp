@@ -805,9 +805,6 @@ float g_fStartPauseTime[MAXPLAYERS + 1];
 // Current runtime
 float g_fCurrentRunTime[MAXPLAYERS + 1];
 
-// PracticeMode saveloc runtime
-float g_fPlayerPracTimeSnap[MAXPLAYERS + 1][MAX_LOCS];
-
 // PracticeMode total time the run took in 00:00:00 format
 char g_szPracticeTime[MAXPLAYERS + 1][32];
 
@@ -1256,7 +1253,11 @@ int g_iLastSaveLocIdClient[MAXPLAYERS + 1];
 float g_fLastCheckpointMade[MAXPLAYERS + 1];
 int g_iSaveLocUnix[MAX_LOCS]; // [loc id]
 int g_iMenuPosition[MAXPLAYERS + 1];
-int g_iPreviousSaveLoc[MAXPLAYERS + 1]; // The previous saveloc the client used
+int g_iPreviousSaveLocIdClient[MAXPLAYERS + 1]; // The previous saveloc the client used
+float g_fPlayerPracTimeSnap[MAXPLAYERS + 1][MAX_LOCS]; // PracticeMode saveloc runtime
+int g_iSaveLocStage[MAXPLAYERS + 1][MAX_LOCS]; // Stage the player was in when creating saveloc
+int g_iSaveLocStageIdClient[MAXPLAYERS + 1]; // Stage Index to use when tele to saveloc
+bool g_bSaveLocTele[MAXPLAYERS + 1]; // Has the player teleported to saveloc?
 
 char g_sServerName[256];
 ConVar g_hHostName = null;
