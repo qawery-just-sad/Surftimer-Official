@@ -3433,12 +3433,12 @@ public void CenterHudAlive(int client)
 					else if (g_bPracticeMode[client])
 					{
 						// Prac mode
-						Format(module[i], 128, "<font color='#eee'>[P]: %s       </font>", pAika);
+						Format(module[i], 128, "<font color='#8df08d'>[P]: %s       </font>", pAika);
 					}
 					else if (g_bInBonus[client])
 					{
 						// In Bonus
-						Format(module[i], 128, "<font color='#d87'>%s       </font>", pAika);
+						Format(module[i], 128, "<font color='#5e5'>%s       </font>", pAika);
 					}
 					else if (g_bMissedMapBest[client] && g_fPersonalRecord[client] > 0.0)
 					{
@@ -3448,7 +3448,7 @@ public void CenterHudAlive(int client)
 					else if (g_fPersonalRecord[client] < 0.1)
 					{
 						// No Personal Best on map
-						Format(module[i], 128, "<font color='#8cd'>%s       </font>", pAika);
+						Format(module[i], 128, "<font color='#5e5'>%s       </font>", pAika);
 					}
 					else
 					{
@@ -3459,10 +3459,10 @@ public void CenterHudAlive(int client)
 				else if (g_bWrcpTimeractivated[client] && !g_bPracticeMode[client])
 				{
 					FormatTimeFloat(client, g_fCurrentWrcpRunTime[client], 3, pAika, 128);
-					Format(module[i], 128, "<font color='#b8b'>%s       </font>", pAika);
+					Format(module[i], 128, "<font color='#8df08d'>%s       </font>", pAika);
 				}
 				else if (!g_bTimerEnabled[client])
-					Format(module[i], 128, "<font color='#ec8'>Disabled       </font>");
+					Format(module[i], 128, "<font color='#f32'>Disabled       </font>");
 				else
 				{
 					Format(module[i], 128, "<font color='#f32'>00:00:00       </font>");
@@ -3493,9 +3493,9 @@ public void CenterHudAlive(int client)
 						{
 							// fluffys
 							if (g_bPracticeMode[client])
-								Format(g_szLastSRDifference[client], 64, "SR: <font color='#b8b'>%s</font>", g_szRecordMapTime);
+								Format(g_szLastSRDifference[client], 64, "SR: <font color='#ffd700'>%s</font>", g_szRecordMapTime);
 							else
-								Format(g_szLastSRDifference[client], 64, "SR: <font color='#b8b'>%s</font>", g_szRecordMapTime);
+								Format(g_szLastSRDifference[client], 64, "SR: <font color='#ffd700'>%s</font>", g_szRecordMapTime);
 						}
 						else
 							Format(g_szLastSRDifference[client], 64, "SR: N/A");
@@ -3506,9 +3506,9 @@ public void CenterHudAlive(int client)
 						{
 							// fluffys
 							if (g_bPracticeMode[client])
-								Format(g_szLastSRDifference[client], 64, "SR: %s", g_szRecordStyleMapTime[style]);
+								Format(g_szLastSRDifference[client], 64, "SR: <font color='#ffd700'>%s</font>", g_szRecordStyleMapTime[style]);
 							else
-								Format(g_szLastSRDifference[client], 64, "SR: %s", g_szRecordStyleMapTime[style]);
+								Format(g_szLastSRDifference[client], 64, "SR: <font color='#ffd700'>%s</font>", g_szRecordStyleMapTime[style]);
 						}
 						else
 							Format(g_szLastSRDifference[client], 64, "SR: N/A");
@@ -3516,9 +3516,9 @@ public void CenterHudAlive(int client)
 					else
 					{
 						if (g_iCurrentStyle[client] == 0)
-							Format(g_szLastSRDifference[client], 64, "SR: %s", g_szBonusFastestTime[g_iClientInZone[client][2]]);
+							Format(g_szLastSRDifference[client], 64, "SR: <font color='#ffd700'>%s</font>", g_szBonusFastestTime[g_iClientInZone[client][2]]);
 						else if (g_iCurrentStyle[client] != 0) // Styles
-							Format(g_szLastSRDifference[client], 64, "SR: %s", g_szStyleBonusFastestTime[style][g_iClientInZone[client][2]]);
+							Format(g_szLastSRDifference[client], 64, "SR: <font color='#ffd700'>%s</font>", g_szStyleBonusFastestTime[style][g_iClientInZone[client][2]]);
 					}
 				}
 				Format(module[i], 128, "%s", g_szLastSRDifference[client]);
@@ -3628,25 +3628,14 @@ public void CenterHudAlive(int client)
 					{
 						if (g_bPracticeMode[client])
 						{
-							if (g_bSaveLocTele[client])
+							if (g_bSaveLocTele[client]) // Has the player teleported to saveloc?
 							{
-								//if (g_iPreviousSaveLocIdClient[client] == g_iLastSaveLocIdClient[client])
-								//{
-									// If you didnt TP to eariler saveloc
-									Format(module[i], 128, "Stage: %i / %i", g_iSaveLocStage[client][g_iSaveLocStageIdClient[client]], (g_mapZonesTypeCount[g_iClientInZone[client][2]][3] + 1));
-								//}
-								//else
-								//{
-									// If you did TP to eariler saveloc
-								//	Format(module[i], 128, "Stage: %i / %i", g_iSaveLocStage[client][g_iPreviousSaveLocIdClient[client]], (g_mapZonesTypeCount[g_iClientInZone[client][2]][3] + 1));
-								//	CPrintToChat(client, "Prev = last: false");
-								//}
+								Format(module[i], 128, "Stage: %i / %i", g_iSaveLocStage[client][g_iSaveLocStageIdClient[client]], (g_mapZonesTypeCount[g_iClientInZone[client][2]][3] + 1));
 							}
 							else
 							{
 								Format(module[i], 128, "Stage: %i / %i", g_Stage[g_iClientInZone[client][2]][client], (g_mapZonesTypeCount[g_iClientInZone[client][2]][3] + 1));
 							}
-							//Format(module[i], 128, "Stage: %i / %i", g_iSaveLocStage[client], (g_mapZonesTypeCount[g_iClientInZone[client][2]][3] + 1));
 						}
 						else
 						{
@@ -3655,7 +3644,9 @@ public void CenterHudAlive(int client)
 					}
 				}
 				else
+				{
 					Format(module[i], 128, "Bonus %i", g_iClientInZone[client][2]);
+				}
 			}
 			else if (g_iCentreHudModule[client][i] == 6)
 			{

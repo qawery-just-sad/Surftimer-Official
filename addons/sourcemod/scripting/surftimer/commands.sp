@@ -697,7 +697,7 @@ public Action Command_createPlayerCheckpoint(int client, int args)
 		// Save stage player was in when creating saveloc
 		if (g_bPracticeMode[client])
 		{
-			if (g_bSaveLocTele[client])
+			if (g_bSaveLocTele[client]) // Has the player teleported to saveloc?
 			{
 				g_iSaveLocStage[client][g_iLastSaveLocIdClient[client]] = g_iSaveLocStage[client][g_iSaveLocStageIdClient[client]];
 			}
@@ -711,44 +711,40 @@ public Action Command_createPlayerCheckpoint(int client, int args)
 			g_iSaveLocStage[client][g_iLastSaveLocIdClient[client]] = g_Stage[g_iClientInZone[client][2]][client];
 		}
 
-		// Normal PracMode
-		if (g_bPracticeMode[client] && !g_bWrcpTimeractivated[client]) // If using saveloc when player already in PracMode, we need to save players current time + the time from players previous saveloc
+		// Save stage player was in when creating saveloc
+		// Normal
+		if (g_bPracticeMode[client] && !g_bWrcpTimeractivated[client]) // Player in PracMode, save players current time + the time from players previous saveloc
 		{
-			if (g_iPreviousSaveLocIdClient[client] == g_iLastSaveLocIdClient[client])
+			if (g_iPreviousSaveLocIdClient[client] == g_iLastSaveLocIdClient[client]) // Did player Tele to earlier saveloc?
 			{
-				// If you didnt TP to eariler saveloc
 				g_fPlayerPracTimeSnap[client][g_iLastSaveLocIdClient[client]] = (time - g_fPracModeStartTime[client] - g_fPauseTime[client]) + g_fPlayerPracTimeSnap[client][g_iLastSaveLocIdClient[client] - 1];	
-				CPrintToChat(client, "SnapTime: %f", g_fPlayerPracTimeSnap[client][g_iLastSaveLocIdClient[client]]);
 			}
 			else
 			{
-				// If you did TP to eariler saveloc
 				g_fPlayerPracTimeSnap[client][g_iLastSaveLocIdClient[client]] = (time - g_fPracModeStartTime[client] - g_fPauseTime[client]) + g_fPlayerPracTimeSnap[client][g_iPreviousSaveLocIdClient[client]];
 			}
 
 			g_fPracModeStartTime[client] = GetGameTime();
 		}		
-		else if (!g_bPracticeMode[client] && !g_bWrcpTimeractivated[client]) // If not in already in PracMode then just save players current time
+		else if (!g_bPracticeMode[client] && !g_bWrcpTimeractivated[client]) // Player not in PracMode, save players current time
 		{	
 			g_fPlayerPracTimeSnap[client][g_iLastSaveLocIdClient[client]] = time - g_fStartTime[client] - g_fPauseTime[client];
 		}
-		// Wrcp PracMode
-		else if (g_bPracticeMode[client] && g_bWrcpTimeractivated[client]) // If using saveloc when player already in WrcpPracMode, we need to save players current time + the time from players previous saveloc
+		// Wrcp
+		else if (g_bPracticeMode[client] && g_bWrcpTimeractivated[client]) // Player in WrcpPracMode, save players current time + the time from players previous saveloc
 		{
-			if (g_iPreviousSaveLocIdClient[client] == g_iLastSaveLocIdClient[client])
+			if (g_iPreviousSaveLocIdClient[client] == g_iLastSaveLocIdClient[client]) // Did player Tele to earlier saveloc?
 			{
-				// If you didnt TP to eariler saveloc
 				g_fPlayerPracTimeSnap[client][g_iLastSaveLocIdClient[client]] = (time - g_fStartWrcpTime[client] - g_fPauseTime[client]) + g_fPlayerPracTimeSnap[client][g_iLastSaveLocIdClient[client] - 1];	
 			}
 			else
 			{
-				// If you did TP to eariler saveloc
 				g_fPlayerPracTimeSnap[client][g_iLastSaveLocIdClient[client]] = (time - g_fStartWrcpTime[client] - g_fPauseTime[client]) + g_fPlayerPracTimeSnap[client][g_iPreviousSaveLocIdClient[client]];
 			}
 
 			g_fPracModeStartTime[client] = GetGameTime();
 		}
-		else if (!g_bPracticeMode[client] && g_bWrcpTimeractivated[client]) // If not in already in WrcpPracMode then just save players current time
+		else if (!g_bPracticeMode[client] && g_bWrcpTimeractivated[client]) // Player not in WrcpPracMode, save players current time
 		{
 			g_fPlayerPracTimeSnap[client][g_iLastSaveLocIdClient[client]] = time -  g_fStartWrcpTime[client] - g_fPauseTime[client];
 		}
