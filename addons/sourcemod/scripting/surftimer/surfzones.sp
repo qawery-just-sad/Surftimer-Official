@@ -456,7 +456,7 @@ public void StartTouch(int client, int action[3])
 						g_bIsValidRun[client] = true;
 					}
 				}
-				
+
 				// Announcing checkpoint in linear maps
 				if (g_iCurrentStyle[client] == 0)
 				{

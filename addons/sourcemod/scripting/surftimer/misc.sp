@@ -3371,7 +3371,8 @@ public void CenterHudDead(int client)
 			}
 			else if (g_bPracticeMode[ObservedUser])
 			{
-				obsTimer = (GetGameTime() - g_fPracModeStartTime[ObservedUser] - g_fStartTime[ObservedUser] - g_fPauseTime[ObservedUser]) + g_fPlayerPracTimeSnap[ObservedUser][g_iLastSaveLocIdClient[ObservedUser]];
+				//obsTimer = (GetGameTime() - g_fPracModeStartTime[ObservedUser] - g_fStartTime[ObservedUser] - g_fPauseTime[ObservedUser]) + g_fPlayerPracTimeSnap[ObservedUser][g_iLastSaveLocIdClient[ObservedUser]];
+				obsTimer = g_fCurrentRunTime[ObservedUser];
 				FormatTimeFloat(client, obsTimer, 3, obsAika, sizeof(obsAika));
 			}
 			else if (g_bTimerRunning[ObservedUser])
@@ -5147,16 +5148,24 @@ public float GetStrafeSync(int client, bool sync)
 
 public void ResetSaveLocs()
 {
-	g_iSaveLocCount = 0;
+	for (int client = 1; client <= MAXPLAYERS; client++)
+	{
+		g_iSaveLocCount[client] = 0;
+	}
+	
 	for (int i = 0; i < MAX_LOCS; i++)
 	{
-		for (int j = 0; j < 3; j++)
+		for (int client = 1; client <= MAXPLAYERS; client++)
 		{
-			g_fSaveLocCoords[i][j] = 0.0;
-			g_fSaveLocAngle[i][j] = 0.0;
-			g_fSaveLocVel[i][j] = 0.0;
+			for (int j = 0; j < 3; j++)
+			{
+				g_fSaveLocCoords[client][i][j] = 0.0;
+				g_fSaveLocAngle[client][i][j] = 0.0;
+				g_fSaveLocVel[client][i][j] = 0.0;
+			}
+		
+			g_iSaveLocUnix[i][client] = 0;
 		}
-		g_iSaveLocUnix[i] = 0;
 		g_szSaveLocTargetname[i][0] = '\0';
 	}
 }
@@ -5170,7 +5179,7 @@ public void TeleportToSaveloc(int client, int id)
 	CL_OnStartTimerPress(client);
 	DispatchKeyValue(client, "targetname", g_szSaveLocTargetname[id]);
 	SetEntPropVector(client, Prop_Data, "m_vecVelocity", view_as<float>( { 0.0, 0.0, 0.0 } ));
-	TeleportEntity(client, g_fSaveLocCoords[id], g_fSaveLocAngle[id], g_fSaveLocVel[id]);
+	TeleportEntity(client, g_fSaveLocCoords[client][id], g_fSaveLocAngle[client][id], g_fSaveLocVel[client][id]);
 }
 
 public void SendBugReport(int client)

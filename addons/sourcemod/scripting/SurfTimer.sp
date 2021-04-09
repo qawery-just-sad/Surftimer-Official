@@ -122,7 +122,7 @@
 #define EF_NODRAW 32
 
 // New Save Locs
-#define MAX_LOCS 1024
+#define MAX_LOCS 128
 
 //CSGO HUD Hint Fix
 #define MAX_HINT_SIZE 254
@@ -1243,15 +1243,15 @@ int g_iTotalMeasures[MAXPLAYERS + 1];
 float g_fAngleCache[MAXPLAYERS + 1];
 
 // Save locs
-int g_iSaveLocCount;
-float g_fSaveLocCoords[MAX_LOCS][3]; // [loc id][coords]
-float g_fSaveLocAngle[MAX_LOCS][3]; // [loc id][angle]
-float g_fSaveLocVel[MAX_LOCS][3]; // [loc id][velocity]
+int g_iSaveLocCount[MAXPLAYERS + 1];
+float g_fSaveLocCoords[MAXPLAYERS + 1][MAX_LOCS][3]; // [loc id][coords]
+float g_fSaveLocAngle[MAXPLAYERS + 1][MAX_LOCS][3]; // [loc id][angle]
+float g_fSaveLocVel[MAXPLAYERS + 1][MAX_LOCS][3]; // [loc id][velocity]
 char g_szSaveLocTargetname[MAX_LOCS][128]; // [loc id]
 char g_szSaveLocClientName[MAX_LOCS][MAX_NAME_LENGTH];
 int g_iLastSaveLocIdClient[MAXPLAYERS + 1];
 float g_fLastCheckpointMade[MAXPLAYERS + 1];
-int g_iSaveLocUnix[MAX_LOCS]; // [loc id]
+int g_iSaveLocUnix[MAX_LOCS][MAXPLAYERS + 1]; // [loc id]
 int g_iMenuPosition[MAXPLAYERS + 1];
 int g_iPreviousSaveLocIdClient[MAXPLAYERS + 1]; // The previous saveloc the client used
 float g_fPlayerPracTimeSnap[MAXPLAYERS + 1][MAX_LOCS]; // PracticeMode saveloc runtime
@@ -1908,7 +1908,6 @@ public void OnMapStart()
 
 	// Save Locs
 	ResetSaveLocs();
-
 }
 
 public void OnMapEnd()

@@ -682,17 +682,17 @@ public Action Command_createPlayerCheckpoint(int client, int args)
 	if ((time - g_fLastCheckpointMade[client]) < 1.0)
 		return Plugin_Handled;
 
-	if (g_iSaveLocCount < MAX_LOCS)
+	if (g_iSaveLocCount[client] < MAX_LOCS)
 	{
-		g_iSaveLocCount++;
+		g_iSaveLocCount[client]++;
 		
-		GetClientAbsOrigin(client, g_fSaveLocCoords[g_iSaveLocCount]);
-		GetClientEyeAngles(client, g_fSaveLocAngle[g_iSaveLocCount]);
-		GetEntPropVector(client, Prop_Data, "m_vecVelocity", g_fSaveLocVel[g_iSaveLocCount]);
-		GetEntPropString(client, Prop_Data, "m_iName", g_szSaveLocTargetname[g_iSaveLocCount], sizeof(g_szSaveLocTargetname));
+		GetClientAbsOrigin(client, g_fSaveLocCoords[client][g_iSaveLocCount[client]]);
+		GetClientEyeAngles(client, g_fSaveLocAngle[client][g_iSaveLocCount[client]]);
+		GetEntPropVector(client, Prop_Data, "m_vecVelocity", g_fSaveLocVel[client][g_iSaveLocCount[client]]);
+		GetEntPropString(client, Prop_Data, "m_iName", g_szSaveLocTargetname[g_iSaveLocCount[client]], sizeof(g_szSaveLocTargetname));
 		
 		g_iPreviousSaveLocIdClient[client] = g_iLastSaveLocIdClient[client];
-		g_iLastSaveLocIdClient[client] = g_iSaveLocCount;
+		g_iLastSaveLocIdClient[client] = g_iSaveLocCount[client];
 
 		// Save stage/checkpoint player was in when creating saveloc
 		if (g_bPracticeMode[client])
@@ -763,11 +763,11 @@ public Action Command_createPlayerCheckpoint(int client, int args)
 			g_fPlayerPracTimeSnap[client][g_iLastSaveLocIdClient[client]] = time -  g_fStartWrcpTime[client] - g_fPauseTime[client];
 		}
 
-		CPrintToChat(client, "%t", "Commands7", g_szChatPrefix, g_iSaveLocCount);
+		CPrintToChat(client, "%t", "Commands7", g_szChatPrefix, g_iSaveLocCount[client]);
 		
 		g_fLastCheckpointMade[client] = GetGameTime();
-		g_iSaveLocUnix[g_iSaveLocCount] = GetTime();
-		GetClientName(client, g_szSaveLocClientName[g_iSaveLocCount], MAX_NAME_LENGTH);
+		g_iSaveLocUnix[g_iSaveLocCount[client]][client] = GetTime();
+		GetClientName(client, g_szSaveLocClientName[g_iSaveLocCount[client]], MAX_NAME_LENGTH);
 
 		/* 	---------------------------------------------------------------------
 			-							TESTING ARRAY							-
@@ -818,7 +818,7 @@ public Action Command_goToPlayerCheckpoint(int client, int args)
 	if (!IsValidClient(client))
 		return Plugin_Handled;
 	
-	if (g_iSaveLocCount > 0)
+	if (g_iSaveLocCount[client] > 0)
 	{	
 		g_bSaveLocTele[client] = true;
 		
@@ -845,7 +845,7 @@ public Action Command_goToPlayerCheckpoint(int client, int args)
 			ReplaceString(arg, 128, "#", "", false);
 			int id = StringToInt(arg);
 
-			if (id < 1 || id > MAX_LOCS - 1 || id > g_iSaveLocCount)
+			if (id < 1 || id > MAX_LOCS - 1 || id > g_iSaveLocCount[client])
 			{
 				CPrintToChat(client, "%t", "Commands10", g_szChatPrefix);
 				return Plugin_Handled;
@@ -873,7 +873,7 @@ public Action Command_goToPlayerCheckpoint(int client, int args)
 
 public Action Command_SaveLocList(int client, int args)
 {
-	if (g_iSaveLocCount < 1)
+	if (g_iSaveLocCount[client] < 1)
 	{
 		CPrintToChat(client, "%t", "Commands11", g_szChatPrefix);
 		return Plugin_Handled;
@@ -892,9 +892,9 @@ public void SaveLocMenu(int client)
 	char szItem[256];
 	char szId[32];
 	int unix;
-	for (int i = 1; i <= g_iSaveLocCount; i++)
+	for (int i = 1; i <= g_iSaveLocCount[client]; i++)
 	{
-		unix = GetTime() - g_iSaveLocUnix[i];
+		unix = GetTime() - g_iSaveLocUnix[i][client];
 		diffForHumans(unix, szBuffer, 128, 1);
 		Format(szItem, sizeof(szItem), "#%d - %s - %s", i, g_szSaveLocClientName[i], szBuffer);
 		IntToString(i, szId, 32);
