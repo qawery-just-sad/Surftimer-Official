@@ -694,24 +694,38 @@ public Action Command_createPlayerCheckpoint(int client, int args)
 		g_iPreviousSaveLocIdClient[client] = g_iLastSaveLocIdClient[client];
 		g_iLastSaveLocIdClient[client] = g_iSaveLocCount;
 
-		// Save stage player was in when creating saveloc
+		// Save stage/checkpoint player was in when creating saveloc
 		if (g_bPracticeMode[client])
 		{
 			if (g_bSaveLocTele[client]) // Has the player teleported to saveloc?
 			{
-				g_iSaveLocStage[client][g_iLastSaveLocIdClient[client]] = g_iSaveLocStage[client][g_iSaveLocStageIdClient[client]];
+				g_iPlayerPracLocationSnap[client][g_iLastSaveLocIdClient[client]] = g_iPlayerPracLocationSnap[client][g_iPlayerPracLocationSnapIdClient[client]];
 			}
 			else
 			{
-				g_iSaveLocStage[client][g_iLastSaveLocIdClient[client]] = g_Stage[g_iClientInZone[client][2]][client];
+				if (g_bhasStages)
+				{
+					g_iPlayerPracLocationSnap[client][g_iLastSaveLocIdClient[client]] = g_Stage[g_iClientInZone[client][2]][client];
+				}
+				else
+				{
+					g_iPlayerPracLocationSnap[client][g_iLastSaveLocIdClient[client]] = g_iCurrentCheckpoint[client] + 1;
+				}
 			}
 		}
 		else
 		{
-			g_iSaveLocStage[client][g_iLastSaveLocIdClient[client]] = g_Stage[g_iClientInZone[client][2]][client];
+			if (g_bhasStages)
+			{
+				g_iPlayerPracLocationSnap[client][g_iLastSaveLocIdClient[client]] = g_Stage[g_iClientInZone[client][2]][client];
+			}
+			else
+			{
+				g_iPlayerPracLocationSnap[client][g_iLastSaveLocIdClient[client]] = g_iCurrentCheckpoint[client] + 1;
+			}
 		}
 
-		// Save stage player was in when creating saveloc
+		// Save players time when creating saveloc
 		// Normal
 		if (g_bPracticeMode[client] && !g_bWrcpTimeractivated[client]) // Player in PracMode, save players current time + the time from players previous saveloc
 		{
@@ -726,7 +740,7 @@ public Action Command_createPlayerCheckpoint(int client, int args)
 
 			g_fPracModeStartTime[client] = GetGameTime();
 		}		
-		else if (!g_bPracticeMode[client] && !g_bWrcpTimeractivated[client]) // Player not in PracMode, save players current time
+		else if (!g_bPracticeMode[client] && !g_bWrcpTimeractivated[client]) // Player not in WrcpPracMode, save players current time
 		{	
 			g_fPlayerPracTimeSnap[client][g_iLastSaveLocIdClient[client]] = time - g_fStartTime[client] - g_fPauseTime[client];
 		}
@@ -744,7 +758,7 @@ public Action Command_createPlayerCheckpoint(int client, int args)
 
 			g_fPracModeStartTime[client] = GetGameTime();
 		}
-		else if (!g_bPracticeMode[client] && g_bWrcpTimeractivated[client]) // Player not in WrcpPracMode, save players current time
+		else if (!g_bPracticeMode[client] && g_bWrcpTimeractivated[client]) // Player in Wrcp, save players current time
 		{
 			g_fPlayerPracTimeSnap[client][g_iLastSaveLocIdClient[client]] = time -  g_fStartWrcpTime[client] - g_fPauseTime[client];
 		}
@@ -757,14 +771,14 @@ public Action Command_createPlayerCheckpoint(int client, int args)
 
 		/* 	---------------------------------------------------------------------
 			-							TESTING ARRAY							-
-			-						g_iSaveLocStage[client]						-
+			-						g_iPlayerPracLocationSnap[client]						-
 			-	(uncomment code to display stage array values in client console -
-			-	when creating checkpoint)										-
+			-	when creating saveloc)											-
 			--------------------------------------------------------------------- */
 		/*int result;
 		for (int i = g_iLastSaveLocIdClient[client]; i >= 0; i--)
 		{
-			result = g_iSaveLocStage[client][i];
+			result = g_iPlayerPracLocationSnap[client][i];
 			
 			PrintToConsole(client, "Index[%i] = %i", i, result);		
 		}
@@ -777,7 +791,7 @@ public Action Command_createPlayerCheckpoint(int client, int args)
 			-							TESTING ARRAY							-
 			-	g_fPlayerPracTimeSnap[client][g_iLastSaveLocIdClient[client]]	-
 			-	(uncomment code to display array values in client console 		-
-			-	when creating checkpoint)										-
+			-	when creating saveloc)											-
 			--------------------------------------------------------------------- */
 		/*float result;
 		for (int i = g_iLastSaveLocIdClient[client]; i >= 0; i--)
@@ -811,8 +825,9 @@ public Action Command_goToPlayerCheckpoint(int client, int args)
 		if (args == 0)
 		{
 			int id = g_iLastSaveLocIdClient[client];
-			g_iSaveLocStageIdClient[client] = id;
-
+				
+			g_iPlayerPracLocationSnapIdClient[client] = id;
+			
 			TeleportToSaveloc(client, id);
 		}
 		else
@@ -837,9 +852,15 @@ public Action Command_goToPlayerCheckpoint(int client, int args)
 			}
 
 			g_iLastSaveLocIdClient[client] = id;
-			g_iSaveLocStageIdClient[client] = id;
+				
+			g_iPlayerPracLocationSnapIdClient[client] = id;
 
 			TeleportToSaveloc(client, id);
+		}
+
+		if (!g_bhasStages && g_bSaveLocTele[client])
+		{
+			g_iCurrentCheckpoint[client] =  g_iPlayerPracLocationSnap[client][g_iLastSaveLocIdClient[client]] -1;
 		}
 	}
 	else

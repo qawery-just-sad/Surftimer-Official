@@ -391,43 +391,8 @@ public void StartTouch(int client, int action[3])
 			// If practice mode is on
 			if (g_bPracticeMode[client]) 
 			{
-				// TODO:
-				// * Practice CPs
 				g_bSaveLocTele[client] = false;
-				
-				if (action[1] != lastCheckpoint[g_iClientInZone[client][2]][client] && g_iClientInZone[client][2] == action[2])
-				{
-					// Make sure the player is not going backwards
-					if ((action[1] + 2) < g_Stage[g_iClientInZone[client][2]][client])
-					{
-						g_bWrcpTimeractivated[client] = false;
-					}
-					else
-					{
-						g_bNewStage[client] = true;
-					}
-
-					g_Stage[g_iClientInZone[client][2]][client] = (action[1] + 2);
-
-					float time = g_fCurrentRunTime[client];
-					float time2 = g_fCurrentWrcpRunTime[client];
-					CL_OnEndWrcpTimerPress(client, time2);
-
-					// Stage enforcer
-					g_iCheckpointsPassed[client]++;
-	
-					if (g_iCheckpointsPassed[client] == g_TotalStages)
-					{
-						g_bIsValidRun[client] = true;
-					}
-
-					if (g_iCurrentStyle[client] == 0)
-					{
-						Checkpoint(client, action[1], g_iClientInZone[client][2], time);
-					}
-
-					lastCheckpoint[g_iClientInZone[client][2]][client] = action[1];
-				}
+				g_Stage[g_iClientInZone[client][2]][client] = (action[1] + 2);
 			}
 			else
 			{ 
@@ -468,26 +433,47 @@ public void StartTouch(int client, int action[3])
 		}
 		else if (action[0] == 4) // Checkpoint Zone
 		{
-			if (action[1] != lastCheckpoint[g_iClientInZone[client][2]][client] && g_iClientInZone[client][2] == action[2])
+			if (action[1] != lastCheckpoint[g_iClientInZone[client][2]][client] && g_iClientInZone[client][2] == action[2] || g_bPracticeMode[client])
 			{
 				g_iCurrentCheckpoint[client]++;
+				g_bSaveLocTele[client] = false;
 				
 				// Checkpoint enforcer
 				if (GetConVarBool(g_hMustPassCheckpoints) && g_iTotalCheckpoints > 0)
 				{
-					g_iCheckpointsPassed[client]++;
-					if (g_iCheckpointsPassed[client] == g_iTotalCheckpoints)
-						g_bIsValidRun[client] = true;
-				}
+					if (!g_bPracticeMode[client])
+					{
+						g_iCheckpointsPassed[client]++;
 
+						if (g_iCheckpointsPassed[client] == g_iTotalCheckpoints)
+						{	
+							g_bIsValidRun[client] = true;
+						}
+					}
+					else
+					{
+						// This bypasses checkpoint enforcer when in PracMode as players wont always be passing all checkpoints
+						g_bIsValidRun[client] = true;
+					}
+				}
+				
 				// Announcing checkpoint in linear maps
 				if (g_iCurrentStyle[client] == 0)
 				{
 					float time = g_fCurrentRunTime[client];
 					Checkpoint(client, action[1], g_iClientInZone[client][2], time);
-					lastCheckpoint[g_iClientInZone[client][2]][client] = action[1];
+					
+					if (!g_bSaveLocTele[client])
+					{
+						lastCheckpoint[g_iClientInZone[client][2]][client] = action[1];
+					}
+					else
+					{
+						lastCheckpoint[g_iClientInZone[client][2]][client] = g_iPlayerPracLocationSnap[client][g_iLastSaveLocIdClient[client]] - 1;
+					}
 				}
 			}
+
 		}
 		else if (action[0] == 6) // TeleToStart Zone
 		{

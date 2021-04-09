@@ -1255,8 +1255,8 @@ int g_iSaveLocUnix[MAX_LOCS]; // [loc id]
 int g_iMenuPosition[MAXPLAYERS + 1];
 int g_iPreviousSaveLocIdClient[MAXPLAYERS + 1]; // The previous saveloc the client used
 float g_fPlayerPracTimeSnap[MAXPLAYERS + 1][MAX_LOCS]; // PracticeMode saveloc runtime
-int g_iSaveLocStage[MAXPLAYERS + 1][MAX_LOCS]; // Stage the player was in when creating saveloc
-int g_iSaveLocStageIdClient[MAXPLAYERS + 1]; // Stage Index to use when tele to saveloc
+int g_iPlayerPracLocationSnap[MAXPLAYERS + 1][MAX_LOCS]; // Stage the player was in when creating saveloc
+int g_iPlayerPracLocationSnapIdClient[MAXPLAYERS + 1]; // Stage Index to use when tele to saveloc
 bool g_bSaveLocTele[MAXPLAYERS + 1]; // Has the player teleported to saveloc?
 
 char g_sServerName[256];

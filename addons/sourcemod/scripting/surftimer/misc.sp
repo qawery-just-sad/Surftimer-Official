@@ -1423,7 +1423,7 @@ public void GetcurrentRunTime(int client)
 	
 	if (g_bWrcpTimeractivated[client])
 	{
-		g_fCurrentWrcpRunTime[client] = fGetGameTime - g_fStartWrcpTime[client];
+		g_fCurrentWrcpRunTime[client] = fGetGameTime - g_fStartWrcpTime[client] - g_fPauseTime[client];
 	}
 }
 
@@ -3369,6 +3369,11 @@ public void CenterHudDead(int client)
 				PrintCSGOHUDText(client, "<pre>%s\nSpeed: <font color='#5e5'>%i u/s\n%s</pre>", obsAika, RoundToNearest(g_fLastSpeed[ObservedUser]), sResult);
 				return;
 			}
+			else if (g_bPracticeMode[ObservedUser])
+			{
+				obsTimer = (GetGameTime() - g_fPracModeStartTime[ObservedUser] - g_fStartTime[ObservedUser] - g_fPauseTime[ObservedUser]) + g_fPlayerPracTimeSnap[ObservedUser][g_iLastSaveLocIdClient[ObservedUser]];
+				FormatTimeFloat(client, obsTimer, 3, obsAika, sizeof(obsAika));
+			}
 			else if (g_bTimerRunning[ObservedUser])
 			{
 				obsTimer = GetGameTime() - g_fStartTime[ObservedUser] - g_fPauseTime[ObservedUser];
@@ -3380,10 +3385,14 @@ public void CenterHudDead(int client)
 				FormatTimeFloat(client, obsTimer, 3, obsAika, sizeof(obsAika));
 			}
 			else if (!g_bTimerEnabled[ObservedUser])
+			{
 				obsAika = "<font color='#f32'>Disabled</font>";
-			else {
+			}
+			else 
+			{
 				obsAika = "<font color='#f32'>00:00:00</font>";
 			}
+			
 			char timerText[32] = "";
 			if (g_iClientInZone[ObservedUser][2] > 0)
 				Format(timerText, 32, "[%s] ", g_szZoneGroupName[g_iClientInZone[ObservedUser][2]]);
@@ -3630,7 +3639,7 @@ public void CenterHudAlive(int client)
 						{
 							if (g_bSaveLocTele[client]) // Has the player teleported to saveloc?
 							{
-								Format(module[i], 128, "Stage: %i / %i", g_iSaveLocStage[client][g_iSaveLocStageIdClient[client]], (g_mapZonesTypeCount[g_iClientInZone[client][2]][3] + 1));
+								Format(module[i], 128, "Stage: %i / %i", g_iPlayerPracLocationSnap[client][g_iPlayerPracLocationSnapIdClient[client]], (g_mapZonesTypeCount[g_iClientInZone[client][2]][3] + 1));
 							}
 							else
 							{
@@ -3838,7 +3847,22 @@ public void SideHudAlive(int client)
 						}
 						else
 						{
-							Format(szCurrentCP, 64, "Checkpoint [%i]", g_iCurrentCheckpoint[client] + 1);
+							if (g_bPracticeMode[client])
+							{
+								if (g_bSaveLocTele[client]) // Has the player teleported to saveloc?
+								{
+									Format(szCurrentCP, 64, "Checkpoint [%i]", g_iPlayerPracLocationSnap[client][g_iLastSaveLocIdClient[client]]);
+								}
+								else
+								{
+									Format(szCurrentCP, 64, "Checkpoint [%i]", g_iCurrentCheckpoint[client] + 1);
+								}
+							}
+							else
+							{
+								Format(szCurrentCP, 64, "Checkpoint [%i]", g_iCurrentCheckpoint[client] + 1);
+							}
+							
 							FormatTimeFloat(0, g_fCheckpointServerRecord[g_iClientInZone[client][2]][g_iCurrentCheckpoint[client]], 3, szCP, 64);
 						}
 
@@ -3849,7 +3873,22 @@ public void SideHudAlive(int client)
 					}
 					else // map has stages
 					{
-						Format(szStage, 64, "Stage: %i / %i", g_Stage[g_iClientInZone[client][2]][client], (g_mapZonesTypeCount[g_iClientInZone[client][2]][3] + 1));
+						if (g_bPracticeMode[client])
+						{
+							if (g_bSaveLocTele[client]) // Has the player teleported to saveloc?
+							{
+								Format(szStage, 64, "Stage: %i / %i", g_iPlayerPracLocationSnap[client][g_iLastSaveLocIdClient[client]], (g_mapZonesTypeCount[g_iClientInZone[client][2]][3] + 1));
+							}
+							else
+							{
+								Format(szStage, 64, "Stage: %i / %i", g_Stage[g_iClientInZone[client][2]][client], (g_mapZonesTypeCount[g_iClientInZone[client][2]][3] + 1));
+							}
+						}
+						else
+						{
+							Format(szStage, 64, "Stage: %i / %i", g_Stage[g_iClientInZone[client][2]][client], (g_mapZonesTypeCount[g_iClientInZone[client][2]][3] + 1));
+						}
+						
 						char szWrcpTime[64];
 						FormatTimeFloat(0, g_fStageRecord[stage], 3, szWrcpTime, 64);
 						char szName[64];
