@@ -1866,8 +1866,12 @@ public void SpecPlayer(int client, int args)
 					for (int x = 1; x <= MaxClients; x++)
 					{
 						if (IsValidClient(x) && IsPlayerAlive(x) && x != client && !IsFakeClient(x) && g_PlayerRank[x][0] > 0)
-							if (g_PlayerRank[x][0] <= bestrank)
-							bestrank = g_PlayerRank[x][0];
+						{
+							if (g_PlayerRank[x][0] < bestrank)
+							{
+								bestrank = g_PlayerRank[x][0];
+							}
+						}
 					}
 					char szMenu[128];
 					Format(szMenu, 128, "Highest ranked player (#%i)", bestrank);
@@ -1967,11 +1971,20 @@ public int SpecMenuHandler(Menu menu, MenuAction action, int param1, int param2)
 				{
 					GetClientName(i, szPlayerName, MAX_NAME_LENGTH);
 					if (i == g_RecordBot)
+					{
 						Format(szPlayerName, MAX_NAME_LENGTH, "MAP RECORD REPLAY");
+					}
+					
 					if (i == g_BonusBot)
+					{
 						Format(szPlayerName, MAX_NAME_LENGTH, "BONUS RECORD REPLAY");
+					}
+					
 					if (i == g_WrcpBot)
+					{	
 						Format(szPlayerName, MAX_NAME_LENGTH, "STAGE RECORD REPLAY");
+					}
+
 					if (StrEqual(info, szPlayerName))
 					{
 						ChangeClientTeam(param1, 1);
@@ -1983,11 +1996,10 @@ public int SpecMenuHandler(Menu menu, MenuAction action, int param1, int param2)
 			}
 		}
 	}
-	else
-		if (action == MenuAction_End)
-		{
-			delete menu;
-		}
+	else if (action == MenuAction_End)
+	{
+		delete menu;
+	}
 }
 
 public Action Client_AutoBhop(int client, int args)
