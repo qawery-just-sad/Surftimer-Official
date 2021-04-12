@@ -138,7 +138,7 @@ void db_CreateCheckCB(Handle owner, Handle hndl, const char[] error, any attempt
 		}
 		else if (tables > 14)
 		{
-			SetFailState("[SurfTimer] SQL Error (db_CreateCheckCB): Are you from future?.");
+			SetFailState("[SurfTimer] SQL Error (db_CreateCheckCB): Create databse only for surftimer!");
 			return;
 		}
 	}
