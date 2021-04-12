@@ -1943,9 +1943,9 @@ public int SpecMenuHandler(Menu menu, MenuAction action, int param1, int param2)
 			int bestrank = 99999999;
 			for (int i = 1; i <= MaxClients; i++)
 			{
-				if (IsValidClient(i) && IsPlayerAlive(i) && i != param1 && !IsFakeClient(i))
+				if (IsValidClient(i) && IsPlayerAlive(i) && i != param1 && !IsFakeClient(i) && g_PlayerRank[i][0] > 0)
 				{
-					if (g_PlayerRank[i][0] <= bestrank)
+					if (g_PlayerRank[i][0] < bestrank)
 					{
 						bestrank = g_PlayerRank[i][0];
 						playerid = i;
