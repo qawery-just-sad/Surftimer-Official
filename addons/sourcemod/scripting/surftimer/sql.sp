@@ -1684,6 +1684,12 @@ public void sql_selectRankedPlayersRankCallback(Handle owner, Handle hndl, const
 	if (SQL_HasResultSet(hndl) && SQL_FetchRow(hndl))
 	{
 		g_PlayerRank[client][style] = SQL_FetchInt(hndl,0);
+
+		if (g_PlayerRank[client][style] == 0)
+		{
+			g_PlayerRank[client][style] = -1;
+		}
+
 		if (GetConVarInt(g_hPrestigeRank) > 0)
 		{
 			if (GetConVarBool(g_hPrestigeStyles) && !g_bPrestigeAvoid[client])
@@ -1713,7 +1719,7 @@ public void sql_selectRankedPlayersRankCallback(Handle owner, Handle hndl, const
 		// Sort players by rank in scoreboard
 		if (style == 0)
 		{
-			if (g_pr_AllPlayers[style] < g_PlayerRank[client][style] || g_PlayerRank[client][style] == 0)
+			if (g_pr_AllPlayers[style] < g_PlayerRank[client][style] || g_PlayerRank[client][style] == -1)
 				CS_SetClientContributionScore(client, -99999);
 			else
 				CS_SetClientContributionScore(client, -g_PlayerRank[client][style]);

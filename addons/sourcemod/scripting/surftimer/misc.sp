@@ -1298,7 +1298,7 @@ public void SetClientDefaults(int client)
 	for (int i = 0; i < MAX_STYLES; i++)
 	{
 		g_pr_points[client][i] = 0;
-		g_PlayerRank[client][i] = 99999;
+		g_PlayerRank[client][i] = -1;
 	}
 
 	g_fCurrentRunTime[client] = -1.0;
