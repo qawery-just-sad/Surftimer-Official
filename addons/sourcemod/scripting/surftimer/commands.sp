@@ -792,6 +792,9 @@ public Action Command_goToPlayerCheckpoint(int client, int args)
 	{	
 		g_bSaveLocTele[client] = true;
 		
+		// This bypasses checkpoint enforcer when in PracMode as players wont always be passing all checkpoints
+		g_bIsValidRun[client] = true;
+		
 		if (args == 0)
 		{
 			int id = g_iLastSaveLocIdClient[client];

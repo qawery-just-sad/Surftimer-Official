@@ -351,6 +351,14 @@ public void StartTouch(int client, int action[3])
 					g_bWrcpEndZone[client] = true;
 					CL_OnEndWrcpTimerPress(client, time);
 				}
+				else
+				{
+					if (g_bPracticeMode[client])
+					{
+						// This bypasses checkpoint enforcer when in PracMode as players wont always be passing all checkpoints
+						g_bIsValidRun[client] = true;
+					}
+				}
 
 				if (g_bToggleMapFinish[client])
 				{
