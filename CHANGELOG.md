@@ -1,6 +1,6 @@
 # Changelog
 
-[2020-04-13 - Version 3.0.5]
+[2021-04-13 - Version 3.0.5]
 ---
 - Added `ck_sound_record_type` to enable controll over record sounds by @Kyli3Boi
 - Fixed Center Speed Display by @Kyli3Boi
@@ -9,7 +9,7 @@
 - Fixed missed PB message for styles by @qawery-just-sad
 - Fixed creating database by @qawery-just-sad
 
-[2020-03-01 - Version 3.0.2]
+[2021-03-01 - Version 3.0.2]
 ---
 - New Discord announcemnets with embeds Thanks to @Sarrus1, improved with style by @Kyli3Boi, added steam profiles by @qawery-just-sad
 - Added style shortcut commands
