@@ -5,7 +5,6 @@ void CreateCommandsNewMap()
 	RegAdminCmd("sm_addnewmap", Client_AddNewMap, ADMFLAG_ROOT, "[surftimer] add a new map");
 	RegAdminCmd("sm_anm", Client_AddNewMap, ADMFLAG_ROOT, "[surftimer] add a new map");
 
-	db_present();
 }
 
 public Action Client_NewMap(int client, int args)
@@ -74,25 +73,4 @@ public void db_InsertNewestMaps()
 	char szQuery[512];
 	Format(szQuery, 512, sql_insertNewestMaps, g_szMapName);
 	SQL_TQuery(g_hDb, SQL_CheckCallback, szQuery, DBPrio_Low);
-}
-
-//update Database just incase
-public void db_present()
-{
-	// Check for db upgrades
-	if (!SQL_FastQuery(g_hDb, "SELECT mapname FROM ck_newmaps LIMIT 1"))
-	{
-		db_upgradeDbNewMap();
-		return;
-	}
-}
-
-
-public void db_upgradeDbNewMap()
-{
-	Transaction createTableTnx = SQL_CreateTransaction();
-
-	SQL_AddQuery(createTableTnx, sql_createNewestMaps);
-
-	SQL_ExecuteTransaction(g_hDb, createTableTnx, SQLTxn_CreateDatabaseSuccess, SQLTxn_CreateDatabaseFailed);
 }
