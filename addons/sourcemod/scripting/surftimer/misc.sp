@@ -3385,15 +3385,17 @@ public void CenterHudDead(int client)
 				PrintCSGOHUDText(client, "<pre>%s\nSpeed: <font color='#5e5'>%i u/s\n%s</pre>", obsAika, RoundToNearest(g_fLastSpeed[ObservedUser]), sResult);
 				return;
 			}
-			else if (g_bPracticeMode[ObservedUser])
-			{
-				//obsTimer = (GetGameTime() - g_fPracModeStartTime[ObservedUser] - g_fStartTime[ObservedUser] - g_fPauseTime[ObservedUser]) + g_fPlayerPracTimeSnap[ObservedUser][g_iLastSaveLocIdClient[ObservedUser]];
-				obsTimer = g_fCurrentRunTime[ObservedUser];
-				FormatTimeFloat(client, obsTimer, 3, obsAika, sizeof(obsAika));
-			}
 			else if (g_bTimerRunning[ObservedUser])
 			{
-				obsTimer = GetGameTime() - g_fStartTime[ObservedUser] - g_fPauseTime[ObservedUser];
+				if (g_bPracticeMode[ObservedUser])
+				{
+					obsTimer = g_fCurrentRunTime[ObservedUser];
+				}
+				else
+				{
+					obsTimer = GetGameTime() - g_fStartTime[ObservedUser] - g_fPauseTime[ObservedUser];
+				}
+
 				FormatTimeFloat(client, obsTimer, 3, obsAika, sizeof(obsAika));
 			}
 			else if (g_bWrcpTimeractivated[ObservedUser] && !g_bTimerRunning[ObservedUser])
