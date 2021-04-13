@@ -4029,7 +4029,7 @@ public void Checkpoint(int client, int zone, int zonegroup, float time)
 	GetClientName(client, szName, MAX_NAME_LENGTH);
 
 	// Has completed the map before
-	if (g_bCheckpointsFound[zonegroup][client] && g_bTimerRunning[client] && !g_bPracticeMode[client] && g_fCheckpointTimesRecord[zonegroup][client][zone] > 0.1)
+	if (g_bCheckpointsFound[zonegroup][client] && g_bTimerRunning[client] && /*!g_bPracticeMode[client] &&*/ g_fCheckpointTimesRecord[zonegroup][client][zone] > 0.1)
 	{
 		// Set percent of completion to assist
 		if (CS_GetMVPCount(client) < 1)
@@ -4089,7 +4089,9 @@ public void Checkpoint(int client, int zone, int zonegroup, float time)
 		Call_Finish();
 
 		if (g_bCheckpointsEnabled[client] && g_iCpMessages[client])
+		{
 			CPrintToChat(client, "%t", "Misc30", g_szChatPrefix, g_iClientInZone[client][1] + 1, szTime, szDiff, sz_srDiff);
+		}
 
 		Format(szSpecMessage, sizeof(szSpecMessage), "%t", "Misc31", g_szChatPrefix, szName, g_iClientInZone[client][1] + 1, szTime, szDiff, sz_srDiff);
 		CheckpointToSpec(client, szSpecMessage);
@@ -4098,7 +4100,7 @@ public void Checkpoint(int client, int zone, int zonegroup, float time)
 		tmpDiff[client] = diff;
 	}
 	else // if first run
-		if (g_bTimerRunning[client] && !g_bPracticeMode[client])
+		if (g_bTimerRunning[client] /*&& !g_bPracticeMode[client]*/)
 		{
 			// Set percent of completion to assist
 			if (CS_GetMVPCount(client) < 1)

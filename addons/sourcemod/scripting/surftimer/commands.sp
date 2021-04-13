@@ -82,6 +82,8 @@ void CreateCommands()
 	RegConsoleCmd("sm_loclist", Command_SaveLocList);
 	RegConsoleCmd("sm_normal", Command_normalMode, "[surftimer] Switches player back to normal mode.");
 	RegConsoleCmd("sm_n", Command_normalMode, "[surftimer] Switches player back to normal mode.");
+	RegConsoleCmd("sm_clearsavelocs", Command_clearPlayerCheckpoints, "[surftimer] Clears the players saved checkpoints");
+	RegConsoleCmd("sm_clearcheckpoints", Command_clearPlayerCheckpoints, "[surftimer] Clears the players saved checkpoints");
 
 	// Admin Commands
 	RegConsoleCmd("sm_ckadmin", Admin_ckPanel, "[surftimer] Displays the SurfTimer admin menu panel");
@@ -726,41 +728,45 @@ public Action Command_createPlayerCheckpoint(int client, int args)
 		}
 
 		// Save players time when creating saveloc
-		// Normal
-		if (g_bPracticeMode[client] && !g_bWrcpTimeractivated[client]) // Player in PracMode, save players current time + the time from players previous saveloc
-		{
-			if (g_iPreviousSaveLocIdClient[client] == g_iLastSaveLocIdClient[client]) // Did player Tele to earlier saveloc?
-			{
-				g_fPlayerPracTimeSnap[client][g_iLastSaveLocIdClient[client]] = (time - g_fPracModeStartTime[client] - g_fPauseTime[client]) + g_fPlayerPracTimeSnap[client][g_iLastSaveLocIdClient[client] - 1];	
-			}
-			else
-			{
-				g_fPlayerPracTimeSnap[client][g_iLastSaveLocIdClient[client]] = (time - g_fPracModeStartTime[client] - g_fPauseTime[client]) + g_fPlayerPracTimeSnap[client][g_iPreviousSaveLocIdClient[client]];
-			}
-
-			g_fPracModeStartTime[client] = GetGameTime();
-		}		
-		else if (!g_bPracticeMode[client] && !g_bWrcpTimeractivated[client]) // Player not in WrcpPracMode, save players current time
+		if (g_bTimerRunning[client])
 		{	
-			g_fPlayerPracTimeSnap[client][g_iLastSaveLocIdClient[client]] = time - g_fStartTime[client] - g_fPauseTime[client];
-		}
-		// Wrcp
-		else if (g_bPracticeMode[client] && g_bWrcpTimeractivated[client]) // Player in WrcpPracMode, save players current time + the time from players previous saveloc
-		{
-			if (g_iPreviousSaveLocIdClient[client] == g_iLastSaveLocIdClient[client]) // Did player Tele to earlier saveloc?
+			if (!g_bPracticeMode[client])
 			{
-				g_fPlayerPracTimeSnap[client][g_iLastSaveLocIdClient[client]] = (time - g_fStartWrcpTime[client] - g_fPauseTime[client]) + g_fPlayerPracTimeSnap[client][g_iLastSaveLocIdClient[client] - 1];	
+				g_fPlayerPracTimeSnap[client][g_iLastSaveLocIdClient[client]] = time - g_fStartTime[client] - g_fPauseTime[client];
 			}
 			else
 			{
-				g_fPlayerPracTimeSnap[client][g_iLastSaveLocIdClient[client]] = (time - g_fStartWrcpTime[client] - g_fPauseTime[client]) + g_fPlayerPracTimeSnap[client][g_iPreviousSaveLocIdClient[client]];
-			}
+				if (g_iPreviousSaveLocIdClient[client] == g_iLastSaveLocIdClient[client]) // Did player Tele to earlier saveloc?
+				{
+					g_fPlayerPracTimeSnap[client][g_iLastSaveLocIdClient[client]] = (time - g_fPracModeStartTime[client] - g_fPauseTime[client]) + g_fPlayerPracTimeSnap[client][g_iLastSaveLocIdClient[client] - 1];	
+				}
+				else
+				{
+					g_fPlayerPracTimeSnap[client][g_iLastSaveLocIdClient[client]] = (time - g_fPracModeStartTime[client] - g_fPauseTime[client]) + g_fPlayerPracTimeSnap[client][g_iPreviousSaveLocIdClient[client]];
+				}
 
-			g_fPracModeStartTime[client] = GetGameTime();
+				g_fPracModeStartTime[client] = GetGameTime();
+			}
 		}
-		else if (!g_bPracticeMode[client] && g_bWrcpTimeractivated[client]) // Player in Wrcp, save players current time
+		else if (g_bWrcpTimeractivated[client])
 		{
-			g_fPlayerPracTimeSnap[client][g_iLastSaveLocIdClient[client]] = time -  g_fStartWrcpTime[client] - g_fPauseTime[client];
+			if (!g_bPracticeMode[client])
+			{
+				g_fPlayerPracTimeSnap[client][g_iLastSaveLocIdClient[client]] = time -  g_fStartWrcpTime[client] - g_fPauseTime[client];
+			}
+			else
+			{
+				if (g_iPreviousSaveLocIdClient[client] == g_iLastSaveLocIdClient[client]) // Did player Tele to earlier saveloc?
+				{
+					g_fPlayerPracTimeSnap[client][g_iLastSaveLocIdClient[client]] = (time - g_fStartWrcpTime[client] - g_fPauseTime[client]) + g_fPlayerPracTimeSnap[client][g_iLastSaveLocIdClient[client] - 1];	
+				}
+				else
+				{
+					g_fPlayerPracTimeSnap[client][g_iLastSaveLocIdClient[client]] = (time - g_fStartWrcpTime[client] - g_fPauseTime[client]) + g_fPlayerPracTimeSnap[client][g_iPreviousSaveLocIdClient[client]];
+				}
+
+				g_fPracModeStartTime[client] = GetGameTime();
+			}
 		}
 
 		CPrintToChat(client, "%t", "Commands7", g_szChatPrefix, g_iSaveLocCount[client]);
@@ -768,42 +774,6 @@ public Action Command_createPlayerCheckpoint(int client, int args)
 		g_fLastCheckpointMade[client] = GetGameTime();
 		g_iSaveLocUnix[g_iSaveLocCount[client]][client] = GetTime();
 		GetClientName(client, g_szSaveLocClientName[g_iSaveLocCount[client]], MAX_NAME_LENGTH);
-
-		/* 	---------------------------------------------------------------------
-			-							TESTING ARRAY							-
-			-						g_iPlayerPracLocationSnap[client]						-
-			-	(uncomment code to display stage array values in client console -
-			-	when creating saveloc)											-
-			--------------------------------------------------------------------- */
-		/*int result;
-		for (int i = g_iLastSaveLocIdClient[client]; i >= 0; i--)
-		{
-			result = g_iPlayerPracLocationSnap[client][i];
-			
-			PrintToConsole(client, "Index[%i] = %i", i, result);		
-		}
-		PrintToConsole(client, "_____________________");*/
-		/* 	---------------------------------------------------------------------
-			-							END TESTING								-
-			--------------------------------------------------------------------- */
-
-		/* 	---------------------------------------------------------------------
-			-							TESTING ARRAY							-
-			-	g_fPlayerPracTimeSnap[client][g_iLastSaveLocIdClient[client]]	-
-			-	(uncomment code to display array values in client console 		-
-			-	when creating saveloc)											-
-			--------------------------------------------------------------------- */
-		/*float result;
-		for (int i = g_iLastSaveLocIdClient[client]; i >= 0; i--)
-		{
-			result = g_fPlayerPracTimeSnap[client][i];
-			
-			PrintToConsole(client, "Index[%i] = %f", i, result);		
-		}
-		PrintToConsole(client, "_____________________");*/
-		/* 	---------------------------------------------------------------------
-			-							END TESTING								-
-			--------------------------------------------------------------------- */
 	}
 	else
 	{
@@ -869,6 +839,41 @@ public Action Command_goToPlayerCheckpoint(int client, int args)
 	}
 
 	return Plugin_Handled;
+}
+
+public Action Command_clearPlayerCheckpoints(int client, int args)
+{
+	if (g_iSaveLocCount[client] == 0)
+	{
+		CPrintToChat(client, "%t", "Commands12", g_szChatPrefix);
+		return Plugin_Handled;
+	}
+	else
+	{
+		for (int i = 0; i <= g_iSaveLocCount[client]; i++)
+		{
+			g_iPlayerPracLocationSnap[client][i] = 0;
+			g_fPlayerPracTimeSnap[client][i] = 0.0;
+		}
+
+		g_iLastSaveLocIdClient[client] = 0;
+		g_iPreviousSaveLocIdClient[client] = 0;
+		g_iSaveLocCount[client] = 0;
+
+		CPrintToChat(client, "%t", "Commands14", g_szChatPrefix);
+
+		if (GetConVarInt(g_hDoubleRestartCommand) == 1)
+		{ 
+			Command_Restart(client, 1);
+			Command_Restart(client, 1);
+		}
+		else
+		{
+			Command_Restart(client, 1);
+		}
+		
+		return Plugin_Handled;
+	}
 }
 
 public Action Command_SaveLocList(int client, int args)
