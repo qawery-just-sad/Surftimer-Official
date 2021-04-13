@@ -82,8 +82,8 @@ void CreateCommands()
 	RegConsoleCmd("sm_loclist", Command_SaveLocList);
 	RegConsoleCmd("sm_normal", Command_normalMode, "[surftimer] Switches player back to normal mode.");
 	RegConsoleCmd("sm_n", Command_normalMode, "[surftimer] Switches player back to normal mode.");
-	RegConsoleCmd("sm_clearsavelocs", Command_clearPlayerCheckpoints, "[surftimer] Clears the players saved checkpoints");
-	RegConsoleCmd("sm_clearcheckpoints", Command_clearPlayerCheckpoints, "[surftimer] Clears the players saved checkpoints");
+	RegConsoleCmd("sm_clearsavelocs", Command_clearPlayerCheckpoints, "[surftimer] Clears the players savelocs");
+	RegConsoleCmd("sm_clearlocs", Command_clearPlayerCheckpoints, "[surftimer] Clears the players savelocs");
 
 	// Admin Commands
 	RegConsoleCmd("sm_ckadmin", Admin_ckPanel, "[surftimer] Displays the SurfTimer admin menu panel");
@@ -794,7 +794,7 @@ public Action Command_goToPlayerCheckpoint(int client, int args)
 		
 		// This bypasses checkpoint enforcer when in PracMode as players wont always be passing all checkpoints
 		g_bIsValidRun[client] = true;
-		
+
 		if (args == 0)
 		{
 			int id = g_iLastSaveLocIdClient[client];
