@@ -66,9 +66,13 @@ public void db_setupDatabase()
 		{
 			db_upgradeDatabase(3);
 		}
-		else if (!SQL_FastQuery(g_hDb, "SELECT style FROM ck_announcements LIMIT 1;"))
+		else if (!SQL_FastQuery(g_hDb, "SELECT mapname FROM ck_newmaps LIMIT 1"))
 		{
 			db_upgradeDatabase(4);
+		}
+		else if (!SQL_FastQuery(g_hDb, "SELECT style FROM ck_announcements LIMIT 1;"))
+		{
+			db_upgradeDatabase(5);
 		}
 	}
 
@@ -78,125 +82,117 @@ public void db_setupDatabase()
 		g_failedTransactions[i] = 0;
 }
 
-public void db_createTables()
+void db_createTables(int attempt = 0)
 {
-	Transaction tTransaction = new Transaction();
 
-	tTransaction.AddQuery(sql_createPlayertmp, 1);
-	tTransaction.AddQuery(sql_createPlayertimes, 2);
-	tTransaction.AddQuery("SELECT COUNT(1) FROM INFORMATION_SCHEMA.STATISTICS WHERE table_schema=DATABASE() AND table_name='ck_playertimes' AND index_name='maprank';", 3);
-	tTransaction.AddQuery(sql_createPlayerRank, 4);
-	tTransaction.AddQuery(sql_createPlayerOptions, 5);
-	tTransaction.AddQuery(sql_createLatestRecords, 6);
-	tTransaction.AddQuery(sql_createBonus, 7);
-	tTransaction.AddQuery("SELECT COUNT(1) FROM INFORMATION_SCHEMA.STATISTICS WHERE table_schema=DATABASE() AND table_name='ck_bonus' AND index_name='bonusrank';", 8);
-	tTransaction.AddQuery(sql_createCheckpoints, 9);
-	tTransaction.AddQuery(sql_createZones, 10);
-	tTransaction.AddQuery(sql_createMapTier, 11);
-	tTransaction.AddQuery(sql_createSpawnLocations, 12);
-	tTransaction.AddQuery(sql_createAnnouncements, 13);
-	tTransaction.AddQuery(sql_createVipAdmins, 14);
-	tTransaction.AddQuery(sql_createWrcps, 15);
-	tTransaction.AddQuery(sql_createNewestMaps, 16);
+	SQL_FastQuery(g_hDb, sql_createPlayertmp);
+	SQL_FastQuery(g_hDb, sql_createPlayertimes);
+	SQL_FastQuery(g_hDb, sql_createPlayerRank);
+	SQL_FastQuery(g_hDb, sql_createPlayerOptions);
+	SQL_FastQuery(g_hDb, sql_createLatestRecords);
+	SQL_FastQuery(g_hDb, sql_createBonus);
+	SQL_FastQuery(g_hDb, sql_createCheckpoints);
+	SQL_FastQuery(g_hDb, sql_createZones);
+	SQL_FastQuery(g_hDb, sql_createMapTier);
+	SQL_FastQuery(g_hDb, sql_createSpawnLocations);
+	SQL_FastQuery(g_hDb, sql_createAnnouncements);
+	SQL_FastQuery(g_hDb, sql_createVipAdmins);
+	SQL_FastQuery(g_hDb, sql_createWrcps);
+	SQL_FastQuery(g_hDb, sql_createNewestMaps);
+	SQL_FastQuery(g_hDb, sql_createPlayertimesIndex);
+	SQL_FastQuery(g_hDb, sql_createBonusIndex);
 
-	SQL_ExecuteTransaction(g_hDb, tTransaction, SQLTxn_CreateDatabaseSuccess, SQLTxn_CreateDatabaseFailed, DBPrio_High);
+	SQL_TQuery(g_hDb, db_CreateCheckCB, "SHOW TABLES", attempt, DBPrio_High);
 
 }
 
-public void SQLTxn_CreateDatabaseSuccess(Handle db, any data, int numQueries, DBResultSet[] results, any[] queryData)
+void db_CreateCheckCB(Handle owner, Handle hndl, const char[] error, any attempt)
 {
-	PrintToServer("[SurfTimer] Database tables succesfully created!");
 
-	for (int i = 0; i < numQueries; i++)
+	if (hndl == null)
 	{
-		if (queryData[i] == 3 || queryData[i] == 8)
+		SetFailState("[SurfTimer] SQL Error (db_CreateCheckCB): %s ", error);
+		return;
+	}
+
+	if(SQL_HasResultSet(hndl))
+	{
+		int tables = SQL_GetRowCount(hndl);
+
+		if(tables < 14 && attempt < 5)
 		{
-			if (results[i].HasResults && results[i].FetchRow())
-			{
-				if (results[i].FetchInt(0) == 0)
-				{
-					if (queryData[i] == 3)
-					{
-						SQL_TQuery(g_hDb, sqlcreatePlayertimesIndex, sql_createPlayertimesIndex, _, DBPrio_High);
-					}
-					else
-					{
-						SQL_TQuery(g_hDb, sqlcreateBonusIndex, sql_createBonusIndex, _, DBPrio_High);
-					}
-				}
-			}
+			LogError("[SurfTimer] SQL Error (db_CreateCheckCB): Tables were not created, retrying. Attempt: %d", attempt);
+			attempt++;
+			db_createTables(attempt);
+			return;
+		}
+		else if (tables < 14 && attempt == 5)
+		{
+			SetFailState("[SurfTimer] SQL Error (db_CreateCheckCB): Tables were not created after 5 attempts.");
+			return;
+		}
+		else if (tables == 14)
+		{
+			PrintToServer("[SurfTimer] Database tables succesfully created!");
+			return;
+		}
+		else if (tables > 14)
+		{
+			SetFailState("[SurfTimer] SQL Error (db_CreateCheckCB): Create databse only for surftimer!");
+			return;
 		}
 	}
 }
 
-public void sqlcreatePlayertimesIndex(Handle db, Handle hndl, const char[] error, any data)
-{
-	if (db == null || (strlen(error) && StrContains(error, "Duplicate", false) == -1))
-	{
-		SetFailState("[SurfTimer] (sqlcreatePlayertimesIndex) Can't add playertimes index. Error: %s", error);
-		return;
-	}
-}
-
-public void sqlcreateBonusIndex(Handle db, Handle hndl, const char[] error, any data)
-{
-	if (db == null || (strlen(error) && StrContains(error, "Duplicate", false) == -1))
-	{
-		SetFailState("[SurfTimer] (sqlcreateBonusIndex) Can't add bonus index. Error: %s", error);
-		return;
-	}
-}
-
-public void SQLTxn_CreateDatabaseFailed(Handle db, any data, int numQueries, const char[] error, int failIndex, any[] queryData)
-{
-	SetFailState("[SurfTimer] Database tables could not be created! Error (Query: %d): %s", queryData[failIndex], error);
-}
-
 public void db_upgradeDatabase(int ver)
 {
-  if (ver == 0)
-  {
-    // SurfTimer v2.01 -> SurfTimer v2.1
-    char query[128];
-    for (int i = 1; i < 11; i++)
-    {
-      Format(query, sizeof(query), "ALTER TABLE ck_maptier DROP COLUMN btier%i", i);
-      SQL_FastQuery(g_hDb, query);
-    }
-    
-    SQL_FastQuery(g_hDb, "ALTER TABLE ck_maptier ADD COLUMN maxvelocity FLOAT NOT NULL DEFAULT '3500.0';");
-    SQL_FastQuery(g_hDb, "ALTER TABLE ck_maptier ADD COLUMN announcerecord INT(11) NOT NULL DEFAULT '0';");
-    SQL_FastQuery(g_hDb, "ALTER TABLE ck_maptier ADD COLUMN gravityfix INT(11) NOT NULL DEFAULT '1';");
-    SQL_FastQuery(g_hDb, "ALTER TABLE ck_zones ADD COLUMN `prespeed` int(64) NOT NULL DEFAULT '350';");
-    SQL_FastQuery(g_hDb, "CREATE INDEX tier ON ck_maptier (mapname, tier);");
-    SQL_FastQuery(g_hDb, "CREATE INDEX mapsettings ON ck_maptier (mapname, maxvelocity, announcerecord, gravityfix);");
-    SQL_FastQuery(g_hDb, "UPDATE ck_maptier a, ck_mapsettings b SET a.maxvelocity = b.maxvelocity WHERE a.mapname = b.mapname;");
-    SQL_FastQuery(g_hDb, "UPDATE ck_maptier a, ck_mapsettings b SET a.announcerecord = b.announcerecord WHERE a.mapname = b.mapname;");
-    SQL_FastQuery(g_hDb, "UPDATE ck_maptier a, ck_mapsettings b SET a.gravityfix = b.gravityfix WHERE a.mapname = b.mapname;");
-    SQL_FastQuery(g_hDb, "UPDATE ck_zones a, ck_mapsettings b SET a.prespeed = b.startprespeed WHERE a.mapname = b.mapname AND zonetype = 1;");
-    SQL_FastQuery(g_hDb, "DROP TABLE ck_mapsettings;");
-  }
-  else if (ver == 1)
-  {
-	// SurfTimer v2.1 -> v2.2
-	SQL_FastQuery(g_hDb, "ALTER TABLE ck_maptier ADD COLUMN ranked INT(11) NOT NULL DEFAULT '1';");
-	SQL_FastQuery(g_hDb, "ALTER TABLE ck_playerrank DROP PRIMARY KEY, ADD COLUMN style INT(11) NOT NULL DEFAULT '0', ADD PRIMARY KEY (steamid, style);");
-  }
-  else if (ver == 2)
-  {
-	  SQL_FastQuery(g_hDb, "ALTER TABLE ck_playerrank ADD COLUMN wrcppoints INT(11) NOT NULL DEFAULT 0 AFTER `wrbpoints`;");
-  }
-  else if (ver == 3)
-  {
-	  SQL_FastQuery(g_hDb, "ALTER TABLE ck_playeroptions2 ADD COLUMN teleside INT(11) NOT NULL DEFAULT 0 AFTER centrehud;");
-	  SQL_FastQuery(g_hDb, "ALTER TABLE ck_spawnlocations DROP PRIMARY KEY, ADD COLUMN teleside INT(11) NOT NULL DEFAULT 0 AFTER stage, ADD PRIMARY KEY (mapname, zonegroup, stage, teleside);");
-  }
-  else if (ver == 4)
-  {
-	  SQL_FastQuery(g_hDb, "ALTER TABLE ck_announcements ADD COLUMN style INT(11) NOT NULL DEFAULT 0;");
-  }
-  
-  SQL_UnlockDatabase(g_hDb);
+	if (ver == 0)
+	{
+		// SurfTimer v2.01 -> SurfTimer v2.1
+		char query[128];
+		for (int i = 1; i < 11; i++)
+		{
+			Format(query, sizeof(query), "ALTER TABLE ck_maptier DROP COLUMN btier%i", i);
+			SQL_FastQuery(g_hDb, query);
+		}
+
+		SQL_FastQuery(g_hDb, "ALTER TABLE ck_maptier ADD COLUMN maxvelocity FLOAT NOT NULL DEFAULT '3500.0';");
+		SQL_FastQuery(g_hDb, "ALTER TABLE ck_maptier ADD COLUMN announcerecord INT(11) NOT NULL DEFAULT '0';");
+		SQL_FastQuery(g_hDb, "ALTER TABLE ck_maptier ADD COLUMN gravityfix INT(11) NOT NULL DEFAULT '1';");
+		SQL_FastQuery(g_hDb, "ALTER TABLE ck_zones ADD COLUMN `prespeed` int(64) NOT NULL DEFAULT '350';");
+		SQL_FastQuery(g_hDb, "CREATE INDEX tier ON ck_maptier (mapname, tier);");
+		SQL_FastQuery(g_hDb, "CREATE INDEX mapsettings ON ck_maptier (mapname, maxvelocity, announcerecord, gravityfix);");
+		SQL_FastQuery(g_hDb, "UPDATE ck_maptier a, ck_mapsettings b SET a.maxvelocity = b.maxvelocity WHERE a.mapname = b.mapname;");
+		SQL_FastQuery(g_hDb, "UPDATE ck_maptier a, ck_mapsettings b SET a.announcerecord = b.announcerecord WHERE a.mapname = b.mapname;");
+		SQL_FastQuery(g_hDb, "UPDATE ck_maptier a, ck_mapsettings b SET a.gravityfix = b.gravityfix WHERE a.mapname = b.mapname;");
+		SQL_FastQuery(g_hDb, "UPDATE ck_zones a, ck_mapsettings b SET a.prespeed = b.startprespeed WHERE a.mapname = b.mapname AND zonetype = 1;");
+		SQL_FastQuery(g_hDb, "DROP TABLE ck_mapsettings;");
+	}
+	else if (ver == 1)
+	{
+		// SurfTimer v2.1 -> v2.2
+		SQL_FastQuery(g_hDb, "ALTER TABLE ck_maptier ADD COLUMN ranked INT(11) NOT NULL DEFAULT '1';");
+		SQL_FastQuery(g_hDb, "ALTER TABLE ck_playerrank DROP PRIMARY KEY, ADD COLUMN style INT(11) NOT NULL DEFAULT '0', ADD PRIMARY KEY (steamid, style);");
+	}
+	else if (ver == 2)
+	{
+		SQL_FastQuery(g_hDb, "ALTER TABLE ck_playerrank ADD COLUMN wrcppoints INT(11) NOT NULL DEFAULT 0 AFTER `wrbpoints`;");
+	}
+	else if (ver == 3)
+	{
+		SQL_FastQuery(g_hDb, "ALTER TABLE ck_playeroptions2 ADD COLUMN teleside INT(11) NOT NULL DEFAULT 0 AFTER centrehud;");
+		SQL_FastQuery(g_hDb, "ALTER TABLE ck_spawnlocations DROP PRIMARY KEY, ADD COLUMN teleside INT(11) NOT NULL DEFAULT 0 AFTER stage, ADD PRIMARY KEY (mapname, zonegroup, stage, teleside);");
+	}
+	else if (ver == 4)
+	{
+		SQL_FastQuery(g_hDb, sql_createNewestMaps);
+	}
+	else if (ver == 5)
+	{
+		SQL_FastQuery(g_hDb, "ALTER TABLE ck_announcements ADD COLUMN style INT(11) NOT NULL DEFAULT 0;");
+	}
+
+	SQL_UnlockDatabase(g_hDb);
 }
 
 /* Admin Delete Menu */
@@ -1684,6 +1680,12 @@ public void sql_selectRankedPlayersRankCallback(Handle owner, Handle hndl, const
 	if (SQL_HasResultSet(hndl) && SQL_FetchRow(hndl))
 	{
 		g_PlayerRank[client][style] = SQL_FetchInt(hndl,0);
+
+		if (g_PlayerRank[client][style] == 0)
+		{
+			g_PlayerRank[client][style] = -1;
+		}
+
 		if (GetConVarInt(g_hPrestigeRank) > 0)
 		{
 			if (GetConVarBool(g_hPrestigeStyles) && !g_bPrestigeAvoid[client])
@@ -1713,7 +1715,7 @@ public void sql_selectRankedPlayersRankCallback(Handle owner, Handle hndl, const
 		// Sort players by rank in scoreboard
 		if (style == 0)
 		{
-			if (g_pr_AllPlayers[style] < g_PlayerRank[client][style] || g_PlayerRank[client][style] == 0)
+			if (g_pr_AllPlayers[style] < g_PlayerRank[client][style] || g_PlayerRank[client][style] == -1)
 				CS_SetClientContributionScore(client, -99999);
 			else
 				CS_SetClientContributionScore(client, -g_PlayerRank[client][style]);

@@ -8,14 +8,26 @@ labels: bug
 **Describe the bug**
 A clear and concise description of what the bug is.
 
+**How To Reproduce**
+Steps to reproduce the behavior:
+1. Go to '...'
+2. Click on '....'
+3. Scroll down to '....'
+4. See error
+
+**Error Log**
+Full error log from the day that the issue occurred.
+
 **Expected behavior**
 A clear and concise description of what you expected to happen.
 
 **Screenshots**
 If applicable, add screenshots to help explain your problem.
 
-**Plugin List**
-List of all your current sourcemod plugins, if applicable to the issue.
+**System Information:**
+ - OS: [e.g. Linux]
+ - Plugins List: [use `sm plugins list`]
+ - SurfTimer Version: [e.g. 285]
 
 **Additional context**
 Add any other context about the problem here.
