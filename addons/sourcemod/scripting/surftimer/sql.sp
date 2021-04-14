@@ -5973,7 +5973,7 @@ public void sql_selectWrcpRecordCallback(Handle owner, Handle hndl, const char[]
 		float stagetime = SQL_FetchFloat(hndl, 0);
 
 		// If old time was slower than the new time, update record
-		if ((g_fFinalWrcpTime[data] <= stagetime || stagetime <= 0.0))
+		if ((g_fFinalWrcpTime[data] <= stagetime || stagetime <= 0.0) && !g_bPracticeMode[data])
 		{
 			db_updateWrcpRecord(data, style, stage);
 		}

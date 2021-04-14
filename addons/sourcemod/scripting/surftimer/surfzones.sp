@@ -326,6 +326,7 @@ public void StartTouch(int client, int action[3])
 			g_bInStageZone[client] = false;
 			g_iCurrentStyle[client] = g_iInitalStyle[client];
 			lastCheckpoint[g_iClientInZone[client][2]][client] = 1;
+			g_bSaveLocTele[client] = false;
 
 			if (g_bhasStages)
 			{
@@ -400,44 +401,53 @@ public void StartTouch(int client, int action[3])
 			if (g_bPracticeMode[client]) 
 			{
 				g_bSaveLocTele[client] = false;
-				g_Stage[g_iClientInZone[client][2]][client] = (action[1] + 2);
 			}
-			else
-			{ 
-				// Setting valid to false, in case of checkers
-				g_bValidRun[client] = false;
+			
+			// Setting valid to false, in case of checkers
+			g_bValidRun[client] = false;
 
-				// Announcing checkpoint
-				if (action[1] != lastCheckpoint[g_iClientInZone[client][2]][client] && g_iClientInZone[client][2] == action[2])
+			// Announcing checkpoint
+			CPrintToChat(client, "action[1]: %i", action[1]);
+			CPrintToChat(client, "lastCP: %i", lastCheckpoint[g_iClientInZone[client][2]][client]);
+			if (action[1] != lastCheckpoint[g_iClientInZone[client][2]][client] && g_iClientInZone[client][2] == action[2] /*|| g_bPracticeMode[client]*/)
+			{
+				// Make sure the player is not going backwards
+				if ((action[1] + 2) < g_Stage[g_iClientInZone[client][2]][client])
+					g_bWrcpTimeractivated[client] = false;
+				else
+					g_bNewStage[client] = true;
+
+				g_Stage[g_iClientInZone[client][2]][client] = (action[1] + 2);
+
+				float time = g_fCurrentRunTime[client];
+				float time2 = g_fCurrentWrcpRunTime[client];
+				CL_OnEndWrcpTimerPress(client, time2);
+				
+				// Stage enforcer
+				g_iCheckpointsPassed[client]++;
+				if (g_iCheckpointsPassed[client] == g_TotalStages)
+					g_bIsValidRun[client] = true;
+
+				if (g_iCurrentStyle[client] == 0)
+					Checkpoint(client, action[1], g_iClientInZone[client][2], time);
+				
+				if (g_bPracticeMode[client])
+					db_selectWrcpRecord(client, g_iCurrentStyle[client], action[1] + 1);
+
+				if (!g_bSaveLocTele[client])
 				{
-					// Make sure the player is not going backwards
-					if ((action[1] + 2) < g_Stage[g_iClientInZone[client][2]][client])
-						g_bWrcpTimeractivated[client] = false;
-					else
-						g_bNewStage[client] = true;
-
-					g_Stage[g_iClientInZone[client][2]][client] = (action[1] + 2);
-
-					float time = g_fCurrentRunTime[client];
-					float time2 = g_fCurrentWrcpRunTime[client];
-					CL_OnEndWrcpTimerPress(client, time2);
-					
-					// Stage enforcer
-					g_iCheckpointsPassed[client]++;
-					if (g_iCheckpointsPassed[client] == g_TotalStages)
-						g_bIsValidRun[client] = true;
-
-					if (g_iCurrentStyle[client] == 0)
-						Checkpoint(client, action[1], g_iClientInZone[client][2], time);
-
 					lastCheckpoint[g_iClientInZone[client][2]][client] = action[1];
 				}
-				else if (!g_bTimerRunning[client])
-					g_iCurrentStyle[client] = g_iInitalStyle[client];
-
-				if (g_bWrcpTimeractivated[client])
-					g_bWrcpTimeractivated[client] = false;
+				else
+				{
+					lastCheckpoint[g_iClientInZone[client][2]][client] = g_iPlayerPracLocationSnap[client][g_iLastSaveLocIdClient[client]] - 1;
+				}
 			}
+			else if (!g_bTimerRunning[client])
+				g_iCurrentStyle[client] = g_iInitalStyle[client];
+
+			if (g_bWrcpTimeractivated[client])
+				g_bWrcpTimeractivated[client] = false;
 		}
 		else if (action[0] == 4) // Checkpoint Zone
 		{

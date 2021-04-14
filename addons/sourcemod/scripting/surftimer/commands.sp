@@ -831,9 +831,12 @@ public Action Command_goToPlayerCheckpoint(int client, int args)
 			TeleportToSaveloc(client, id);
 		}
 
-		if (!g_bhasStages && g_bSaveLocTele[client])
+		g_iCurrentCheckpoint[client] =  g_iPlayerPracLocationSnap[client][g_iLastSaveLocIdClient[client]] -1;
+		
+		lastCheckpoint[g_iClientInZone[client][2]][client] = g_iCurrentCheckpoint[client] - 1;
+		if (lastCheckpoint[g_iClientInZone[client][2]][client] == -1)
 		{
-			g_iCurrentCheckpoint[client] =  g_iPlayerPracLocationSnap[client][g_iLastSaveLocIdClient[client]] -1;
+			lastCheckpoint[g_iClientInZone[client][2]][client] = 999;
 		}
 	}
 	else

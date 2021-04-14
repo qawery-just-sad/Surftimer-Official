@@ -1385,6 +1385,7 @@ public void SetClientDefaults(int client)
 	// Save loc
 	g_iLastSaveLocIdClient[client] = 0;
 	g_fLastCheckpointMade[client] = 0.0;
+	g_bSaveLocTele[client] = false;
 
 	// surf_christmas2
 	g_bUsingStageTeleport[client] = false;
@@ -3995,7 +3996,7 @@ public void Checkpoint(int client, int zone, int zonegroup, float time)
 	percent = percent * 100.0;
 	Format(szPercnt, 24, "%1.f%%", percent);
 
-	if (g_bTimerRunning[client] && !g_bPracticeMode[client]) {
+	if (g_bTimerRunning[client] /*&& !g_bPracticeMode[client]*/) {
 		if (g_fMaxPercCompleted[client] < 1.0) // First time a checkpoint is reached
 			g_fMaxPercCompleted[client] = percent;
 		else
