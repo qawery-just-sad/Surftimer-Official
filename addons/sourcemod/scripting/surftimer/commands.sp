@@ -769,6 +769,16 @@ public Action Command_createPlayerCheckpoint(int client, int args)
 			}
 		}
 
+		// Save bonus number when creating saveloc in bonus 
+		if (g_bInBonus[client])
+		{
+			g_iSaveLocInBonus[client][g_iSaveLocCount[client]] = g_iInBonus[client];
+		}
+		else
+		{
+			g_iSaveLocInBonus[client][g_iSaveLocCount[client]] = 0;
+		}
+
 		CPrintToChat(client, "%t", "Commands7", g_szChatPrefix, g_iSaveLocCount[client]);
 		
 		g_fLastCheckpointMade[client] = GetGameTime();
@@ -856,10 +866,15 @@ public Action Command_clearPlayerCheckpoints(int client, int args)
 	}
 	else
 	{
-		for (int i = 0; i <= g_iSaveLocCount[client]; i++)
+		for (int i = 0; i < g_iSaveLocCount[client]; i++)
 		{
 			g_iPlayerPracLocationSnap[client][i] = 0;
 			g_fPlayerPracTimeSnap[client][i] = 0.0;
+		}
+
+		for (int i = 0; i < MAX_LOCS; i++)
+		{
+			g_iSaveLocInBonus[client][i] = 0;
 		}
 
 		g_iLastSaveLocIdClient[client] = 0;

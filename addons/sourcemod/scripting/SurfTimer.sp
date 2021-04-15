@@ -1258,6 +1258,7 @@ float g_fPlayerPracTimeSnap[MAXPLAYERS + 1][MAX_LOCS]; // PracticeMode saveloc r
 int g_iPlayerPracLocationSnap[MAXPLAYERS + 1][MAX_LOCS]; // Stage the player was in when creating saveloc
 int g_iPlayerPracLocationSnapIdClient[MAXPLAYERS + 1]; // Stage Index to use when tele to saveloc
 bool g_bSaveLocTele[MAXPLAYERS + 1]; // Has the player teleported to saveloc?
+int g_iSaveLocInBonus[MAXPLAYERS + 1][MAX_LOCS]; // Bonus number if player created saveloc in bonus
 
 char g_sServerName[256];
 ConVar g_hHostName = null;

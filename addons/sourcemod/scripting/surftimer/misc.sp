@@ -1386,6 +1386,11 @@ public void SetClientDefaults(int client)
 	g_iLastSaveLocIdClient[client] = 0;
 	g_fLastCheckpointMade[client] = 0.0;
 	g_bSaveLocTele[client] = false;
+	
+	for (int i = 0; i < MAX_LOCS; i++)
+	{
+		g_iSaveLocInBonus[client][i] = 0;
+	}
 
 	// surf_christmas2
 	g_bUsingStageTeleport[client] = false;
@@ -5197,6 +5202,20 @@ public void TeleportToSaveloc(int client, int id)
 	ResetGravity(client);
 	g_bPracticeMode[client] = true;
 	g_bWrcpTimeractivated[client] = false;
+	
+	// Allows you to go from saveloc in map to bonus and visa-versa and use correct times/hud
+	if(g_iSaveLocInBonus[client][id] > 0)
+	{
+		g_bInBonus[client] = true;
+		g_iInBonus[client] = g_iSaveLocInBonus[client][id];
+		g_iClientInZone[client][2] = g_iInBonus[client];
+	}
+	else
+	{
+		g_bInBonus[client] = false;
+		g_iClientInZone[client][2] = 0;
+	}
+
 	CL_OnStartTimerPress(client);
 	DispatchKeyValue(client, "targetname", g_szSaveLocTargetname[id]);
 	SetEntPropVector(client, Prop_Data, "m_vecVelocity", view_as<float>( { 0.0, 0.0, 0.0 } ));
