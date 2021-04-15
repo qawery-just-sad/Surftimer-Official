@@ -407,8 +407,6 @@ public void StartTouch(int client, int action[3])
 			g_bValidRun[client] = false;
 
 			// Announcing checkpoint
-			CPrintToChat(client, "action[1]: %i", action[1]);
-			CPrintToChat(client, "lastCP: %i", lastCheckpoint[g_iClientInZone[client][2]][client]);
 			if (action[1] != lastCheckpoint[g_iClientInZone[client][2]][client] && g_iClientInZone[client][2] == action[2] /*|| g_bPracticeMode[client]*/)
 			{
 				// Make sure the player is not going backwards

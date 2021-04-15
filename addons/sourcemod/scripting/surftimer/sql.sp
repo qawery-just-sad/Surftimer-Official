@@ -4620,8 +4620,11 @@ public void SQL_selectMapZonesCallback(Handle owner, Handle hndl, const char[] e
 						Format(g_mapZones[g_mapZonesCount].ZoneName, sizeof(MapZone::ZoneName), "End-%i", g_mapZones[g_mapZonesCount].ZoneTypeId);
 					}
 					case 3: {
-						g_bhasStages = true;
-						Format(g_mapZones[g_mapZonesCount].ZoneName, sizeof(MapZone::ZoneName), "Stage-%i", (g_mapZones[g_mapZonesCount].ZoneTypeId + 2));
+						if (g_mapZones[g_mapZonesCount].ZoneGroup == 0)
+						{
+							g_bhasStages = true;
+							Format(g_mapZones[g_mapZonesCount].ZoneName, sizeof(MapZone::ZoneName), "Stage-%i", (g_mapZones[g_mapZonesCount].ZoneTypeId + 2));
+						}
 					}
 					case 4: {
 						Format(g_mapZones[g_mapZonesCount].ZoneName, sizeof(MapZone::ZoneName), "Checkpoint-%i", g_mapZones[g_mapZonesCount].ZoneTypeId);
@@ -4659,7 +4662,13 @@ public void SQL_selectMapZonesCallback(Handle owner, Handle hndl, const char[] e
 							g_bhasBonus = true;
 						Format(g_szZoneGroupName[g_mapZones[g_mapZonesCount].ZoneGroup], 128, "%s", g_mapZones[g_mapZonesCount].ZoneName);
 					}
-					case 3: g_bhasStages = true;
+					case 3: 
+					{
+						if (g_mapZones[g_mapZonesCount].ZoneGroup == 0)
+						{
+							g_bhasStages = true;
+						}
+					}
 				}
 			}
 
