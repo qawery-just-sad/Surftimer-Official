@@ -1,6 +1,15 @@
 # Changelog
 
-[2012-03-01 - Version 3.0.2]
+[2021-04-13 - Version 3.0.5]
+---
+- Added `ck_sound_record_type` to enable controll over record sounds by @Kyli3Boi
+- Fixed Center Speed Display by @Kyli3Boi
+- Changed permissions for `sm_fixbot` by @Kyli3Boi
+- Fixed bug where you couldn't spectate highest rank player by @Kyli3Boi and @qawery-just-sad
+- Fixed missed PB message for styles by @qawery-just-sad
+- Fixed creating database by @qawery-just-sad
+
+[2021-03-01 - Version 3.0.2]
 ---
 - New Discord announcemnets with embeds Thanks to @Sarrus1, improved with style by @Kyli3Boi, added steam profiles by @qawery-just-sad
 - Added style shortcut commands
