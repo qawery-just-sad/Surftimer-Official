@@ -5937,7 +5937,7 @@ public void sql_selectWrcpRecordCallback(Handle owner, Handle hndl, const char[]
 	int stage = ReadPackCell(packx);
 	delete packx;
 
-	if (!IsValidClient(data) || IsFakeClient(data))
+	if (!IsValidClient(data) || IsFakeClient(data) || g_bPracticeMode[data])
 		return;
 
 	char szName[MAX_NAME_LENGTH];
@@ -5982,7 +5982,7 @@ public void sql_selectWrcpRecordCallback(Handle owner, Handle hndl, const char[]
 		float stagetime = SQL_FetchFloat(hndl, 0);
 
 		// If old time was slower than the new time, update record
-		if ((g_fFinalWrcpTime[data] <= stagetime || stagetime <= 0.0) && !g_bPracticeMode[data])
+		if ((g_fFinalWrcpTime[data] <= stagetime || stagetime <= 0.0))
 		{
 			db_updateWrcpRecord(data, style, stage);
 		}
