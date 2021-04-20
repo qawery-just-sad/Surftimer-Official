@@ -122,7 +122,7 @@
 #define EF_NODRAW 32
 
 // New Save Locs
-#define MAX_LOCS 1024
+#define MAX_LOCS 128
 
 //CSGO HUD Hint Fix
 #define MAX_HINT_SIZE 254
@@ -787,6 +787,9 @@ char g_szBonusTimeDifference[MAXPLAYERS + 1];
 // Time when run was started
 float g_fStartTime[MAXPLAYERS + 1];
 
+// Time when PracMode run was started
+float g_fPracModeStartTime[MAXPLAYERS + 1];
+
 // Total time the run took
 float g_fFinalTime[MAXPLAYERS + 1];
 
@@ -801,6 +804,9 @@ float g_fStartPauseTime[MAXPLAYERS + 1];
 
 // Current runtime
 float g_fCurrentRunTime[MAXPLAYERS + 1];
+
+// PracticeMode total time the run took in 00:00:00 format
+char g_szPracticeTime[MAXPLAYERS + 1][32];
 
 // Missed personal record time?
 bool g_bMissedMapBest[MAXPLAYERS + 1];
@@ -1237,16 +1243,22 @@ int g_iTotalMeasures[MAXPLAYERS + 1];
 float g_fAngleCache[MAXPLAYERS + 1];
 
 // Save locs
-int g_iSaveLocCount;
-float g_fSaveLocCoords[MAX_LOCS][3]; // [loc id][coords]
-float g_fSaveLocAngle[MAX_LOCS][3]; // [loc id][angle]
-float g_fSaveLocVel[MAX_LOCS][3]; // [loc id][velocity]
+int g_iSaveLocCount[MAXPLAYERS + 1];
+float g_fSaveLocCoords[MAXPLAYERS + 1][MAX_LOCS][3]; // [loc id][coords]
+float g_fSaveLocAngle[MAXPLAYERS + 1][MAX_LOCS][3]; // [loc id][angle]
+float g_fSaveLocVel[MAXPLAYERS + 1][MAX_LOCS][3]; // [loc id][velocity]
 char g_szSaveLocTargetname[MAX_LOCS][128]; // [loc id]
 char g_szSaveLocClientName[MAX_LOCS][MAX_NAME_LENGTH];
 int g_iLastSaveLocIdClient[MAXPLAYERS + 1];
 float g_fLastCheckpointMade[MAXPLAYERS + 1];
-int g_iSaveLocUnix[MAX_LOCS]; // [loc id]
+int g_iSaveLocUnix[MAX_LOCS][MAXPLAYERS + 1]; // [loc id]
 int g_iMenuPosition[MAXPLAYERS + 1];
+int g_iPreviousSaveLocIdClient[MAXPLAYERS + 1]; // The previous saveloc the client used
+float g_fPlayerPracTimeSnap[MAXPLAYERS + 1][MAX_LOCS]; // PracticeMode saveloc runtime
+int g_iPlayerPracLocationSnap[MAXPLAYERS + 1][MAX_LOCS]; // Stage the player was in when creating saveloc
+int g_iPlayerPracLocationSnapIdClient[MAXPLAYERS + 1]; // Stage Index to use when tele to saveloc
+bool g_bSaveLocTele[MAXPLAYERS + 1]; // Has the player teleported to saveloc?
+int g_iSaveLocInBonus[MAXPLAYERS + 1][MAX_LOCS]; // Bonus number if player created saveloc in bonus
 
 char g_sServerName[256];
 ConVar g_hHostName = null;
@@ -1897,7 +1909,6 @@ public void OnMapStart()
 
 	// Save Locs
 	ResetSaveLocs();
-
 }
 
 public void OnMapEnd()

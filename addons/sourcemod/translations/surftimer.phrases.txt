@@ -568,10 +568,20 @@
 		"#format"	"{1:s}"
 		"en"		"{1} There are no saved locations, use sm_saveloc to make one"
 	}
+	"Commands12"
+	{
+		"#format"	"{1:s}"
+		"en"		"{1} {red}There are no saved locations to remove"
+	}
 	"Commands13"
 	{
 		"#format"	"{1:s},{2:d}"
 		"en"		"{1} Set saveloc id to #{2}"
+	}
+	"Commands14"
+	{
+		"#format"	"{1:s}"
+		"en"		"{1} {green}Saved locations cleared"
 	}
 	"NoBonusOnMap"
 	{

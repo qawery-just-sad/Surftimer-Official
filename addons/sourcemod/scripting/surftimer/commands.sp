@@ -82,6 +82,8 @@ void CreateCommands()
 	RegConsoleCmd("sm_loclist", Command_SaveLocList);
 	RegConsoleCmd("sm_normal", Command_normalMode, "[surftimer] Switches player back to normal mode.");
 	RegConsoleCmd("sm_n", Command_normalMode, "[surftimer] Switches player back to normal mode.");
+	RegConsoleCmd("sm_clearsavelocs", Command_clearPlayerCheckpoints, "[surftimer] Clears the players savelocs");
+	RegConsoleCmd("sm_clearlocs", Command_clearPlayerCheckpoints, "[surftimer] Clears the players savelocs");
 
 	// Admin Commands
 	RegConsoleCmd("sm_ckadmin", Admin_ckPanel, "[surftimer] Displays the SurfTimer admin menu panel");
@@ -682,19 +684,106 @@ public Action Command_createPlayerCheckpoint(int client, int args)
 	if ((time - g_fLastCheckpointMade[client]) < 1.0)
 		return Plugin_Handled;
 
-	if (g_iSaveLocCount < MAX_LOCS)
+	if (g_iSaveLocCount[client] < MAX_LOCS)
 	{
-		g_iSaveLocCount++;
-		GetClientAbsOrigin(client, g_fSaveLocCoords[g_iSaveLocCount]);
-		GetClientEyeAngles(client, g_fSaveLocAngle[g_iSaveLocCount]);
-		GetEntPropVector(client, Prop_Data, "m_vecVelocity", g_fSaveLocVel[g_iSaveLocCount]);
-		GetEntPropString(client, Prop_Data, "m_iName", g_szSaveLocTargetname[g_iSaveLocCount], sizeof(g_szSaveLocTargetname));
-		g_iLastSaveLocIdClient[client] = g_iSaveLocCount;
-		CPrintToChat(client, "%t", "Commands7", g_szChatPrefix, g_iSaveLocCount);
+		g_iSaveLocCount[client]++;
+		
+		GetClientAbsOrigin(client, g_fSaveLocCoords[client][g_iSaveLocCount[client]]);
+		GetClientEyeAngles(client, g_fSaveLocAngle[client][g_iSaveLocCount[client]]);
+		GetEntPropVector(client, Prop_Data, "m_vecVelocity", g_fSaveLocVel[client][g_iSaveLocCount[client]]);
+		GetEntPropString(client, Prop_Data, "m_iName", g_szSaveLocTargetname[g_iSaveLocCount[client]], sizeof(g_szSaveLocTargetname));
+		
+		g_iPreviousSaveLocIdClient[client] = g_iLastSaveLocIdClient[client];
+		g_iLastSaveLocIdClient[client] = g_iSaveLocCount[client];
 
+		// Save stage/checkpoint player was in when creating saveloc
+		if (g_bPracticeMode[client])
+		{
+			if (g_bSaveLocTele[client]) // Has the player teleported to saveloc?
+			{
+				g_iPlayerPracLocationSnap[client][g_iLastSaveLocIdClient[client]] = g_iPlayerPracLocationSnap[client][g_iPlayerPracLocationSnapIdClient[client]];
+			}
+			else
+			{
+				if (g_bhasStages)
+				{
+					g_iPlayerPracLocationSnap[client][g_iLastSaveLocIdClient[client]] = g_Stage[g_iClientInZone[client][2]][client];
+				}
+				else
+				{
+					g_iPlayerPracLocationSnap[client][g_iLastSaveLocIdClient[client]] = g_iCurrentCheckpoint[client] + 1;
+				}
+			}
+		}
+		else
+		{
+			if (g_bhasStages)
+			{
+				g_iPlayerPracLocationSnap[client][g_iLastSaveLocIdClient[client]] = g_Stage[g_iClientInZone[client][2]][client];
+			}
+			else
+			{
+				g_iPlayerPracLocationSnap[client][g_iLastSaveLocIdClient[client]] = g_iCurrentCheckpoint[client] + 1;
+			}
+		}
+
+		// Save players time when creating saveloc
+		if (g_bTimerRunning[client])
+		{	
+			if (!g_bPracticeMode[client])
+			{
+				g_fPlayerPracTimeSnap[client][g_iLastSaveLocIdClient[client]] = time - g_fStartTime[client] - g_fPauseTime[client];
+			}
+			else
+			{
+				if (g_iPreviousSaveLocIdClient[client] == g_iLastSaveLocIdClient[client]) // Did player Tele to earlier saveloc?
+				{
+					g_fPlayerPracTimeSnap[client][g_iLastSaveLocIdClient[client]] = (time - g_fPracModeStartTime[client] - g_fPauseTime[client]) + g_fPlayerPracTimeSnap[client][g_iLastSaveLocIdClient[client] - 1];	
+				}
+				else
+				{
+					g_fPlayerPracTimeSnap[client][g_iLastSaveLocIdClient[client]] = (time - g_fPracModeStartTime[client] - g_fPauseTime[client]) + g_fPlayerPracTimeSnap[client][g_iPreviousSaveLocIdClient[client]];
+				}
+
+				g_fPracModeStartTime[client] = GetGameTime();
+			}
+		}
+		else if (g_bWrcpTimeractivated[client])
+		{
+			if (!g_bPracticeMode[client])
+			{
+				g_fPlayerPracTimeSnap[client][g_iLastSaveLocIdClient[client]] = time -  g_fStartWrcpTime[client] - g_fPauseTime[client];
+			}
+			else
+			{
+				if (g_iPreviousSaveLocIdClient[client] == g_iLastSaveLocIdClient[client]) // Did player Tele to earlier saveloc?
+				{
+					g_fPlayerPracTimeSnap[client][g_iLastSaveLocIdClient[client]] = (time - g_fStartWrcpTime[client] - g_fPauseTime[client]) + g_fPlayerPracTimeSnap[client][g_iLastSaveLocIdClient[client] - 1];	
+				}
+				else
+				{
+					g_fPlayerPracTimeSnap[client][g_iLastSaveLocIdClient[client]] = (time - g_fStartWrcpTime[client] - g_fPauseTime[client]) + g_fPlayerPracTimeSnap[client][g_iPreviousSaveLocIdClient[client]];
+				}
+
+				g_fPracModeStartTime[client] = GetGameTime();
+			}
+		}
+
+		// Save bonus number when creating saveloc in bonus 
+		if (g_bInBonus[client])
+		{
+			g_iSaveLocInBonus[client][g_iSaveLocCount[client]] = g_iInBonus[client];
+		}
+		else
+		{
+			g_iSaveLocInBonus[client][g_iSaveLocCount[client]] = 0;
+		}
+
+		CPrintToChat(client, "%t", "Commands7", g_szChatPrefix, g_iSaveLocCount[client]);
+		
 		g_fLastCheckpointMade[client] = GetGameTime();
-		g_iSaveLocUnix[g_iSaveLocCount] = GetTime();
-		GetClientName(client, g_szSaveLocClientName[g_iSaveLocCount], MAX_NAME_LENGTH);
+		g_iSaveLocUnix[g_iSaveLocCount[client]][client] = GetTime();
+		GetClientName(client, g_szSaveLocClientName[g_iSaveLocCount[client]], MAX_NAME_LENGTH);
 	}
 	else
 	{
@@ -709,11 +798,19 @@ public Action Command_goToPlayerCheckpoint(int client, int args)
 	if (!IsValidClient(client))
 		return Plugin_Handled;
 	
-	if (g_iSaveLocCount > 0)
-	{
+	if (g_iSaveLocCount[client] > 0)
+	{	
+		g_bSaveLocTele[client] = true;
+		
+		// This bypasses checkpoint enforcer when in PracMode as players wont always be passing all checkpoints
+		g_bIsValidRun[client] = true;
+
 		if (args == 0)
 		{
 			int id = g_iLastSaveLocIdClient[client];
+				
+			g_iPlayerPracLocationSnapIdClient[client] = id;
+			
 			TeleportToSaveloc(client, id);
 		}
 		else
@@ -731,14 +828,25 @@ public Action Command_goToPlayerCheckpoint(int client, int args)
 			ReplaceString(arg, 128, "#", "", false);
 			int id = StringToInt(arg);
 
-			if (id < 1 || id > MAX_LOCS - 1 || id > g_iSaveLocCount)
+			if (id < 1 || id > MAX_LOCS - 1 || id > g_iSaveLocCount[client])
 			{
 				CPrintToChat(client, "%t", "Commands10", g_szChatPrefix);
 				return Plugin_Handled;
 			}
 
 			g_iLastSaveLocIdClient[client] = id;
+				
+			g_iPlayerPracLocationSnapIdClient[client] = id;
+
 			TeleportToSaveloc(client, id);
+		}
+
+		g_iCurrentCheckpoint[client] =  g_iPlayerPracLocationSnap[client][g_iLastSaveLocIdClient[client]] -1;
+		
+		lastCheckpoint[g_iClientInZone[client][2]][client] = g_iCurrentCheckpoint[client] - 1;
+		if (lastCheckpoint[g_iClientInZone[client][2]][client] == -1)
+		{
+			lastCheckpoint[g_iClientInZone[client][2]][client] = 999;
 		}
 	}
 	else
@@ -749,9 +857,49 @@ public Action Command_goToPlayerCheckpoint(int client, int args)
 	return Plugin_Handled;
 }
 
+public Action Command_clearPlayerCheckpoints(int client, int args)
+{
+	if (g_iSaveLocCount[client] == 0)
+	{
+		CPrintToChat(client, "%t", "Commands12", g_szChatPrefix);
+		return Plugin_Handled;
+	}
+	else
+	{
+		for (int i = 0; i < g_iSaveLocCount[client]; i++)
+		{
+			g_iPlayerPracLocationSnap[client][i] = 0;
+			g_fPlayerPracTimeSnap[client][i] = 0.0;
+		}
+
+		for (int i = 0; i < MAX_LOCS; i++)
+		{
+			g_iSaveLocInBonus[client][i] = 0;
+		}
+
+		g_iLastSaveLocIdClient[client] = 0;
+		g_iPreviousSaveLocIdClient[client] = 0;
+		g_iSaveLocCount[client] = 0;
+
+		CPrintToChat(client, "%t", "Commands14", g_szChatPrefix);
+
+		if (GetConVarInt(g_hDoubleRestartCommand) == 1)
+		{ 
+			Command_Restart(client, 1);
+			Command_Restart(client, 1);
+		}
+		else
+		{
+			Command_Restart(client, 1);
+		}
+		
+		return Plugin_Handled;
+	}
+}
+
 public Action Command_SaveLocList(int client, int args)
 {
-	if (g_iSaveLocCount < 1)
+	if (g_iSaveLocCount[client] < 1)
 	{
 		CPrintToChat(client, "%t", "Commands11", g_szChatPrefix);
 		return Plugin_Handled;
@@ -770,9 +918,9 @@ public void SaveLocMenu(int client)
 	char szItem[256];
 	char szId[32];
 	int unix;
-	for (int i = 1; i <= g_iSaveLocCount; i++)
+	for (int i = 1; i <= g_iSaveLocCount[client]; i++)
 	{
-		unix = GetTime() - g_iSaveLocUnix[i];
+		unix = GetTime() - g_iSaveLocUnix[i][client];
 		diffForHumans(unix, szBuffer, 128, 1);
 		Format(szItem, sizeof(szItem), "#%d - %s - %s", i, g_szSaveLocClientName[i], szBuffer);
 		IntToString(i, szId, 32);

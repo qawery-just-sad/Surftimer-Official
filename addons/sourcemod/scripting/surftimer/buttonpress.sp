@@ -54,11 +54,13 @@ public void CL_OnStartTimerPress(int client)
 		SetEntityRenderMode(client, RENDER_NORMAL);
 		g_fStartTime[client] = GetGameTime();
 		g_fCurrentRunTime[client] = 0.0;
+		g_fPracModeStartTime[client] = GetGameTime();
 		g_bPositionRestored[client] = false;
 		g_bMissedMapBest[client] = true;
 		g_bMissedBonusBest[client] = true;
 		g_bTimerRunning[client] = true;
 		g_bTop10Time[client] = false;
+		
 		// Strafe Sync
 		g_iGoodGains[client] = 0;
 		g_iTotalMeasures[client] = 0;
@@ -195,10 +197,13 @@ public void CL_OnEndTimerPress(int client)
 
 	if (g_bPracticeMode[client])
 	{
+		// Get CurrentRunTime and format it to a string
+		FormatTimeFloat(client, g_fCurrentRunTime[client], 3, g_szPracticeTime[client], 32);
+
 		if (g_iClientInZone[client][2] > 0)
-			CPrintToChat(client, "%t", "BPress4", g_szChatPrefix, szName, g_szFinalTime[client]);
+			CPrintToChat(client, "%t", "BPress4", g_szChatPrefix, szName, g_szPracticeTime[client]);
 		else
-			CPrintToChat(client, "%t", "BPress5", g_szChatPrefix, szName, g_szFinalTime[client]);
+			CPrintToChat(client, "%t", "BPress5", g_szChatPrefix, szName, g_szPracticeTime[client]);
 		
 		/* Start function call */
 		Call_StartForward(g_PracticeFinishForward);
@@ -210,6 +215,9 @@ public void CL_OnEndTimerPress(int client)
 
 		/* Finish the call, get the result */
 		Call_Finish();
+
+		// Stop Timer
+		Client_Stop(client, 1);
 
 		return;
 	}
