@@ -5942,7 +5942,7 @@ public void sql_selectWrcpRecordCallback(Handle owner, Handle hndl, const char[]
 	int stage = ReadPackCell(packx);
 	delete packx;
 
-	if (!IsValidClient(data) || IsFakeClient(data) || g_bPracticeMode[data])
+	if (!IsValidClient(data) || IsFakeClient(data))
 		return;
 
 	char szName[MAX_NAME_LENGTH];
@@ -5956,11 +5956,19 @@ public void sql_selectWrcpRecordCallback(Handle owner, Handle hndl, const char[]
 	char sz_srDiff[128];
 	char szDiff[128];
 	float time = g_fFinalWrcpTime[data];
+	float pracTime = g_fCurrentRunTime[data];
 	float f_srDiff;
 	float fDiff;
 
 	// PB
-	fDiff = (g_fWrcpRecord[data][stage][style] - time);
+	if (!g_bPracticeMode[data])
+	{
+		fDiff = (g_fWrcpRecord[data][stage][style] - time);
+	}
+	else
+	{
+		fDiff = (g_fWrcpRecord[data][stage][style] - pracTime);
+	}	
 	FormatTimeFloat(data, fDiff, 3, szDiff, 128);
 
 	if (fDiff > 0)
@@ -5970,10 +5978,27 @@ public void sql_selectWrcpRecordCallback(Handle owner, Handle hndl, const char[]
 
 	// SR
 	if (style == 0)
-		f_srDiff = (g_fStageRecord[stage] - time);
+	{
+		if (!g_bPracticeMode[data])
+		{
+			f_srDiff = (g_fStageRecord[stage] - time);
+		}
+		else
+		{
+			f_srDiff = (g_fStageRecord[stage] - pracTime);
+		}
+	}
 	else // styles
-		f_srDiff = (g_fStyleStageRecord[style][stage] - time);
-
+	{
+		if (!g_bPracticeMode[data])
+		{
+			f_srDiff = (g_fStyleStageRecord[style][stage] - time);
+		}
+		else
+		{
+			f_srDiff = (g_fStyleStageRecord[style][stage] - pracTime);
+		}
+	}
 	FormatTimeFloat(data, f_srDiff, 3, sz_srDiff, 128);
 
 	if (f_srDiff > 0)
@@ -5987,7 +6012,7 @@ public void sql_selectWrcpRecordCallback(Handle owner, Handle hndl, const char[]
 		float stagetime = SQL_FetchFloat(hndl, 0);
 
 		// If old time was slower than the new time, update record
-		if ((g_fFinalWrcpTime[data] <= stagetime || stagetime <= 0.0))
+		if ((g_fFinalWrcpTime[data] <= stagetime || stagetime <= 0.0) && !g_bPracticeMode[data])
 		{
 			db_updateWrcpRecord(data, style, stage);
 		}
@@ -5999,17 +6024,24 @@ public void sql_selectWrcpRecordCallback(Handle owner, Handle hndl, const char[]
 			if (style == 0)
 			{
 				if (g_iWrcpMessages[data])
+				{
 					CPrintToChat(data, "%t", "SQL11", g_szChatPrefix, stage, g_szFinalWrcpTime[data], szDiff, sz_srDiff);
-
+				}
+				
+				CPrintToChat(data, "TEST NOT STYLE");
 				Format(szSpecMessage, sizeof(szSpecMessage), "%t", "SQL12", g_szChatPrefix, szName, stage, g_szFinalWrcpTime[data], szDiff, sz_srDiff);
 			}
 			else if (style != 0) // styles
 			{
 				if (g_iWrcpMessages[data])
+				{
 					CPrintToChat(data, "%t", "SQL13", g_szChatPrefix, stage, g_szStyleRecordPrint[style], g_szFinalWrcpTime[data], sz_srDiff, g_StyleStageRank[style][data][stage], g_TotalStageStyleRecords[style][stage]);
+				}
 				
+				CPrintToChat(data, "TEST STYLE");
 				Format(szSpecMessage, sizeof(szSpecMessage), "%t", "SQL14", g_szChatPrefix, stage, g_szStyleRecordPrint[style], g_szFinalWrcpTime[data], sz_srDiff, g_StyleStageRank[style][data][stage], g_TotalStageStyleRecords[style][stage]);
 			}
+			
 			CheckpointToSpec(data, szSpecMessage);
 
 			if (g_bRepeat[data])
@@ -6036,11 +6068,18 @@ public void sql_selectWrcpRecordCallback(Handle owner, Handle hndl, const char[]
 		WritePackCell(pack, 1);
 		WritePackCell(pack, data);
 
-		if (style == 0)
-			Format(szQuery, sizeof(szQuery), "INSERT INTO ck_wrcps (steamid, name, mapname, runtimepro, stage) VALUES ('%s', '%s', '%s', '%f', %i);", g_szSteamID[data], szName, g_szMapName, g_fFinalWrcpTime[data], stage);
-		else if (style != 0)
-			Format(szQuery, sizeof(szQuery), "INSERT INTO ck_wrcps (steamid, name, mapname, runtimepro, stage, style) VALUES ('%s', '%s', '%s', '%f', %i, %i);", g_szSteamID[data], szName, g_szMapName, g_fFinalWrcpTime[data], stage, style);
-
+		if (!g_bPracticeMode[data])
+		{
+			if (style == 0)
+				Format(szQuery, sizeof(szQuery), "INSERT INTO ck_wrcps (steamid, name, mapname, runtimepro, stage) VALUES ('%s', '%s', '%s', '%f', %i);", g_szSteamID[data], szName, g_szMapName, g_fFinalWrcpTime[data], stage);
+			else if (style != 0)
+				Format(szQuery, sizeof(szQuery), "INSERT INTO ck_wrcps (steamid, name, mapname, runtimepro, stage, style) VALUES ('%s', '%s', '%s', '%f', %i, %i);", g_szSteamID[data], szName, g_szMapName, g_fFinalWrcpTime[data], stage, style);
+		}
+		else
+		{
+			Format(szQuery, sizeof(szQuery), "");
+		}
+		
 		SQL_TQuery(g_hDb, SQL_UpdateWrcpRecordCallback, szQuery, pack, DBPrio_Low);
 
 		g_bStageSRVRecord[data][stage] = false;
