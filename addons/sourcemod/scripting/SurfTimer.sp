@@ -2075,6 +2075,13 @@ public void OnClientPutInServer(int client)
 		g_iSettingToLoad[client] = 0;
 		LoadClientSetting(client, g_iSettingToLoad[client]);
 	}
+
+	//display center speed so doesnt have to be re-enabled in options
+	if (g_bCenterSpeedDisplay[client])
+	{
+		SetHudTextParams(-1.0, 0.30, 1.0, 255, 255, 255, 255, 0, 0.25, 0.0, 0.0);
+		CreateTimer(0.1, CenterSpeedDisplayTimer, client, TIMER_FLAG_NO_MAPCHANGE|TIMER_REPEAT);
+	}
 }
 
 public void OnClientAuthorized(int client)
