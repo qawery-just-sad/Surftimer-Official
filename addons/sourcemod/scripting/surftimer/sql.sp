@@ -4567,8 +4567,13 @@ public void SQL_selectMapZonesCallback(Handle owner, Handle hndl, const char[] e
 			g_mapZones[g_mapZonesCount].ZoneGroup = SQL_FetchInt(hndl, 11);
 
 			// Total amount of checkpoints
-			if (g_mapZones[g_mapZonesCount].ZoneType == 4)
-				g_iTotalCheckpoints++;
+			if (g_mapZones[g_mapZonesCount].ZoneGroup == 0)
+			{
+				if (g_mapZones[g_mapZonesCount].ZoneType == 4)
+				{
+					g_iTotalCheckpoints++;
+				}
+			}
 
 			/**
 			* Initialize error checking
