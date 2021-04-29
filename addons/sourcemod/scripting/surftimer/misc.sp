@@ -4032,7 +4032,7 @@ public void Checkpoint(int client, int zone, int zonegroup, float time)
 	percent = percent * 100.0;
 	Format(szPercnt, 24, "%1.f%%", percent);
 
-	if (g_bTimerRunning[client] /*&& !g_bPracticeMode[client]*/) {
+	if (g_bTimerRunning[client]) {
 		if (g_fMaxPercCompleted[client] < 1.0) // First time a checkpoint is reached
 			g_fMaxPercCompleted[client] = percent;
 		else

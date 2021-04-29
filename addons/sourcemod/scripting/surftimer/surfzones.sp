@@ -296,7 +296,10 @@ public Action EndTouchTrigger(int caller, int activator)
 		return Plugin_Handled;
 
 	// End touch
-	EndTouch(activator, action);
+	if (!g_bSaveLocTele[client])
+	{
+		EndTouch(activator, action);
+	}
 
 	return Plugin_Handled;
 }
@@ -305,7 +308,9 @@ public void StartTouch(int client, int action[3])
 {
 	if (IsValidClient(client))
 	{
-		float time = g_fCurrentRunTime[client];
+		float fCurrentRunTime = g_fCurrentRunTime[client];
+		float fCurrentWrcpRunTime = g_fCurrentWrcpRunTime[client];
+		float fCurrentPracSrcpRunTime = g_fCurrentPracSrcpRunTime[client];
 		
 		// Types: Start(1), End(2), Stage(3), Checkpoint(4), Speed(5), TeleToStart(6), Validator(7), Chekcer(8), Stop(0) // fluffys: NoBhop(9), NoCrouch(10)
 		if (action[0] == 0) // Stop Zone
@@ -349,16 +354,15 @@ public void StartTouch(int client, int action[3])
 				// fluffys wrcps
 				if (g_bhasStages)
 				{
-					float currentPracSrcpRunTime = g_fCurrentPracSrcpRunTime[client];
 					if (!g_bPracticeMode[client])
 					{
 						g_bWrcpEndZone[client] = true;
-						CL_OnEndWrcpTimerPress(client, time);
+						CL_OnEndWrcpTimerPress(client, fCurrentRunTime);
 					}
 					else
 					{
 						g_bPracSrcpEndZone[client] = true;
-						CL_OnEndPracSrcpTimerPress(client, currentPracSrcpRunTime);
+						CL_OnEndPracSrcpTimerPress(client, fCurrentPracSrcpRunTime);
 					}
 				}
 				else
@@ -421,17 +425,15 @@ public void StartTouch(int client, int action[3])
 
 				g_Stage[g_iClientInZone[client][2]][client] = (action[1] + 2);
 
-				if (!g_bInBonus[client])
+				if (!g_bInBonus[client]) // Stop this from happening in bonus because if bonus has stages then this will display incorrect info
 				{
-					float currentWrcpRunTime = g_fCurrentWrcpRunTime[client];
-					float currentPracSrcpRunTime = g_fCurrentPracSrcpRunTime[client];
 					if (!g_bPracticeMode[client])
 					{
-						CL_OnEndWrcpTimerPress(client, currentWrcpRunTime);
+						CL_OnEndWrcpTimerPress(client, fCurrentWrcpRunTime);
 					}
 					else
 					{
-						CL_OnEndPracSrcpTimerPress(client, currentPracSrcpRunTime);
+						CL_OnEndPracSrcpTimerPress(client, fCurrentPracSrcpRunTime);
 					}
 				}
 				
@@ -441,8 +443,10 @@ public void StartTouch(int client, int action[3])
 					g_bIsValidRun[client] = true;
 				
 				if (g_iCurrentStyle[client] == 0)
-					Checkpoint(client, action[1], g_iClientInZone[client][2], time);
-
+				{
+					Checkpoint(client, action[1], g_iClientInZone[client][2], fCurrentRunTime);
+				}
+				
 				if (!g_bSaveLocTele[client])
 				{
 					lastCheckpoint[g_iClientInZone[client][2]][client] = action[1];
@@ -496,7 +500,7 @@ public void StartTouch(int client, int action[3])
 				// Announcing checkpoint in linear maps
 				if (g_iCurrentStyle[client] == 0)
 				{
-					Checkpoint(client, action[1], g_iClientInZone[client][2], time);
+					Checkpoint(client, action[1], g_iClientInZone[client][2], fCurrentRunTime);
 					
 					if (!g_bSaveLocTele[client])
 					{
@@ -634,7 +638,6 @@ public void EndTouch(int client, int action[3])
 			}
 			
 			CL_OnStartPracSrcpTimerPress(client);
-
 		}
 		else if (action[0] == 9) // fluffys nojump
 		{

@@ -770,7 +770,7 @@ public Action Command_createPlayerCheckpoint(int client, int args)
 			}
 		}
 
-		// Save players Prac Wrcp time when creating saveloc
+		// Save players Prac Srcp time when creating saveloc
 		if (g_bPracSrcpTimerActivated[client])
 		{
 			if (!g_bPracticeMode[client])
@@ -779,8 +779,6 @@ public Action Command_createPlayerCheckpoint(int client, int args)
 			}
 			else
 			{
-				//g_fStartPracSrcpTime[client] = fGetGameTime;
-
 				g_fPlayerPracSrcpTimeSnap[client][g_iLastSaveLocIdClient[client]] = g_fCurrentPracSrcpRunTime[client];
 			}
 		}
@@ -818,7 +816,6 @@ public Action Command_goToPlayerCheckpoint(int client, int args)
 	{	
 		g_bSaveLocTele[client] = true;
 		g_fOldFinalWrcpTime[client] = 0.0;
-		g_fStartPracSrcpTime[client] = GetGameTime();
 		
 		// This bypasses checkpoint enforcer when in PracMode as players wont always be passing all checkpoints
 		g_bIsValidRun[client] = true;
