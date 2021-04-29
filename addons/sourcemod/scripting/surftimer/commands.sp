@@ -870,8 +870,6 @@ public Action Command_goToPlayerCheckpoint(int client, int args)
 		{
 			lastCheckpoint[g_iClientInZone[client][2]][client] = 999;
 		}
-
-		CL_OnStartPracSrcpTimerPress(client);
 	}
 	else
 	{
