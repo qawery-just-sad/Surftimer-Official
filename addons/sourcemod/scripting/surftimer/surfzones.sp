@@ -349,7 +349,7 @@ public void StartTouch(int client, int action[3])
 				// fluffys wrcps
 				if (g_bhasStages)
 				{
-					float currentPracWrcpRunTime = g_fCurrentPracSrcpRunTime[client];
+					float currentPracSrcpRunTime = g_fCurrentPracSrcpRunTime[client];
 					if (!g_bPracticeMode[client])
 					{
 						g_bWrcpEndZone[client] = true;
@@ -358,7 +358,7 @@ public void StartTouch(int client, int action[3])
 					else
 					{
 						g_bPracSrcpEndZone[client] = true;
-						CL_OnEndPracSrcpTimerPress(client, currentPracWrcpRunTime);
+						CL_OnEndPracSrcpTimerPress(client, currentPracSrcpRunTime);
 					}
 				}
 				else
@@ -424,14 +424,14 @@ public void StartTouch(int client, int action[3])
 				if (!g_bInBonus[client])
 				{
 					float currentWrcpRunTime = g_fCurrentWrcpRunTime[client];
-					float currentPracWrcpRunTime = g_fCurrentPracSrcpRunTime[client];
+					float currentPracSrcpRunTime = g_fCurrentPracSrcpRunTime[client];
 					if (!g_bPracticeMode[client])
 					{
 						CL_OnEndWrcpTimerPress(client, currentWrcpRunTime);
 					}
 					else
 					{
-						CL_OnEndPracSrcpTimerPress(client, currentPracWrcpRunTime);
+						CL_OnEndPracSrcpTimerPress(client, currentPracSrcpRunTime);
 					}
 				}
 				

@@ -927,8 +927,6 @@ public void CL_OnEndWrcpTimerPress(int client, float time2)
 public void CL_OnStartPracSrcpTimerPress(int client)
 {
 	float fGetGameTime = GetGameTime();
-	//float fPauseTime = g_fPauseTime[client];
-	//float fPlayerPracTimeSnap = g_fPlayerPracTimeSnap[client][g_iLastSaveLocIdClient[client]];
 
 	if (!g_bSpectate[client] && !g_bNoClip[client] && ((fGetGameTime - g_fLastTimeNoClipUsed[client]) > 2.0))
 	{
@@ -956,7 +954,7 @@ public void CL_OnStartPracSrcpTimerPress(int client)
 	}
 }
 
-public void CL_OnEndPracSrcpTimerPress(int client, float currentPracWrcpRunTime)
+public void CL_OnEndPracSrcpTimerPress(int client, float currentPracSrcpRunTime)
 {
 	int stage = g_iPracSrcpStage[client];
 
@@ -978,7 +976,7 @@ public void CL_OnEndPracSrcpTimerPress(int client, float currentPracWrcpRunTime)
 
 	if (g_bPracSrcpTimerActivated[client])
 	{
-		g_fFinalPracSrcpTime[client] = currentPracWrcpRunTime;
+		g_fFinalPracSrcpTime[client] = currentPracSrcpRunTime;
 	}
 
 	if (g_fFinalPracSrcpTime[client] <= 0.0)
