@@ -84,6 +84,8 @@ void CreateCommands()
 	RegConsoleCmd("sm_n", Command_normalMode, "[surftimer] Switches player back to normal mode.");
 	RegConsoleCmd("sm_clearsavelocs", Command_clearPlayerCheckpoints, "[surftimer] Clears the players savelocs");
 	RegConsoleCmd("sm_clearlocs", Command_clearPlayerCheckpoints, "[surftimer] Clears the players savelocs");
+	RegConsoleCmd("sm_addsaveloc", Command_recreatePlayerCheckpoint, "[surftimer] Recreates a saveloc with supplied information, where the player can teleport back to");
+	RegConsoleCmd("sm_addloc", Command_recreatePlayerCheckpoint, "[surftimer] Recreates a saveloc with supplied information, where the player can teleport back to");
 
 	// Admin Commands
 	RegConsoleCmd("sm_ckadmin", Admin_ckPanel, "[surftimer] Displays the SurfTimer admin menu panel");
@@ -795,6 +797,9 @@ public Action Command_createPlayerCheckpoint(int client, int args)
 
 		CPrintToChat(client, "%t", "Commands7", g_szChatPrefix, g_iSaveLocCount[client]);
 		
+		int id = g_iSaveLocCount[client];
+		CPrintToChat(client, "%t", "Commands7.2", g_fSaveLocCoords[client][id][0], g_fSaveLocCoords[client][id][1], g_fSaveLocCoords[client][id][2], g_fSaveLocAngle[client][id][0], g_fSaveLocAngle[client][id][1], g_fSaveLocAngle[client][id][2], g_fSaveLocVel[client][id][0], g_fSaveLocVel[client][id][1], g_fSaveLocVel[client][id][2], g_iPlayerPracLocationSnap[client][id], g_fPlayerPracTimeSnap[client][id], g_fPracModeStartTime[client], g_fPlayerPracSrcpTimeSnap[client][id], g_iSaveLocInBonus[client][id]);
+		
 		g_fLastCheckpointMade[client] = fGetGameTime;
 		g_iSaveLocUnix[g_iSaveLocCount[client]][client] = GetTime();
 		GetClientName(client, g_szSaveLocClientName[g_iSaveLocCount[client]], MAX_NAME_LENGTH);
@@ -872,6 +877,61 @@ public Action Command_goToPlayerCheckpoint(int client, int args)
 	{
 		CPrintToChat(client, "%t", "Commands11", g_szChatPrefix);
 	}
+
+	return Plugin_Handled;
+}
+
+public Action Command_recreatePlayerCheckpoint(int client, char args)
+{
+	float fGetGameTime = GetGameTime();
+	
+	if ((fGetGameTime - g_fLastCheckpointMade[client]) < 1.0)
+		return Plugin_Handled;
+
+	if (g_iSaveLocCount[client] < MAX_LOCS)
+	{
+		g_iSaveLocCount[client]++;
+		int id = g_iSaveLocCount[client];
+
+		char szBuffer[128];
+		char input[20][24]; 
+		GetCmdArgString(szBuffer, sizeof(szBuffer));
+		ExplodeString(szBuffer, "|", input, sizeof(input), sizeof(input[]));
+
+		// Coords
+		g_fSaveLocCoords[client][id][0] = StringToFloat(input[0]);
+		g_fSaveLocCoords[client][id][1] = StringToFloat(input[1]);
+		g_fSaveLocCoords[client][id][2] = StringToFloat(input[2]);
+		
+		// Angle
+		g_fSaveLocAngle[client][id][0] = StringToFloat(input[3]);
+		g_fSaveLocAngle[client][id][1] = StringToFloat(input[4]);
+		g_fSaveLocAngle[client][id][2] = StringToFloat(input[5]);
+
+		// Vel
+		g_fSaveLocVel[client][id][0] = StringToFloat(input[6]);
+		g_fSaveLocVel[client][id][1] = StringToFloat(input[7]);
+		g_fSaveLocVel[client][id][2] = StringToFloat(input[8]);
+
+		// Times
+		g_iPlayerPracLocationSnap[client][id] = StringToInt(input[9]);
+		g_fPlayerPracTimeSnap[client][id] = StringToFloat(input[10]);
+		g_fPracModeStartTime[client] = StringToFloat(input[11]);
+		g_fPlayerPracSrcpTimeSnap[client][id] = StringToFloat(input[12]);
+
+		// In bonus?
+		g_iSaveLocInBonus[client][id] = StringToInt(input[13]);
+
+		CPrintToChat(client, "%t", "Commands7.1", g_szChatPrefix, id);
+		
+		char szSaveLocCount[128];
+		Format(szSaveLocCount, sizeof(szSaveLocCount), "#%s", IntToString(id, szSaveLocCount, sizeof(szSaveLocCount)));
+		int iSaveLocCount = StringToInt(szSaveLocCount);
+		
+		Command_goToPlayerCheckpoint(client, iSaveLocCount);
+	}
+
+	g_fLastCheckpointMade[client] = fGetGameTime;
 
 	return Plugin_Handled;
 }
