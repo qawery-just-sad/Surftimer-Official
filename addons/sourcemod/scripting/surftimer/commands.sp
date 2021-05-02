@@ -1309,6 +1309,8 @@ public Action Command_ToStage(int client, int args)
 	if (!IsValidClient(client))
 		return Plugin_Handled;
 
+	g_fPauseTime[client] = 0.0;
+
 	if (args < 1)
 	{
 		// Remove chat output to reduce chat spam
