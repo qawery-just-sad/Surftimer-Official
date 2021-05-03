@@ -213,6 +213,9 @@ public Plugin myinfo =
 =             Variables             =
 ===================================*/
 
+// It's a surprise tool that will help us later
+// int g_CUID[MAXPLAYERS +1];
+
 // Testing Variables
 float g_fTick[MAXPLAYERS + 1][2];
 float g_fServerLoading[2];
@@ -1993,6 +1996,7 @@ public void OnClientConnected(int client)
 	g_bWrcpTimeractivated[client] = false;
 	g_CurrentStage[client] = 1;
 	g_wrcpStage2Fix[client] = true;
+	// g_CUID = GetClientUserId(client);
 }
 
 public void OnClientPutInServer(int client)
@@ -2047,15 +2051,15 @@ public void OnClientPutInServer(int client)
 	// char fix
 	FixPlayerName(client);
 
-	// Position Restoring
-	if (GetConVarBool(g_hcvarRestore))
-	db_selectLastRun(client);
-
 	if (g_bLateLoaded && IsPlayerAlive(client))
-	PlayerSpawn(client);
+	{
+		PlayerSpawn(client);
+	}
 
 	if (g_bTierFound)
+	{
 		AnnounceTimer[client] = CreateTimer(20.0, AnnounceMap, client, TIMER_FLAG_NO_MAPCHANGE);
+	}
 
 	if (g_bServerDataLoaded && !g_bSettingsLoaded[client] && !g_bLoadingSettings[client])
 	{
@@ -2065,10 +2069,10 @@ public void OnClientPutInServer(int client)
 		LoadClientSetting(client, g_iSettingToLoad[client]);
 	}
 
-	//display center speed so doesnt have to be re-enabled in options
-	if (g_bCenterSpeedDisplay[client])
+	// Position Restoring
+	if (GetConVarBool(g_hcvarRestore))
 	{
-		CreateTimer(0.1, CenterSpeedDisplayTimer, client, TIMER_FLAG_NO_MAPCHANGE|TIMER_REPEAT);
+		db_selectLastRun(client);
 	}
 }
 

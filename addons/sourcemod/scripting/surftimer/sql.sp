@@ -3213,7 +3213,9 @@ public void db_deleteTmp(int client)
 {
 	char szQuery[256];
 	if (!IsValidClient(client))
+	{
 		return;
+	}
 	Format(szQuery, 256, sql_deletePlayerTmp, g_szSteamID[client]);
 	SQL_TQuery(g_hDb, SQL_CheckCallback, szQuery, client, DBPrio_Low);
 }
@@ -3222,7 +3224,9 @@ public void db_selectLastRun(int client)
 {
 	char szQuery[512];
 	if (!IsValidClient(client))
-	return;
+	{
+		return;
+	}
 	Format(szQuery, 512, sql_selectPlayerTmp, g_szSteamID[client], g_szMapName);
 	SQL_TQuery(g_hDb, SQL_LastRunCallback, szQuery, client, DBPrio_Low);
 }
@@ -5608,12 +5612,19 @@ public void db_viewPlayerOptionsCallback(Handle owner, Handle hndl, const char[]
 			g_bSpecListOnly[client] = false;
 		
 		g_bLoadedModules[client] = true;
+
+		//display center speed so doesnt have to be re-enabled in options
+		if (g_bCenterSpeedDisplay[client])
+		{
+			CreateTimer(0.1, CenterSpeedDisplayTimer, client, TIMER_FLAG_NO_MAPCHANGE|TIMER_REPEAT);
+		}
+		
 	}
 	else
 	{
 		char szQuery[512];
 		if (!IsValidClient(client))
-		return;
+			return;
 
 		// "INSERT INTO ck_playeroptions2 (steamid, timer, hide, sounds, chat, viewmodel, autobhop, checkpoints, centrehud, module1c, module2c, module3c, module4c, module5c, module6c, sidehud, module1s, module2s, module3s, module4s, module5s) VALUES('%s', '%i', '%i', '%i', '%i', '%i', '%i', '%i', '%i', '%i', '%i', '%i', '%i', '%i', '%i', '%i', '%i', '%i', '%i', '%i', '%i');";
 
