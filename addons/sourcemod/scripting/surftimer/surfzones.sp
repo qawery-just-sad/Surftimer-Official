@@ -337,6 +337,7 @@ public void StartTouch(int client, int action[3])
 			if (g_bhasStages)
 			{
 				g_bWrcpTimeractivated[client] = false;
+				g_bPracSrcpTimerActivated[client] = false;
 				g_CurrentStage[client] = 0;
 			}
 		}
@@ -361,9 +362,10 @@ public void StartTouch(int client, int action[3])
 					}
 					else
 					{
-						g_bPracSrcpEndZone[client] = true;
 						CL_OnEndPracSrcpTimerPress(client, fCurrentPracSrcpRunTime);
 					}
+
+					g_bPracSrcpEndZone[client] = true;
 				}
 				else
 				{
@@ -407,6 +409,7 @@ public void StartTouch(int client, int action[3])
 			{
 				Client_Stop(client, 1);
 				g_bWrcpTimeractivated[client] = false;
+				g_bPracSrcpTimerActivated[client] = false;
 			}
 
 			// Setting valid to false, in case of checkers
@@ -419,13 +422,14 @@ public void StartTouch(int client, int action[3])
 				if ((action[1] + 2) < g_Stage[g_iClientInZone[client][2]][client])
 				{
 					g_bWrcpTimeractivated[client] = false;
+					g_bPracSrcpTimerActivated[client] = false;
 				}
 				else
 					g_bNewStage[client] = true;
 
 				g_Stage[g_iClientInZone[client][2]][client] = (action[1] + 2);
 
-				if (!g_bInBonus[client]) // Stop this from happening in bonus because if bonus has stages then this will display incorrect info
+				if (!g_bInBonus[client]) // Stop announcement from happening in bonus because if bonus has stages then this will display incorrect info
 				{
 					if (!g_bPracticeMode[client])
 					{
@@ -464,6 +468,11 @@ public void StartTouch(int client, int action[3])
 			if (g_bWrcpTimeractivated[client])
 			{
 				g_bWrcpTimeractivated[client] = false;
+			}
+
+			if(g_bPracSrcpTimerActivated[client])
+			{
+				g_bPracSrcpTimerActivated[client] = false;
 			}
 
 			if (g_bPracticeMode[client]) 
@@ -567,6 +576,8 @@ public void EndTouch(int client, int action[3])
 		// Types: Start(1), End(2), Stage(3), Checkpoint(4), Speed(5), TeleToStart(6), Validator(7), Chekcer(8), Stop(0)
 		if (action[0] == 1 || action[0] == 5)
 		{
+			CL_OnStartPracSrcpTimerPress(client);
+			
 			if (g_bPracticeMode[client] && !g_bTimerRunning[client]) // If on practice mode, but timer isn't on - kick you out of practice mode and then start timer 
 			{
 				g_bPracticeMode[client] = false;
@@ -593,7 +604,7 @@ public void EndTouch(int client, int action[3])
 						if (g_bhasStages && g_bTimerEnabled[client])
 						{
 							CL_OnStartWrcpTimerPress(client); // fluffys only start stage timer if not in prac mode
-							CL_OnStartPracSrcpTimerPress(client);
+							//CL_OnStartPracSrcpTimerPress(client);
 						}
 
 						if (g_bTimerEnabled[client])

@@ -570,7 +570,19 @@ void TeamChangeActual(int client, int toteam)
 	if (g_bSpectate[client])
 	{
 		if (g_fStartTime[client] != -1.0 && g_bTimerRunning[client] == true)
+		{
 			g_fPauseTime[client] = GetGameTime() - g_fStartPauseTime[client];
+			
+			if (g_iClientInZone[client][0] == 3)
+			{
+				g_fSrcpPauseTime[client] = 0.0;
+			}
+			else
+			{
+				g_fSrcpPauseTime[client] = g_fPauseTime[client];
+			}
+		}
+
 		g_bSpectate[client] = false;
 	}
 
@@ -1416,8 +1428,9 @@ public void SetClientDefaults(int client)
 public void GetcurrentRunTime(int client)
 {
 	float fGetGameTime = GetGameTime();
-	float fStartPracWrcpTime = g_fStartPracSrcpTime[client];
+	float fStartPracSrcpTime = g_fStartPracSrcpTime[client];
 	float fPauseTime = g_fPauseTime[client];
+	float fSrcpPauseTime = g_fSrcpPauseTime[client];
 
 	if (g_bPracticeMode[client]) // If in PracMode then use normal CurrentRunTime + time from saveloc
 	{
@@ -1430,18 +1443,18 @@ public void GetcurrentRunTime(int client)
 	
 	if (g_bWrcpTimeractivated[client])
 	{
-		g_fCurrentWrcpRunTime[client] = fGetGameTime - g_fStartWrcpTime[client] - fPauseTime;
+		g_fCurrentWrcpRunTime[client] = fGetGameTime - g_fStartWrcpTime[client] - fSrcpPauseTime;
 	}
 
 	if (g_bPracSrcpTimerActivated[client])
 	{
 		if (!g_bSaveLocTele[client])
 		{
-			g_fCurrentPracSrcpRunTime[client] = fGetGameTime - fStartPracWrcpTime - fPauseTime;
+			g_fCurrentPracSrcpRunTime[client] = fGetGameTime - fStartPracSrcpTime - fSrcpPauseTime;
 		}
 		else
 		{
-			g_fCurrentPracSrcpRunTime[client] = (fGetGameTime - fStartPracWrcpTime - fPauseTime) + g_fPlayerPracSrcpTimeSnap[client][g_iLastSaveLocIdClient[client]];
+			g_fCurrentPracSrcpRunTime[client] = (fGetGameTime - fStartPracSrcpTime - fSrcpPauseTime) + g_fPlayerPracSrcpTimeSnap[client][g_iLastSaveLocIdClient[client]];
 		}
 	}
 }
@@ -5560,6 +5573,4 @@ public void PrintPracSrcp(int client, int style, int stage, float fClientPbStage
 	}
 
 	CheckpointToSpec(client, szSpecMessage);
-
-	g_bPracSrcpTimerActivated[client] = false;
 }

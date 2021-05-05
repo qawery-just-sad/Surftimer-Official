@@ -924,11 +924,11 @@ public Action Command_recreatePlayerCheckpoint(int client, char args)
 
 		CPrintToChat(client, "%t", "Commands7.1", g_szChatPrefix, id);
 		
-		char szSaveLocCount[128];
-		Format(szSaveLocCount, sizeof(szSaveLocCount), "#%s", IntToString(id, szSaveLocCount, sizeof(szSaveLocCount)));
-		int iSaveLocCount = StringToInt(szSaveLocCount);
+		//char szSaveLocCount[128];
+		//Format(szSaveLocCount, sizeof(szSaveLocCount), "#%s", IntToString(id, szSaveLocCount, sizeof(szSaveLocCount)));
+		//int iSaveLocCount = StringToInt(szSaveLocCount);
 		
-		Command_goToPlayerCheckpoint(client, iSaveLocCount);
+		Command_goToPlayerCheckpoint(client, 0);
 	}
 
 	g_fLastCheckpointMade[client] = fGetGameTime;
@@ -1309,6 +1309,9 @@ public Action Command_ToStage(int client, int args)
 	if (!IsValidClient(client))
 		return Plugin_Handled;
 
+	g_fPauseTime[client] = 0.0;
+	g_fSrcpPauseTime[client] = 0.0;
+	
 	if (args < 1)
 	{
 		// Remove chat output to reduce chat spam
@@ -2620,7 +2623,7 @@ public Action Client_Pause(int client, int args)
 public void PauseMethod(int client)
 {
 	if (GetClientTeam(client) == 1)return;
-	if (g_bPause[client] == false && IsValidEntity(client))
+	if (g_bPause[client] == false && IsValidEntity(client)) // When using !pause to pause
 	{
 		if (GetConVarBool(g_hPauseServerside) == false && client != g_RecordBot && client != g_BonusBot)
 		{
@@ -2634,16 +2637,20 @@ public void PauseMethod(int client)
 		{
 			g_fStartPauseTime[client] = GetGameTime();
 			if (g_fPauseTime[client] > 0.0)
+			{
 				g_fStartPauseTime[client] = g_fStartPauseTime[client] - g_fPauseTime[client];
+			}
 		}
 		SetEntityRenderMode(client, RENDER_NONE);
 		SetEntData(client, FindSendPropInfo("CBaseEntity", "m_CollisionGroup"), 2, 4, true);
 	}
-	else
+	else // When using !pause to unpause
 	{
 		if (g_fStartTime[client] != -1.0 && g_bTimerRunning[client] == true)
 		{
 			g_fPauseTime[client] = GetGameTime() - g_fStartPauseTime[client];
+			g_fSrcpPauseTime[client] = g_fPauseTime[client];
+			CPrintToChat(client, "SrcpPause: %f", g_fSrcpPauseTime[client]);
 		}
 
 		g_bNoClip[client] = false;

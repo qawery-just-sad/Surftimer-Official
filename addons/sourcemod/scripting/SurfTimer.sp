@@ -452,6 +452,7 @@ int g_iPracSrcpStage[MAXPLAYERS + 1];
 bool g_bPracSrcpEndZone[MAXPLAYERS + 1] = false;
 float g_fFinalPracSrcpTime[MAXPLAYERS + 1];
 char g_szFinalPracSrcpTime[MAXPLAYERS + 1][32];
+float g_fSrcpPauseTime[MAXPLAYERS + 1];
 
 /*----------  Map Settings Variables ----------*/
 float g_fMaxVelocity;
@@ -2162,7 +2163,9 @@ public void OnClientDisconnect(int client)
 			g_fPlayerLastTime[client] = GetGameTime() - g_fStartTime[client] - g_fPauseTime[client];
 		}
 		else
+		{
 			g_fPlayerLastTime[client] = g_fCurrentRunTime[client];
+		}
 	}
 
 	SDKUnhook(client, SDKHook_SetTransmit, Hook_SetTransmit);

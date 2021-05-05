@@ -50,6 +50,7 @@ public void CL_OnStartTimerPress(int client)
 		// Reset Run Variables
 		tmpDiff[client] = 9999.0;
 		g_fPauseTime[client] = 0.0;
+		g_fSrcpPauseTime[client] = 0.0;
 		g_fStartPauseTime[client] = 0.0;
 		g_bPause[client] = false;
 		SetEntityMoveType(client, MOVETYPE_WALK);
@@ -62,7 +63,7 @@ public void CL_OnStartTimerPress(int client)
 		g_bMissedBonusBest[client] = true;
 		g_bTimerRunning[client] = true;
 		g_bTop10Time[client] = false;
-		g_fStartPracSrcpTime[client] = fGetGameTime;
+		//g_fStartPracSrcpTime[client] = fGetGameTime;
 		
 		// Strafe Sync
 		g_iGoodGains[client] = 0;
@@ -940,6 +941,7 @@ public void CL_OnStartPracSrcpTimerPress(int client)
 		if (zGroup == 0)
 		{
 			g_bPracSrcpTimerActivated[client] = true;
+			g_fSrcpPauseTime[client] = 0.0;
 			g_fStartPracSrcpTime[client] = fGetGameTime;
 			
 			if (g_bSaveLocTele[client]) // Has the player teleported to saveloc?
@@ -956,6 +958,11 @@ public void CL_OnStartPracSrcpTimerPress(int client)
 
 public void CL_OnEndPracSrcpTimerPress(int client, float currentPracSrcpRunTime)
 {
+	if (!IsValidClient(client))
+	{
+		return;
+	}
+	
 	int stage = g_iPracSrcpStage[client];
 
 	if (g_bPracSrcpEndZone[client])
@@ -965,18 +972,18 @@ public void CL_OnEndPracSrcpTimerPress(int client, float currentPracSrcpRunTime)
 	}
 
 	if (stage > g_TotalStages) // Hack Fix for multiple end zone issue
-		stage = g_TotalStages;
-	else if (stage < 1)
-		stage = 1;
-	
-	if (!IsValidClient(client))
 	{
-		return;
+		stage = g_TotalStages;
+	}
+	else if (stage < 1)
+	{
+		stage = 1;
 	}
 
 	if (g_bPracSrcpTimerActivated[client])
 	{
 		g_fFinalPracSrcpTime[client] = currentPracSrcpRunTime;
+		g_bPracSrcpTimerActivated[client] = false;
 	}
 
 	if (g_fFinalPracSrcpTime[client] <= 0.0)
