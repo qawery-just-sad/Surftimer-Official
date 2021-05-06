@@ -675,12 +675,15 @@ public Action Command_createPlayerCheckpoint(int client, int args)
 	if (!IsValidClient(client))
 		return Plugin_Handled;
 	
-	if (g_iClientInZone[client][0] == 1 || g_iClientInZone[client][0] == 5)
+	if (!g_bSaveLocTele[client])
 	{
-		CPrintToChat(client, "%t", "PracticeInStartZone", g_szChatPrefix);
-		return Plugin_Handled;
+		if (g_iClientInZone[client][0] == 1 || g_iClientInZone[client][0] == 5)
+		{
+			CPrintToChat(client, "%t", "PracticeInStartZone", g_szChatPrefix);
+			return Plugin_Handled;
+		}
 	}
-
+	
 	float fGetGameTime = GetGameTime();
 
 	if ((fGetGameTime - g_fLastCheckpointMade[client]) < 1.0)
@@ -831,7 +834,7 @@ public Action Command_goToPlayerCheckpoint(int client, int args)
 		{
 			int id = g_iLastSaveLocIdClient[client];
 			g_iPlayerPracLocationSnapIdClient[client] = id;
-			stage = id;
+			stage = g_iPlayerPracLocationSnap[client][id];
 			
 			TeleportToSaveloc(client, id);
 		}
@@ -858,7 +861,7 @@ public Action Command_goToPlayerCheckpoint(int client, int args)
 
 			g_iLastSaveLocIdClient[client] = id;
 			g_iPlayerPracLocationSnapIdClient[client] = id;
-			stage = id;
+			stage = g_iPlayerPracLocationSnap[client][id];
 
 			TeleportToSaveloc(client, id);
 		}
