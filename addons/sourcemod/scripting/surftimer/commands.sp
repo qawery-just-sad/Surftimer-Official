@@ -683,6 +683,12 @@ public Action Command_createPlayerCheckpoint(int client, int args)
 			return Plugin_Handled;
 		}
 	}
+
+	if (g_bSpectate[client])
+	{
+		CPrintToChat(client, "%t", "PracticeInSpectate", g_szChatPrefix);
+		return Plugin_Handled;
+	}
 	
 	float fGetGameTime = GetGameTime();
 
@@ -818,8 +824,16 @@ public Action Command_createPlayerCheckpoint(int client, int args)
 public Action Command_goToPlayerCheckpoint(int client, int args)
 {
 	if (!IsValidClient(client))
+	{
 		return Plugin_Handled;
-	
+	}
+
+	if (g_bSpectate[client])
+	{
+		CPrintToChat(client, "%t", "PracticeInSpectate2", g_szChatPrefix);
+		return Plugin_Handled;
+	}
+
 	if (g_iSaveLocCount[client] > 0)
 	{	
 		g_bSaveLocTele[client] = true;
