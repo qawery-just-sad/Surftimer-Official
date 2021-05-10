@@ -806,9 +806,20 @@ public Action Command_createPlayerCheckpoint(int client, int args)
 
 		CPrintToChat(client, "%t", "Commands7", g_szChatPrefix, g_iSaveLocCount[client]);
 		
-		int id = g_iSaveLocCount[client];
-		CPrintToChat(client, "%t", "Commands7.2", g_fSaveLocCoords[client][id][0], g_fSaveLocCoords[client][id][1], g_fSaveLocCoords[client][id][2], g_fSaveLocAngle[client][id][0], g_fSaveLocAngle[client][id][1], g_fSaveLocAngle[client][id][2], g_fSaveLocVel[client][id][0], g_fSaveLocVel[client][id][1], g_fSaveLocVel[client][id][2], g_iPlayerPracLocationSnap[client][id], g_fPlayerPracTimeSnap[client][id], g_fPracModeStartTime[client], g_fPlayerPracSrcpTimeSnap[client][id], g_iSaveLocInBonus[client][id]);
-		
+		if (g_iallowCheckpointRecreation != 0)
+		{
+			int id = g_iSaveLocCount[client];
+
+			if (g_iallowCheckpointRecreation == 1)
+			{
+				CPrintToChat(client, "%t", "Commands7.2", g_fSaveLocCoords[client][id][0], g_fSaveLocCoords[client][id][1], g_fSaveLocCoords[client][id][2], g_fSaveLocAngle[client][id][0], g_fSaveLocAngle[client][id][1], g_fSaveLocAngle[client][id][2], g_fSaveLocVel[client][id][0], g_fSaveLocVel[client][id][1], g_fSaveLocVel[client][id][2], g_iPlayerPracLocationSnap[client][id], g_fPlayerPracTimeSnap[client][id], g_fPracModeStartTime[client], g_fPlayerPracSrcpTimeSnap[client][id], g_iSaveLocInBonus[client][id]);
+			}
+			else if (g_iallowCheckpointRecreation == 2)
+			{
+				PrintToConsole(client, "%t", "Commands7.3", g_iSaveLocCount[client], g_fSaveLocCoords[client][id][0], g_fSaveLocCoords[client][id][1], g_fSaveLocCoords[client][id][2], g_fSaveLocAngle[client][id][0], g_fSaveLocAngle[client][id][1], g_fSaveLocAngle[client][id][2], g_fSaveLocVel[client][id][0], g_fSaveLocVel[client][id][1], g_fSaveLocVel[client][id][2], g_iPlayerPracLocationSnap[client][id], g_fPlayerPracTimeSnap[client][id], g_fPracModeStartTime[client], g_fPlayerPracSrcpTimeSnap[client][id], g_iSaveLocInBonus[client][id]);
+			}
+		}
+
 		g_fLastCheckpointMade[client] = fGetGameTime;
 		g_iSaveLocUnix[g_iSaveLocCount[client]][client] = GetTime();
 		GetClientName(client, g_szSaveLocClientName[client][g_iSaveLocCount[client]], MAX_NAME_LENGTH);
