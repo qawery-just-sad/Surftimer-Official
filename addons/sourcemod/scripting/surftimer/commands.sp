@@ -811,7 +811,7 @@ public Action Command_createPlayerCheckpoint(int client, int args)
 		
 		g_fLastCheckpointMade[client] = fGetGameTime;
 		g_iSaveLocUnix[g_iSaveLocCount[client]][client] = GetTime();
-		GetClientName(client, g_szSaveLocClientName[g_iSaveLocCount[client]], MAX_NAME_LENGTH);
+		GetClientName(client, g_szSaveLocClientName[client][g_iSaveLocCount[client]], MAX_NAME_LENGTH);
 	}
 	else
 	{
@@ -1019,7 +1019,7 @@ public void SaveLocMenu(int client)
 	{
 		unix = GetTime() - g_iSaveLocUnix[i][client];
 		diffForHumans(unix, szBuffer, 128, 1);
-		Format(szItem, sizeof(szItem), "#%d - %s - %s", i, g_szSaveLocClientName[i], szBuffer);
+		Format(szItem, sizeof(szItem), "#%d - %s - %s", i, g_szSaveLocClientName[client][i], szBuffer);
 		IntToString(i, szId, 32);
 		AddMenuItem(menu, szId, szItem);
 	}

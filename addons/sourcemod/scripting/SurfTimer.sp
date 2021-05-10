@@ -1259,7 +1259,7 @@ float g_fSaveLocCoords[MAXPLAYERS + 1][MAX_LOCS][3]; // [loc id][coords]
 float g_fSaveLocAngle[MAXPLAYERS + 1][MAX_LOCS][3]; // [loc id][angle]
 float g_fSaveLocVel[MAXPLAYERS + 1][MAX_LOCS][3]; // [loc id][velocity]
 char g_szSaveLocTargetname[MAX_LOCS][128]; // [loc id]
-char g_szSaveLocClientName[MAX_LOCS][MAX_NAME_LENGTH];
+char g_szSaveLocClientName[MAXPLAYERS + 1][MAX_LOCS][MAX_NAME_LENGTH];
 int g_iLastSaveLocIdClient[MAXPLAYERS + 1];
 float g_fLastCheckpointMade[MAXPLAYERS + 1];
 int g_iSaveLocUnix[MAX_LOCS][MAXPLAYERS + 1]; // [loc id]
