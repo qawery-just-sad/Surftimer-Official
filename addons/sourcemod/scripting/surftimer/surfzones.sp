@@ -575,50 +575,46 @@ public void EndTouch(int client, int action[3])
 
 		// Types: Start(1), End(2), Stage(3), Checkpoint(4), Speed(5), TeleToStart(6), Validator(7), Chekcer(8), Stop(0)
 		if (action[0] == 1 || action[0] == 5)
-		{
-			CL_OnStartPracSrcpTimerPress(client);
-			
+		{	
 			if (g_bPracticeMode[client] && !g_bTimerRunning[client]) // If on practice mode, but timer isn't on - kick you out of practice mode and then start timer 
 			{
 				g_bPracticeMode[client] = false;
 				CPrintToChat(client, "%t", "PracticeNormal", g_szChatPrefix);
-				CL_OnStartTimerPress(client);
 			}
-			else
+			
+			if (!g_bPracticeMode[client])
 			{
-				if (!g_bPracticeMode[client])
+				g_Stage[g_iClientInZone[client][2]][client] = 1;
+				lastCheckpoint[g_iClientInZone[client][2]][client] = 999;
+
+				// NoClip check
+				if (g_bNoClip[client] || (!g_bNoClip[client] && (GetGameTime() - g_fLastTimeNoClipUsed[client]) < 3.0))
 				{
-					g_Stage[g_iClientInZone[client][2]][client] = 1;
-					lastCheckpoint[g_iClientInZone[client][2]][client] = 999;
-
-					// NoClip check
-					if (g_bNoClip[client] || (!g_bNoClip[client] && (GetGameTime() - g_fLastTimeNoClipUsed[client]) < 3.0))
-					{
-						CPrintToChat(client, "%t", "SurfZones1", g_szChatPrefix);
-						ClientCommand(client, "play buttons\\button10.wav");
-						// fluffys
-						// ClientCommand(client, "sm_stuck");
-					}
-					else
-					{
-						if (g_bhasStages && g_bTimerEnabled[client])
-						{
-							CL_OnStartWrcpTimerPress(client); // fluffys only start stage timer if not in prac mode
-							//CL_OnStartPracSrcpTimerPress(client);
-						}
-
-						if (g_bTimerEnabled[client])
-						{
-							CL_OnStartTimerPress(client);
-						}
-					}
-
+					CPrintToChat(client, "%t", "SurfZones1", g_szChatPrefix);
+					ClientCommand(client, "play buttons\\button10.wav");
 					// fluffys
-					if (!g_bNoClip[client])
-						g_bInStartZone[client] = false;
-
-					g_bValidRun[client] = false;
+					// ClientCommand(client, "sm_stuck");
 				}
+				else
+				{
+					if (g_bhasStages && g_bTimerEnabled[client])
+					{
+						CL_OnStartWrcpTimerPress(client); // fluffys only start stage timer if not in prac mode
+					}
+
+					if (g_bTimerEnabled[client])
+					{
+						CL_OnStartTimerPress(client);
+					}
+
+					CL_OnStartPracSrcpTimerPress(client);
+				}
+
+				// fluffys
+				if (!g_bNoClip[client])
+					g_bInStartZone[client] = false;
+
+				g_bValidRun[client] = false;
 			}
 		}
 		// fluffys

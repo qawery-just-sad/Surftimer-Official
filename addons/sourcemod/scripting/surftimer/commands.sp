@@ -790,7 +790,14 @@ public Action Command_createPlayerCheckpoint(int client, int args)
 			}
 			else
 			{
-				g_fPlayerPracSrcpTimeSnap[client][g_iLastSaveLocIdClient[client]] = g_fCurrentPracSrcpRunTime[client];
+				if (g_iPreviousSaveLocIdClient[client] == g_iLastSaveLocIdClient[client]) // Did player Tele to earlier saveloc?
+				{	
+					g_fPlayerPracSrcpTimeSnap[client][g_iLastSaveLocIdClient[client]] = (fGetGameTime -  g_fStartPracSrcpTime[client] - g_fPauseTime[client]) + g_fPlayerPracSrcpTimeSnap[client][g_iLastSaveLocIdClient[client] - 1];
+				}
+				else
+				{
+					g_fPlayerPracSrcpTimeSnap[client][g_iLastSaveLocIdClient[client]] = (fGetGameTime -  g_fStartPracSrcpTime[client] - g_fPauseTime[client]) + g_fPlayerPracSrcpTimeSnap[client][g_iPreviousSaveLocIdClient[client]];
+				}
 			}
 		}
 

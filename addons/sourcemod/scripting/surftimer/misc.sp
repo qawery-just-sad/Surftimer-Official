@@ -1428,7 +1428,6 @@ public void SetClientDefaults(int client)
 public void GetcurrentRunTime(int client)
 {
 	float fGetGameTime = GetGameTime();
-	float fStartPracSrcpTime = g_fStartPracSrcpTime[client];
 	float fPauseTime = g_fPauseTime[client];
 	float fSrcpPauseTime = g_fSrcpPauseTime[client];
 
@@ -1448,6 +1447,8 @@ public void GetcurrentRunTime(int client)
 
 	if (g_bPracSrcpTimerActivated[client])
 	{
+		float fStartPracSrcpTime = g_fStartPracSrcpTime[client];
+		
 		if (!g_bSaveLocTele[client])
 		{
 			g_fCurrentPracSrcpRunTime[client] = fGetGameTime - fStartPracSrcpTime - fSrcpPauseTime;
