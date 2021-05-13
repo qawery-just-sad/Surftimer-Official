@@ -829,6 +829,7 @@ public Action Command_createPlayerCheckpoint(int client, int args)
 
 		g_fLastCheckpointMade[client] = fGetGameTime;
 		g_iSaveLocUnix[g_iSaveLocCount[client]][client] = GetTime();
+
 		GetClientName(client, g_szSaveLocClientName[client][g_iSaveLocCount[client]], MAX_NAME_LENGTH);
 	}
 	else
@@ -968,6 +969,9 @@ public Action Command_recreatePlayerCheckpoint(int client, char args)
 			// In bonus?
 			g_iSaveLocInBonus[client][id] = StringToInt(input[14]);
 
+			g_iSaveLocUnix[id][client] = GetTime();
+			g_fLastCheckpointMade[client] = fGetGameTime;
+
 			CReplyToCommand(client, "%t", "Commands7.1", g_szChatPrefix, id);
 			
 			Command_goToPlayerCheckpoint(client, 0);
@@ -1044,12 +1048,14 @@ public void SaveLocMenu(int client)
 	char szBuffer[128];
 	char szItem[256];
 	char szId[32];
+	char szTime[32];
 	int unix;
 	for (int i = 1; i <= g_iSaveLocCount[client]; i++)
 	{
 		unix = GetTime() - g_iSaveLocUnix[i][client];
 		diffForHumans(unix, szBuffer, 128, 1);
-		Format(szItem, sizeof(szItem), "#%d - %s - %s", i, g_szSaveLocClientName[client][i], szBuffer);
+		FormatTimeFloat(client, g_fPlayerPracTimeSnap[client][i], 3, szTime, sizeof(szTime));
+		Format(szItem, sizeof(szItem), "#%d %s - %s", i, szTime, szBuffer); //TODO add speed
 		IntToString(i, szId, 32);
 		AddMenuItem(menu, szId, szItem);
 	}
