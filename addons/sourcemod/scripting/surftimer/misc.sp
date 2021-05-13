@@ -405,8 +405,17 @@ int setClientLocation(int client, float fDestination[3])
 	if (zId != g_iClientInZone[client][3]) // Ignore location changes, if teleporting to the same zone they are already in
 	{
 		if (g_iClientInZone[client][0] != -1) // Ignore end touch if teleporting from within a zone
-			g_bIgnoreZone[client] = true;
-
+		{	
+			if (!g_bPracticeMode)
+			{
+				g_bIgnoreZone[client] = true;
+			}
+			else
+			{
+				g_bIgnoreZone[client] = false;
+			}
+		}
+		
 		if (zId > -1)
 		{
 			g_iClientInZone[client][0] = g_mapZones[zId].ZoneType;
