@@ -605,9 +605,8 @@ public void EndTouch(int client, int action[3])
 					if (g_bTimerEnabled[client])
 					{
 						CL_OnStartTimerPress(client);
+						CL_OnStartPracSrcpTimerPress(client);
 					}
-
-					CL_OnStartPracSrcpTimerPress(client);
 				}
 
 				// fluffys
