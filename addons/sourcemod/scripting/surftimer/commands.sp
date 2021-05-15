@@ -1364,6 +1364,7 @@ public Action Command_ToStage(int client, int args)
 
 	g_fPauseTime[client] = 0.0;
 	g_fSrcpPauseTime[client] = 0.0;
+	g_wrcpStage2Fix[client] = false; // Stops "StageNotRecorded" when tele to s2, createloc, teletoloc, sm_rs, complete stage
 	
 	if (args < 1)
 	{
@@ -2921,6 +2922,8 @@ public Action Client_Stop(int client, int args)
 	// Strafe Sync
 	g_iGoodGains[client] = 0;
 	g_iTotalMeasures[client] = 0;
+	
+	g_bSaveLocTele[client] = false;
 
 	return Plugin_Handled;
 }
