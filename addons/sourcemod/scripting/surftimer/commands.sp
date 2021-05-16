@@ -675,19 +675,34 @@ public Action Command_createPlayerCheckpoint(int client, int args)
 	if (!IsValidClient(client))
 		return Plugin_Handled;
 	
-	if (!g_bSaveLocTele[client])
+	int playerType;
+	int player;
+	int ObservedUser;
+	
+	ObservedUser = GetEntPropEnt(client, Prop_Send, "m_hObserverTarget");
+
+	if (!g_bSpectate[client])
 	{
-		if (g_iClientInZone[client][0] == 1 || g_iClientInZone[client][0] == 5)
+		playerType = 1;
+	}
+	else
+	{
+		playerType = 2;
+	}
+
+	switch (playerType)
+	{
+		case 1: player = client;
+		case 2: player = ObservedUser;
+	}
+
+	if (!g_bSaveLocTele[player])
+	{
+		if (g_iClientInZone[player][0] == 1 || g_iClientInZone[player][0] == 5)
 		{
 			CPrintToChat(client, "%t", "PracticeInStartZone", g_szChatPrefix);
 			return Plugin_Handled;
 		}
-	}
-
-	if (g_bSpectate[client])
-	{
-		CPrintToChat(client, "%t", "PracticeInSpectate", g_szChatPrefix);
-		return Plugin_Handled;
 	}
 	
 	float fGetGameTime = GetGameTime();
@@ -709,21 +724,21 @@ public Action Command_createPlayerCheckpoint(int client, int args)
 
 
 		// Save stage/checkpoint player was in when creating saveloc
-		if (g_bPracticeMode[client])
+		if (g_bPracticeMode[player])
 		{
-			if (g_bSaveLocTele[client]) // Has the player teleported to saveloc?
+			if (g_bSaveLocTele[player]) // Has the player teleported to saveloc?
 			{
-				g_iPlayerPracLocationSnap[client][g_iLastSaveLocIdClient[client]] = g_iPlayerPracLocationSnap[client][g_iPlayerPracLocationSnapIdClient[client]];
+				g_iPlayerPracLocationSnap[client][g_iLastSaveLocIdClient[client]] = g_iPlayerPracLocationSnap[player][g_iPlayerPracLocationSnapIdClient[player]];
 			}
 			else
 			{
 				if (g_bhasStages)
 				{
-					g_iPlayerPracLocationSnap[client][g_iLastSaveLocIdClient[client]] = g_Stage[g_iClientInZone[client][2]][client];
+					g_iPlayerPracLocationSnap[client][g_iLastSaveLocIdClient[client]] = g_Stage[g_iClientInZone[player][2]][player];
 				}
 				else
 				{
-					g_iPlayerPracLocationSnap[client][g_iLastSaveLocIdClient[client]] = g_iCurrentCheckpoint[client] + 1;
+					g_iPlayerPracLocationSnap[client][g_iLastSaveLocIdClient[client]] = g_iCurrentCheckpoint[player] + 1;
 				}
 			}
 		}
@@ -731,50 +746,50 @@ public Action Command_createPlayerCheckpoint(int client, int args)
 		{
 			if (g_bhasStages)
 			{
-				g_iPlayerPracLocationSnap[client][g_iLastSaveLocIdClient[client]] = g_Stage[g_iClientInZone[client][2]][client];
+				g_iPlayerPracLocationSnap[client][g_iLastSaveLocIdClient[client]] = g_Stage[g_iClientInZone[player][2]][player];
 			}
 			else
 			{
-				g_iPlayerPracLocationSnap[client][g_iLastSaveLocIdClient[client]] = g_iCurrentCheckpoint[client] + 1;
+				g_iPlayerPracLocationSnap[client][g_iLastSaveLocIdClient[client]] = g_iCurrentCheckpoint[player] + 1;
 			}
 		}
 
 		// Save players time when creating saveloc
-		if (g_bTimerRunning[client])
+		if (g_bTimerRunning[player])
 		{	
-			if (!g_bPracticeMode[client])
+			if (!g_bPracticeMode[player])
 			{
-				g_fPlayerPracTimeSnap[client][g_iLastSaveLocIdClient[client]] = fGetGameTime - g_fStartTime[client] - g_fPauseTime[client];
+				g_fPlayerPracTimeSnap[client][g_iLastSaveLocIdClient[client]] = fGetGameTime - g_fStartTime[player] - g_fPauseTime[player];
 			}
 			else
 			{
-				if (g_iPreviousSaveLocIdClient[client] == g_iLastSaveLocIdClient[client]) // Did player Tele to earlier saveloc?
+				if (g_iPreviousSaveLocIdClient[player] == g_iLastSaveLocIdClient[player]) // Did player Tele to earlier saveloc?
 				{
-					g_fPlayerPracTimeSnap[client][g_iLastSaveLocIdClient[client]] = (fGetGameTime - g_fPracModeStartTime[client] - g_fPauseTime[client]) + g_fPlayerPracTimeSnap[client][g_iLastSaveLocIdClient[client] - 1];	
+					g_fPlayerPracTimeSnap[client][g_iLastSaveLocIdClient[client]] = (fGetGameTime - g_fPracModeStartTime[player] - g_fPauseTime[player]) + g_fPlayerPracTimeSnap[player][g_iLastSaveLocIdClient[player] - 1];	
 				}
 				else
 				{
-					g_fPlayerPracTimeSnap[client][g_iLastSaveLocIdClient[client]] = (fGetGameTime - g_fPracModeStartTime[client] - g_fPauseTime[client]) + g_fPlayerPracTimeSnap[client][g_iPreviousSaveLocIdClient[client]];
+					g_fPlayerPracTimeSnap[client][g_iLastSaveLocIdClient[client]] = (fGetGameTime - g_fPracModeStartTime[player] - g_fPauseTime[player]) + g_fPlayerPracTimeSnap[player][g_iPreviousSaveLocIdClient[player]];
 				}
 
 				g_fPracModeStartTime[client] = fGetGameTime;
 			}
 		}
-		else if (g_bWrcpTimeractivated[client])
+		else if (g_bWrcpTimeractivated[player])
 		{
-			if (!g_bPracticeMode[client])
+			if (!g_bPracticeMode[player])
 			{
-				g_fPlayerPracTimeSnap[client][g_iLastSaveLocIdClient[client]] = fGetGameTime -  g_fStartWrcpTime[client] - g_fPauseTime[client];
+				g_fPlayerPracTimeSnap[client][g_iLastSaveLocIdClient[client]] = fGetGameTime -  g_fStartWrcpTime[player] - g_fPauseTime[player];
 			}
 			else
 			{
-				if (g_iPreviousSaveLocIdClient[client] == g_iLastSaveLocIdClient[client]) // Did player Tele to earlier saveloc?
+				if (g_iPreviousSaveLocIdClient[player] == g_iLastSaveLocIdClient[player]) // Did player Tele to earlier saveloc?
 				{
-					g_fPlayerPracTimeSnap[client][g_iLastSaveLocIdClient[client]] = (fGetGameTime - g_fStartWrcpTime[client] - g_fPauseTime[client]) + g_fPlayerPracTimeSnap[client][g_iLastSaveLocIdClient[client] - 1];	
+					g_fPlayerPracTimeSnap[client][g_iLastSaveLocIdClient[client]] = (fGetGameTime - g_fStartWrcpTime[player] - g_fPauseTime[player]) + g_fPlayerPracTimeSnap[player][g_iLastSaveLocIdClient[player] - 1];	
 				}
 				else
 				{
-					g_fPlayerPracTimeSnap[client][g_iLastSaveLocIdClient[client]] = (fGetGameTime - g_fStartWrcpTime[client] - g_fPauseTime[client]) + g_fPlayerPracTimeSnap[client][g_iPreviousSaveLocIdClient[client]];
+					g_fPlayerPracTimeSnap[client][g_iLastSaveLocIdClient[client]] = (fGetGameTime - g_fStartWrcpTime[player] - g_fPauseTime[player]) + g_fPlayerPracTimeSnap[player][g_iPreviousSaveLocIdClient[player]];
 				}
 
 				g_fPracModeStartTime[client] = fGetGameTime;
@@ -782,33 +797,40 @@ public Action Command_createPlayerCheckpoint(int client, int args)
 		}
 
 		// Save players Prac Srcp time when creating saveloc
-		if (g_bPracSrcpTimerActivated[client])
+		if (g_bPracSrcpTimerActivated[player])
 		{
-			if (!g_bPracticeMode[client])
+			if (!g_bPracticeMode[player])
 			{
-				g_fPlayerPracSrcpTimeSnap[client][g_iLastSaveLocIdClient[client]] = fGetGameTime -  g_fStartPracSrcpTime[client] - g_fPauseTime[client];
+				g_fPlayerPracSrcpTimeSnap[client][g_iLastSaveLocIdClient[client]] = fGetGameTime -  g_fStartPracSrcpTime[player] - g_fPauseTime[player];
 			}
 			else
 			{
-				if (g_iPreviousSaveLocIdClient[client] == g_iLastSaveLocIdClient[client]) // Did player Tele to earlier saveloc?
+				if (g_iPreviousSaveLocIdClient[player] == g_iLastSaveLocIdClient[player]) // Did player Tele to earlier saveloc?
 				{	
-					g_fPlayerPracSrcpTimeSnap[client][g_iLastSaveLocIdClient[client]] = (fGetGameTime -  g_fStartPracSrcpTime[client] - g_fPauseTime[client]) + g_fPlayerPracSrcpTimeSnap[client][g_iLastSaveLocIdClient[client] - 1];
+					g_fPlayerPracSrcpTimeSnap[client][g_iLastSaveLocIdClient[client]] = (fGetGameTime -  g_fStartPracSrcpTime[player] - g_fPauseTime[player]) + g_fPlayerPracSrcpTimeSnap[player][g_iLastSaveLocIdClient[player] - 1];
 				}
 				else
 				{
-					g_fPlayerPracSrcpTimeSnap[client][g_iLastSaveLocIdClient[client]] = (fGetGameTime -  g_fStartPracSrcpTime[client] - g_fPauseTime[client]) + g_fPlayerPracSrcpTimeSnap[client][g_iPreviousSaveLocIdClient[client]];
+					g_fPlayerPracSrcpTimeSnap[client][g_iLastSaveLocIdClient[client]] = (fGetGameTime -  g_fStartPracSrcpTime[player] - g_fPauseTime[player]) + g_fPlayerPracSrcpTimeSnap[player][g_iPreviousSaveLocIdClient[player]];
 				}
 			}
 		}
 
 		// Save bonus number when creating saveloc in bonus 
-		if (g_bInBonus[client])
+		if (player == g_BonusBot)
 		{
-			g_iSaveLocInBonus[client][g_iSaveLocCount[client]] = g_iInBonus[client];
+			g_iSaveLocInBonus[client][g_iSaveLocCount[client]] = g_iClientInZone[g_BonusBot][2];
 		}
 		else
 		{
-			g_iSaveLocInBonus[client][g_iSaveLocCount[client]] = 0;
+			if (g_bInBonus[player])
+			{
+				g_iSaveLocInBonus[client][g_iSaveLocCount[client]] = g_iClientInZone[player][2];
+			}
+			else
+			{
+				g_iSaveLocInBonus[client][g_iSaveLocCount[client]] = 0;
+			}	
 		}
 
 		CPrintToChat(client, "%t", "Commands7Chat", g_szChatPrefix, g_iSaveLocCount[client]);
@@ -820,11 +842,11 @@ public Action Command_createPlayerCheckpoint(int client, int args)
 
 			if (g_iallowCheckpointRecreation == 1)
 			{
-				CPrintToChat(client, "To Recreate use: !addsaveloc %i|%i|%i|%i|%i|%i|%i|%i|%i|%i|%0.3f|%0.3f|%0.3f|%0.3f|%i", RoundToNearest(g_fSaveLocCoords[client][id][0]), RoundToNearest(g_fSaveLocCoords[client][id][1]), RoundToNearest(g_fSaveLocCoords[client][id][2]), RoundToNearest(g_fSaveLocAngle[client][id][0]), RoundToNearest(g_fSaveLocAngle[client][id][1]), RoundToNearest(g_fSaveLocAngle[client][id][2]), RoundToNearest(g_fSaveLocVel[client][id][0]), RoundToNearest(g_fSaveLocVel[client][id][1]), RoundToNearest(g_fSaveLocVel[client][id][2]), g_iPlayerPracLocationSnap[client][id], g_fPlayerPracTimeSnap[client][id], g_fPracModeStartTime[client], g_fPlayerPracSrcpTimeSnap[client][id], g_fStartPracSrcpTime[client], g_iSaveLocInBonus[client][id]);
+				CPrintToChat(client, "To Recreate use: !addsaveloc %i|%i|%i|%i|%i|%i|%i|%i|%i|%i|%0.3f|%0.3f|%0.3f|%0.3f|%i", RoundToNearest(g_fSaveLocCoords[player][id][0]), RoundToNearest(g_fSaveLocCoords[player][id][1]), RoundToNearest(g_fSaveLocCoords[player][id][2]), RoundToNearest(g_fSaveLocAngle[player][id][0]), RoundToNearest(g_fSaveLocAngle[player][id][1]), RoundToNearest(g_fSaveLocAngle[player][id][2]), RoundToNearest(g_fSaveLocVel[player][id][0]), RoundToNearest(g_fSaveLocVel[player][id][1]), RoundToNearest(g_fSaveLocVel[player][id][2]), g_iPlayerPracLocationSnap[player][id], g_fPlayerPracTimeSnap[player][id], g_fPracModeStartTime[player], g_fPlayerPracSrcpTimeSnap[player][id], g_fStartPracSrcpTime[player], g_iSaveLocInBonus[player][id]);
 			}
 			else if (g_iallowCheckpointRecreation == 2)
 			{
-				PrintToConsole(client, "SurfTimer | To Recreate sm_tele #%i use: sm_addsaveloc %i|%i|%i|%i|%i|%i|%i|%i|%i|%i|%0.3f|%0.3f|%0.3f|%0.3f|%i", g_iSaveLocCount[client], RoundToNearest(g_fSaveLocCoords[client][id][0]), RoundToNearest(g_fSaveLocCoords[client][id][1]), RoundToNearest(g_fSaveLocCoords[client][id][2]), RoundToNearest(g_fSaveLocAngle[client][id][0]), RoundToNearest(g_fSaveLocAngle[client][id][1]), RoundToNearest(g_fSaveLocAngle[client][id][2]), RoundToNearest(g_fSaveLocVel[client][id][0]), RoundToNearest(g_fSaveLocVel[client][id][1]), RoundToNearest(g_fSaveLocVel[client][id][2]), g_iPlayerPracLocationSnap[client][id], g_fPlayerPracTimeSnap[client][id], g_fPracModeStartTime[client], g_fPlayerPracSrcpTimeSnap[client][id], g_fStartPracSrcpTime[client], g_iSaveLocInBonus[client][id]);
+				PrintToConsole(client, "SurfTimer | To Recreate sm_tele #%i use: sm_addsaveloc %i|%i|%i|%i|%i|%i|%i|%i|%i|%i|%0.3f|%0.3f|%0.3f|%0.3f|%i", g_iSaveLocCount[player], RoundToNearest(g_fSaveLocCoords[player][id][0]), RoundToNearest(g_fSaveLocCoords[player][id][1]), RoundToNearest(g_fSaveLocCoords[player][id][2]), RoundToNearest(g_fSaveLocAngle[player][id][0]), RoundToNearest(g_fSaveLocAngle[player][id][1]), RoundToNearest(g_fSaveLocAngle[player][id][2]), RoundToNearest(g_fSaveLocVel[player][id][0]), RoundToNearest(g_fSaveLocVel[player][id][1]), RoundToNearest(g_fSaveLocVel[player][id][2]), g_iPlayerPracLocationSnap[player][id], g_fPlayerPracTimeSnap[player][id], g_fPracModeStartTime[player], g_fPlayerPracSrcpTimeSnap[player][id], g_fStartPracSrcpTime[player], g_iSaveLocInBonus[player][id]);
 			}
 		}
 
@@ -850,7 +872,7 @@ public Action Command_goToPlayerCheckpoint(int client, int args)
 
 	if (g_bSpectate[client])
 	{
-		CPrintToChat(client, "%t", "PracticeInSpectate2", g_szChatPrefix);
+		CPrintToChat(client, "%t", "PracticeInSpectate", g_szChatPrefix);
 		return Plugin_Handled;
 	}
 

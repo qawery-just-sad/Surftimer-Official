@@ -362,7 +362,10 @@ public void StartTouch(int client, int action[3])
 					}
 					else
 					{
-						CL_OnEndPracSrcpTimerPress(client, fCurrentPracSrcpRunTime);
+						if (!g_bInBonus[client])
+						{
+							CL_OnEndPracSrcpTimerPress(client, fCurrentPracSrcpRunTime);
+						}
 					}
 
 					g_bPracSrcpEndZone[client] = true;

@@ -18,11 +18,6 @@
 	"PracticeInSpectate"
 	{
 		"#format"	"{1:s}"
-		"en"		"{1} You can't make a checkpoint whilst spectating!"
-	}
-	"PracticeInSpectate2"
-	{
-		"#format"	"{1:s}"
 		"en"		"{1} You can't go to a checkpoint whilst spectating!"
 	}
 	"ToogleCheckpoints1"
