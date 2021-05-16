@@ -811,7 +811,8 @@ public Action Command_createPlayerCheckpoint(int client, int args)
 			g_iSaveLocInBonus[client][g_iSaveLocCount[client]] = 0;
 		}
 
-		CPrintToChat(client, "%t", "Commands7", g_szChatPrefix, g_iSaveLocCount[client]);
+		CPrintToChat(client, "%t", "Commands7Chat", g_szChatPrefix, g_iSaveLocCount[client]);
+		PrintToConsole(client, "%t", "Commands7Console", g_iSaveLocCount[client]);
 		
 		if (g_iallowCheckpointRecreation != 0)
 		{
@@ -819,11 +820,11 @@ public Action Command_createPlayerCheckpoint(int client, int args)
 
 			if (g_iallowCheckpointRecreation == 1)
 			{
-				CPrintToChat(client, "%t", "Commands7.2", g_fSaveLocCoords[client][id][0], g_fSaveLocCoords[client][id][1], g_fSaveLocCoords[client][id][2], g_fSaveLocAngle[client][id][0], g_fSaveLocAngle[client][id][1], g_fSaveLocAngle[client][id][2], g_fSaveLocVel[client][id][0], g_fSaveLocVel[client][id][1], g_fSaveLocVel[client][id][2], g_iPlayerPracLocationSnap[client][id], g_fPlayerPracTimeSnap[client][id], g_fPracModeStartTime[client], g_fPlayerPracSrcpTimeSnap[client][id], g_fStartPracSrcpTime[client], g_iSaveLocInBonus[client][id]);
+				CPrintToChat(client, "To Recreate use: !addsaveloc %i|%i|%i|%i|%i|%i|%i|%i|%i|%i|%0.3f|%0.3f|%0.3f|%0.3f|%i", RoundToNearest(g_fSaveLocCoords[client][id][0]), RoundToNearest(g_fSaveLocCoords[client][id][1]), RoundToNearest(g_fSaveLocCoords[client][id][2]), RoundToNearest(g_fSaveLocAngle[client][id][0]), RoundToNearest(g_fSaveLocAngle[client][id][1]), RoundToNearest(g_fSaveLocAngle[client][id][2]), RoundToNearest(g_fSaveLocVel[client][id][0]), RoundToNearest(g_fSaveLocVel[client][id][1]), RoundToNearest(g_fSaveLocVel[client][id][2]), g_iPlayerPracLocationSnap[client][id], g_fPlayerPracTimeSnap[client][id], g_fPracModeStartTime[client], g_fPlayerPracSrcpTimeSnap[client][id], g_fStartPracSrcpTime[client], g_iSaveLocInBonus[client][id]);
 			}
 			else if (g_iallowCheckpointRecreation == 2)
 			{
-				PrintToConsole(client, "%t", "Commands7.3", g_iSaveLocCount[client], g_fSaveLocCoords[client][id][0], g_fSaveLocCoords[client][id][1], g_fSaveLocCoords[client][id][2], g_fSaveLocAngle[client][id][0], g_fSaveLocAngle[client][id][1], g_fSaveLocAngle[client][id][2], g_fSaveLocVel[client][id][0], g_fSaveLocVel[client][id][1], g_fSaveLocVel[client][id][2], g_iPlayerPracLocationSnap[client][id], g_fPlayerPracTimeSnap[client][id], g_fPracModeStartTime[client], g_fPlayerPracSrcpTimeSnap[client][id], g_fStartPracSrcpTime[client], g_iSaveLocInBonus[client][id]);
+				PrintToConsole(client, "SurfTimer | To Recreate sm_tele #%i use: sm_addsaveloc %i|%i|%i|%i|%i|%i|%i|%i|%i|%i|%0.3f|%0.3f|%0.3f|%0.3f|%i", g_iSaveLocCount[client], RoundToNearest(g_fSaveLocCoords[client][id][0]), RoundToNearest(g_fSaveLocCoords[client][id][1]), RoundToNearest(g_fSaveLocCoords[client][id][2]), RoundToNearest(g_fSaveLocAngle[client][id][0]), RoundToNearest(g_fSaveLocAngle[client][id][1]), RoundToNearest(g_fSaveLocAngle[client][id][2]), RoundToNearest(g_fSaveLocVel[client][id][0]), RoundToNearest(g_fSaveLocVel[client][id][1]), RoundToNearest(g_fSaveLocVel[client][id][2]), g_iPlayerPracLocationSnap[client][id], g_fPlayerPracTimeSnap[client][id], g_fPracModeStartTime[client], g_fPlayerPracSrcpTimeSnap[client][id], g_fStartPracSrcpTime[client], g_iSaveLocInBonus[client][id]);
 			}
 		}
 
@@ -934,6 +935,7 @@ public Action Command_recreatePlayerCheckpoint(int client, char args)
 	{
 		g_iSaveLocCount[client]++;
 		int id = g_iSaveLocCount[client];
+		g_iLastSaveLocIdClient[client] = id;
 
 		char szBuffer[256];
 		char input[15][32]; 
@@ -945,19 +947,19 @@ public Action Command_recreatePlayerCheckpoint(int client, char args)
 		if (inputSize == 15)
 		{
 			// Coords
-			g_fSaveLocCoords[client][id][0] = StringToFloat(input[0]);
-			g_fSaveLocCoords[client][id][1] = StringToFloat(input[1]);
-			g_fSaveLocCoords[client][id][2] = StringToFloat(input[2]);
+			g_fSaveLocCoords[client][id][0] = (StringToInt(input[0]) / 1.0);
+			g_fSaveLocCoords[client][id][1] = (StringToInt(input[1]) / 1.0);
+			g_fSaveLocCoords[client][id][2] = (StringToInt(input[2]) / 1.0);
 			
 			// Angle
-			g_fSaveLocAngle[client][id][0] = StringToFloat(input[3]);
-			g_fSaveLocAngle[client][id][1] = StringToFloat(input[4]);
-			g_fSaveLocAngle[client][id][2] = StringToFloat(input[5]);
+			g_fSaveLocAngle[client][id][0] = (StringToInt(input[3]) / 1.0);
+			g_fSaveLocAngle[client][id][1] = (StringToInt(input[4]) / 1.0);
+			g_fSaveLocAngle[client][id][2] = (StringToInt(input[5]) / 1.0);
 
 			// Vel
-			g_fSaveLocVel[client][id][0] = StringToFloat(input[6]);
-			g_fSaveLocVel[client][id][1] = StringToFloat(input[7]);
-			g_fSaveLocVel[client][id][2] = StringToFloat(input[8]);
+			g_fSaveLocVel[client][id][0] = (StringToInt(input[6]) / 1.0);
+			g_fSaveLocVel[client][id][1] = (StringToInt(input[7]) / 1.0);
+			g_fSaveLocVel[client][id][2] = (StringToInt(input[8]) / 1.0);
 
 			// Times
 			g_iPlayerPracLocationSnap[client][id] = StringToInt(input[9]);
@@ -972,7 +974,7 @@ public Action Command_recreatePlayerCheckpoint(int client, char args)
 			g_iSaveLocUnix[id][client] = GetTime();
 			g_fLastCheckpointMade[client] = fGetGameTime;
 
-			CReplyToCommand(client, "%t", "Commands7.1", g_szChatPrefix, id);
+			CReplyToCommand(client, "%t", "Commands7Added", g_szChatPrefix, id);
 			
 			Command_goToPlayerCheckpoint(client, 0);
 		}
@@ -981,8 +983,6 @@ public Action Command_recreatePlayerCheckpoint(int client, char args)
 			CReplyToCommand(client, "%t", "CheckpointRecreationUnable", g_szChatPrefix);
 		}
 	}
-
-	g_fLastCheckpointMade[client] = fGetGameTime;
 
 	return Plugin_Handled;
 }
