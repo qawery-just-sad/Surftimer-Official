@@ -992,7 +992,7 @@ public bool checkSpam(int client)
 
 stock bool IsValidClient(int client)
 {
-	if (client >= 1 && client <= MaxClients && IsValidEntity(client) && IsClientConnected(client) && IsClientInGame(client))
+	if (client >= 1 && client <= MaxClients && IsValidEntity(client) && IsClientConnected(client) && IsClientInGame(client) /*&& (g_CUID == GetClientUserID(client))*/)
 		return true;
 	return false;
 }
@@ -4513,23 +4513,28 @@ public void CheckBonusStyleRanks(int client, int zGroup, int style)
 public void GetSpeedColour(int client, int speed, int type)
 {
 	int pos;
+	if (speed < 0)
+	{
+		speed = speed * -1;
+	}
+	
 	if (g_fMaxVelocity == 10000.0)
 	{
-		if (type == 1 && g_SpeedMode[client] == 0) // green
+		if (type == 1) // green
 		{
 			pos = RoundToFloor(speed / 400.0);
 			if (pos > 24)
 				pos = 24;
 			Format(g_szSpeedColour[client], sizeof(g_szSpeedColour), g_sz10000mvGradient[pos]);
 		}
-		else if (type == 2 && g_SpeedMode[client] == 0) // rainbow
+		else if (type == 2) // rainbow
 		{
 			pos = RoundToFloor(speed / 476.0);
 			if (pos > 21)
 				pos = 21;
 			Format(g_szSpeedColour[client], sizeof(g_szSpeedColour), g_szRainbowGradient[pos]);
 		}
-		else if (type == 3 && g_SpeedMode[client] == 0) // gain/loss
+		else if (type == 3) // gain/loss
 		{
 			if (speed >= GetConVarInt(g_hMaxVelocity))
 				Format(g_szSpeedColour[client], sizeof(g_szSpeedColour), "#b8b");
@@ -4545,14 +4550,14 @@ public void GetSpeedColour(int client, int speed, int type)
 	}
 	else
 	{
-		if (type == 1 && g_SpeedMode[client] == 0) // green
+		if (type == 1) // green
 		{
 			pos = RoundToFloor(speed / 100.0);
 			if (pos > 34)
 				pos = 34;
 			Format(g_szSpeedColour[client], sizeof(g_szSpeedColour), g_sz3500mvGradient[pos]);
 		}
-		else if (type == 2 && g_SpeedMode[client] == 0) // rainbow
+		else if (type == 2) // rainbow
 		{
 			pos = RoundToFloor(speed / 166.0);
 			if (pos > 21)
@@ -4560,7 +4565,7 @@ public void GetSpeedColour(int client, int speed, int type)
 
 			Format(g_szSpeedColour[client], sizeof(g_szSpeedColour), g_szRainbowGradient[pos]);
 		}
-		else if (type == 3 && g_SpeedMode[client] == 0) // gain/loss
+		else if (type == 3) // gain/loss
 		{
 			if (speed >= GetConVarInt(g_hMaxVelocity))
 				Format(g_szSpeedColour[client], sizeof(g_szSpeedColour), "#b8b");
