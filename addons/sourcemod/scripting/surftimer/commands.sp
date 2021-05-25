@@ -2727,7 +2727,6 @@ public void PauseMethod(int client)
 		{
 			g_fPauseTime[client] = GetGameTime() - g_fStartPauseTime[client];
 			g_fSrcpPauseTime[client] = g_fPauseTime[client];
-			CPrintToChat(client, "SrcpPause: %f", g_fSrcpPauseTime[client]);
 		}
 
 		g_bNoClip[client] = false;

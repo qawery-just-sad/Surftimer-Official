@@ -63,7 +63,6 @@ public void CL_OnStartTimerPress(int client)
 		g_bMissedBonusBest[client] = true;
 		g_bTimerRunning[client] = true;
 		g_bTop10Time[client] = false;
-		//g_fStartPracSrcpTime[client] = fGetGameTime;
 		
 		// Strafe Sync
 		g_iGoodGains[client] = 0;
