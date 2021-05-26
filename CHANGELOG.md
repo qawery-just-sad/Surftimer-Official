@@ -1,5 +1,16 @@
 # Changelog
 
+[2021-05-26 - Version 3.1.6]
+---
+- Changed the way savelocs are saved, from a server based system to a player based system
+- Added time comparisions when in practice mode
+- Added the ability to recreate other players savelocs by using `sm_addsaveloc` / `sm_addloc` followed by the various inputs required to recreate the saveloc
+- Added the ability to clear savelocs by using `sm_clearsavelocs` / `sm_clearlocs`
+- Added `ck_allow_checkpoint_recreation` to enable server owners control over allowing checkpoint recreation and how they want it to be impelemented
+- Changed the way savelocs are created when spectating a player/bot. You will now create the saveloc with the time that the player/bot had at that point. This will allow you to teleport to the saveloc and receive the time the player/bot had instead of the timer just starting at 0
+- Changed how practice mode works when leaving start zone. Before it would allow you to start a run in practice mode but now it will kick you out of practice mode and start the run normally
+- Changed a few of the HUD colours
+
 [2021-04-13 - Version 3.0.5]
 ---
 - Added `ck_sound_record_type` to enable controll over record sounds by @Kyli3Boi
