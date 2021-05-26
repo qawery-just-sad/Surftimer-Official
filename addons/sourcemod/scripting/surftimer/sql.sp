@@ -6052,7 +6052,6 @@ public void sql_selectWrcpRecordCallback(Handle owner, Handle hndl, const char[]
 		else if (style != 0)
 			Format(szQuery, sizeof(szQuery), "INSERT INTO ck_wrcps (steamid, name, mapname, runtimepro, stage, style) VALUES ('%s', '%s', '%s', '%f', %i, %i);", g_szSteamID[data], szName, g_szMapName, g_fFinalWrcpTime[data], stage, style);
 
-		
 		SQL_TQuery(g_hDb, SQL_UpdateWrcpRecordCallback, szQuery, pack, DBPrio_Low);
 
 		g_bStageSRVRecord[data][stage] = false;

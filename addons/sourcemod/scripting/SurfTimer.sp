@@ -1925,7 +1925,6 @@ public void OnMapStart()
 
 	// Save Locs
 	ResetSaveLocs();
-	g_iallowCheckpointRecreation = GetConVarInt(g_hallowCheckpointRecreation);
 }
 
 public void OnMapEnd()

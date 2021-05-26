@@ -840,13 +840,13 @@ public Action Command_createPlayerCheckpoint(int client, int args)
 		{
 			int id = g_iSaveLocCount[client];
 
-			if (g_iallowCheckpointRecreation == 1)
+			if (g_iallowCheckpointRecreation == 1 || g_iallowCheckpointRecreation == 3)
 			{
-				CPrintToChat(client, "To Recreate use: !addsaveloc %i|%i|%i|%i|%i|%i|%i|%i|%i|%i|%0.3f|%0.3f|%0.3f|%0.3f|%i", RoundToNearest(g_fSaveLocCoords[player][id][0]), RoundToNearest(g_fSaveLocCoords[player][id][1]), RoundToNearest(g_fSaveLocCoords[player][id][2]), RoundToNearest(g_fSaveLocAngle[player][id][0]), RoundToNearest(g_fSaveLocAngle[player][id][1]), RoundToNearest(g_fSaveLocAngle[player][id][2]), RoundToNearest(g_fSaveLocVel[player][id][0]), RoundToNearest(g_fSaveLocVel[player][id][1]), RoundToNearest(g_fSaveLocVel[player][id][2]), g_iPlayerPracLocationSnap[player][id], g_fPlayerPracTimeSnap[player][id], g_fPracModeStartTime[player], g_fPlayerPracSrcpTimeSnap[player][id], g_fStartPracSrcpTime[player], g_iSaveLocInBonus[player][id]);
+				CPrintToChat(client, "%t", "CheckpointRecreationToChat", RoundToNearest(g_fSaveLocCoords[player][id][0]), RoundToNearest(g_fSaveLocCoords[player][id][1]), RoundToNearest(g_fSaveLocCoords[player][id][2]), RoundToNearest(g_fSaveLocAngle[player][id][0]), RoundToNearest(g_fSaveLocAngle[player][id][1]), RoundToNearest(g_fSaveLocAngle[player][id][2]), RoundToNearest(g_fSaveLocVel[player][id][0]), RoundToNearest(g_fSaveLocVel[player][id][1]), RoundToNearest(g_fSaveLocVel[player][id][2]), g_iPlayerPracLocationSnap[player][id], g_fPlayerPracTimeSnap[player][id], g_fPracModeStartTime[player], g_fPlayerPracSrcpTimeSnap[player][id], g_fStartPracSrcpTime[player], g_iSaveLocInBonus[player][id]);
 			}
-			else if (g_iallowCheckpointRecreation == 2)
+			else if (g_iallowCheckpointRecreation == 2 || g_iallowCheckpointRecreation == 3)
 			{
-				PrintToConsole(client, "SurfTimer | To Recreate sm_tele #%i use: sm_addsaveloc %i|%i|%i|%i|%i|%i|%i|%i|%i|%i|%0.3f|%0.3f|%0.3f|%0.3f|%i", g_iSaveLocCount[player], RoundToNearest(g_fSaveLocCoords[player][id][0]), RoundToNearest(g_fSaveLocCoords[player][id][1]), RoundToNearest(g_fSaveLocCoords[player][id][2]), RoundToNearest(g_fSaveLocAngle[player][id][0]), RoundToNearest(g_fSaveLocAngle[player][id][1]), RoundToNearest(g_fSaveLocAngle[player][id][2]), RoundToNearest(g_fSaveLocVel[player][id][0]), RoundToNearest(g_fSaveLocVel[player][id][1]), RoundToNearest(g_fSaveLocVel[player][id][2]), g_iPlayerPracLocationSnap[player][id], g_fPlayerPracTimeSnap[player][id], g_fPracModeStartTime[player], g_fPlayerPracSrcpTimeSnap[player][id], g_fStartPracSrcpTime[player], g_iSaveLocInBonus[player][id]);
+				PrintToConsole(client, "%t", "CheckpointRecreationToConsole", g_iSaveLocCount[player], RoundToNearest(g_fSaveLocCoords[player][id][0]), RoundToNearest(g_fSaveLocCoords[player][id][1]), RoundToNearest(g_fSaveLocCoords[player][id][2]), RoundToNearest(g_fSaveLocAngle[player][id][0]), RoundToNearest(g_fSaveLocAngle[player][id][1]), RoundToNearest(g_fSaveLocAngle[player][id][2]), RoundToNearest(g_fSaveLocVel[player][id][0]), RoundToNearest(g_fSaveLocVel[player][id][1]), RoundToNearest(g_fSaveLocVel[player][id][2]), g_iPlayerPracLocationSnap[player][id], g_fPlayerPracTimeSnap[player][id], g_fPracModeStartTime[player], g_fPlayerPracSrcpTimeSnap[player][id], g_fStartPracSrcpTime[player], g_iSaveLocInBonus[player][id]);
 			}
 		}
 

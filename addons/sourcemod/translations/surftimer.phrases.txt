@@ -596,6 +596,16 @@
 		"#format"	"{1:s},{2:i}"
 		"en"		"{1} {lime}Added saveloc {default}to sm_tele #{2}"
 	}
+	"CheckpointRecreationToChat"
+	{
+		"#format"	"{1:i},{2:i},{3:i},{4:i},{5:i},{6:i},{7:i},{8:i},{9:i},{10:i},{11:.3f},{12:.3f},{13:.3f},{14:.3f},{15:i}"
+		"en"		"To Recreate use: !addsaveloc {1}|{2}|{3}|{4}|{5}|{6}|{7}|{8}|{9}|{10}|{11}|{12}|{13}|{14}|{15}"
+	}
+	"CheckpointRecreationToConsole"
+	{
+		"#format"	"{1:i}{2:i},{3:i},{4:i},{5:i},{6:i},{7:i},{8:i},{9:i},{10:i},{11:i},{12:.3f},{13:.3f},{14:.3f},{15:.3f},{16:i}"
+		"en"		"SurfTimer | To Recreate sm_tele #{1} use: sm_addsaveloc {2}|{3}|{4}|{5}|{6}|{7}|{8}|{9}|{10}|{11}|{12}|{13}|{14}|{15}|{16}"
+	}
 	"CheckpointRecreationUnable"
 	{
 		"#format"	"{1:s}"
