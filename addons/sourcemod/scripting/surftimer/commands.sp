@@ -836,15 +836,15 @@ public Action Command_createPlayerCheckpoint(int client, int args)
 		CPrintToChat(client, "%t", "Commands7Chat", g_szChatPrefix, g_iSaveLocCount[client]);
 		PrintToConsole(client, "%t", "Commands7Console", g_iSaveLocCount[client]);
 		
-		if (g_iallowCheckpointRecreation != 0)
+		if (g_iAllowCheckpointRecreation != 0)
 		{
 			int id = g_iSaveLocCount[client];
 
-			if (g_iallowCheckpointRecreation == 1 || g_iallowCheckpointRecreation == 3)
+			if (g_iAllowCheckpointRecreation == 1 || g_iAllowCheckpointRecreation == 3)
 			{
 				CPrintToChat(client, "%t", "CheckpointRecreationToChat", RoundToNearest(g_fSaveLocCoords[player][id][0]), RoundToNearest(g_fSaveLocCoords[player][id][1]), RoundToNearest(g_fSaveLocCoords[player][id][2]), RoundToNearest(g_fSaveLocAngle[player][id][0]), RoundToNearest(g_fSaveLocAngle[player][id][1]), RoundToNearest(g_fSaveLocAngle[player][id][2]), RoundToNearest(g_fSaveLocVel[player][id][0]), RoundToNearest(g_fSaveLocVel[player][id][1]), RoundToNearest(g_fSaveLocVel[player][id][2]), g_iPlayerPracLocationSnap[player][id], g_fPlayerPracTimeSnap[player][id], g_fPracModeStartTime[player], g_fPlayerPracSrcpTimeSnap[player][id], g_fStartPracSrcpTime[player], g_iSaveLocInBonus[player][id]);
 			}
-			else if (g_iallowCheckpointRecreation == 2 || g_iallowCheckpointRecreation == 3)
+			else if (g_iAllowCheckpointRecreation == 2 || g_iAllowCheckpointRecreation == 3)
 			{
 				PrintToConsole(client, "%t", "CheckpointRecreationToConsole", g_iSaveLocCount[player], RoundToNearest(g_fSaveLocCoords[player][id][0]), RoundToNearest(g_fSaveLocCoords[player][id][1]), RoundToNearest(g_fSaveLocCoords[player][id][2]), RoundToNearest(g_fSaveLocAngle[player][id][0]), RoundToNearest(g_fSaveLocAngle[player][id][1]), RoundToNearest(g_fSaveLocAngle[player][id][2]), RoundToNearest(g_fSaveLocVel[player][id][0]), RoundToNearest(g_fSaveLocVel[player][id][1]), RoundToNearest(g_fSaveLocVel[player][id][2]), g_iPlayerPracLocationSnap[player][id], g_fPlayerPracTimeSnap[player][id], g_fPracModeStartTime[player], g_fPlayerPracSrcpTimeSnap[player][id], g_fStartPracSrcpTime[player], g_iSaveLocInBonus[player][id]);
 			}
@@ -942,7 +942,7 @@ public Action Command_goToPlayerCheckpoint(int client, int args)
 
 public Action Command_recreatePlayerCheckpoint(int client, char args)
 {
-	if (g_iallowCheckpointRecreation == 0)
+	if (g_iAllowCheckpointRecreation == 0)
 	{
 		CReplyToCommand(client, "%t", "CheckpointRecreationNotAllowed", g_szChatPrefix);
 		return Plugin_Handled;
