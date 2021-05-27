@@ -3,6 +3,7 @@
 [2021-05-27 - Version 3.1.7]
 ---
 - Fixed Player profile map completions
+- Fixed `ck_allow_checkpoint_recreation` not applying correctly
 
 [2021-05-26 - Version 3.1.6]
 ---

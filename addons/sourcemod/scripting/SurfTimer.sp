@@ -2733,6 +2733,10 @@ public void OnSettingChanged(Handle convar, const char[] oldValue, const char[] 
 			Format(g_szRelativeSoundPathWRCP, sizeof(g_szRelativeSoundPathWRCP), "*physics/glass/glass_bottle_break2.wav");
 		}
 	}
+	else if (convar == g_hAllowCheckpointRecreation)
+	{
+		g_iAllowCheckpointRecreation = GetConVarInt(g_hAllowCheckpointRecreation);
+	}
 	if (g_hZoneTimer != INVALID_HANDLE)
 	{
 		KillTimer(g_hZoneTimer);
