@@ -1,5 +1,9 @@
 # Changelog
 
+[2021-05-27 - Version 3.1.7]
+---
+- Fixed Player profile map completions
+
 [2021-05-26 - Version 3.1.6]
 ---
 - Changed the way savelocs are saved, from a server based system to a player based system
@@ -10,6 +14,7 @@
 - Changed the way savelocs are created when spectating a player/bot. You will now create the saveloc with the time that the player/bot had at that point. This will allow you to teleport to the saveloc and receive the time the player/bot had instead of the timer just starting at 0
 - Changed how practice mode works when leaving start zone. Before it would allow you to start a run in practice mode but now it will kick you out of practice mode and start the run normally
 - Changed a few of the HUD colours
+- Fixed CSD again
 
 [2021-04-13 - Version 3.0.5]
 ---
