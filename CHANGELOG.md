@@ -1,5 +1,9 @@
 # Changelog
 
+[2021-05-30 - Version 3.1.8]
+---
+- Fixed bug when teleporting to stages
+
 [2021-05-27 - Version 3.1.7]
 ---
 - Fixed Player profile map completions
