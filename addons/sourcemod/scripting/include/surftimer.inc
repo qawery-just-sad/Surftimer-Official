@@ -178,7 +178,7 @@ forward Action:surftimer_OnPracticeFinished(client, Float:fRunTime, String:sRunT
  * @param timeDif			Time difference with the former record
  * @param bonusGroup	Group of the bonus. -1 if the record isn't a bonus
  */
-forward Action surftimer_OnNewRecord(int client, int style, char[] time, char[] timeDif, int bonusGroup);
+forward void surftimer_OnNewRecord(int client, int style, char[] time, char[] timeDif, int bonusGroup);
 
 public SharedPlugin:__pl_surftimer =
 {
