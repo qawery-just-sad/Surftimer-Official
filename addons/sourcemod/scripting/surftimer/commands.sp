@@ -193,7 +193,6 @@ void CreateCommands()
 	// Discord
 	RegConsoleCmd("sm_bug", Command_Bug, "[surftimer] report a bug to our discord");
 	RegConsoleCmd("sm_calladmin", Command_Calladmin, "[surftimer] sends a message to the staff");
-	RegAdminCmd("sm_discordtest", Command_DiscordTest, ADMFLAG_ROOT, "[surftimer] Allows to test the discord webhook");
 
 	// CPR
 	RegConsoleCmd("sm_cpr", Command_CPR, "[surftimer] Compare clients time to another clients time");
@@ -225,18 +224,6 @@ void CreateCommands()
 	RegConsoleCmd("sm_nctriggers", Command_ToggleNcTriggers, "[surftimer] [settings] on/off - toggle triggers while noclipping");
 	RegConsoleCmd("sm_autoreset", Command_ToggleAutoReset, "[surftimer] [settings] on/off - toggle auto reset for your current map/bonus run if your above your pb");
 
-}
-
-public Action Command_DiscordTest(int client, int args)
-{
-	if (!GetConVarBool(g_dcTest))
-	{
-		return Plugin_Handled;
-	}
-	sendDiscordAnnouncement("Gaben", "76561197960287930", "surf_utopia_v3", "0:00:00", "0:00:00");
-	sendDiscordAnnouncementBonus("Gaben", "76561197960287930", "surf_utopia_v3", "0:00:00", 1, "0:00:00");
-	CReplyToCommand(client, "%t", "Discord_Test", g_szChatPrefix);
-	return Plugin_Handled;
 }
 
 public Action Command_ToggleAutoReset(int client, int args) {

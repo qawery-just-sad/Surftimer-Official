@@ -2007,6 +2007,8 @@ stock void MapFinishedMsgs(int client, int rankThisRun = 0)
 			{
 				db_insertAnnouncement(szName, g_szMapName, 0, g_szFinalTime[client], 0, 0);
 			}
+			
+			SendNewRecordForward(client, 0, szRecordDiff, false);
 		}
 
 		if (g_bTop10Time[client])
@@ -2036,8 +2038,6 @@ stock void MapFinishedMsgs(int client, int rankThisRun = 0)
 
 		/* Finish the call, get the result */
 		Call_Finish();
-
-		SendNewRecordForward(client, style, szRecordDiff, false);
 	}
 	// recalc avg
 	db_CalcAvgRunTime();
@@ -2174,6 +2174,8 @@ stock void PrintChatBonus (int client, int zGroup, int rank = 0)
 		{
 			db_insertAnnouncement(szName, g_szMapName, 1, g_szFinalTime[client], zGroup, 0);
 		}
+
+		SendNewRecordForward(client, 0, szRecordDiff, zGroup);
 	}
 
 	/* Start function call */
@@ -2190,7 +2192,6 @@ stock void PrintChatBonus (int client, int zGroup, int rank = 0)
 	/* Finish the call, get the result */
 	Call_Finish();
 
-	SendNewRecordForward(client, 0, szRecordDiff, zGroup);
 	CheckBonusRanks(client, zGroup);
 	db_CalcAvgRunTimeBonus();
 
@@ -4365,8 +4366,9 @@ stock void StyleFinishedMsgs(int client, int style)
 			{	
 				db_insertAnnouncement(szName, g_szMapName, 2, g_szFinalTime[client], 0, style);
 			}
+
+			SendNewRecordForward(client, style, szRecordDiff2);
 		}
-		SendNewRecordForward(client, style, szRecordDiff2);
 		CalculatePlayerRank(client, style);
 		return;
 	}
@@ -4462,8 +4464,9 @@ stock void PrintChatBonusStyle (int client, int zGroup, int style, int rank = 0)
 		{
 			db_insertAnnouncement(szName, g_szMapName, 3, g_szFinalTime[client], zGroup, style);
 		}
+
+		SendNewRecordForward(client, style, szRecordDiff2, zGroup);
 	}
-	SendNewRecordForward(client, style, szRecordDiff2, zGroup);
 	CalculatePlayerRank(client, style);
 	return;
 }
