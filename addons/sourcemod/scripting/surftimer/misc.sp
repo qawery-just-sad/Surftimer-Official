@@ -2007,13 +2007,6 @@ stock void MapFinishedMsgs(int client, int rankThisRun = 0)
 			{
 				db_insertAnnouncement(szName, g_szMapName, 0, g_szFinalTime[client], 0, 0);
 			}
-			
-			char buffer[1024];
-			GetConVarString(g_hRecordAnnounceDiscord, buffer, 1024);
-			if (!StrEqual(buffer, ""))
-			{
-				sendDiscordAnnouncement(szName, szSteamId64, g_szMapName, g_szFinalTime[client], szRecordDiff2);
-			}
 		}
 
 		if (g_bTop10Time[client])
@@ -2044,6 +2037,7 @@ stock void MapFinishedMsgs(int client, int rankThisRun = 0)
 		/* Finish the call, get the result */
 		Call_Finish();
 
+		SendNewRecordForward(client, style, szRecordDiff, false);
 	}
 	// recalc avg
 	db_CalcAvgRunTime();
@@ -2180,13 +2174,6 @@ stock void PrintChatBonus (int client, int zGroup, int rank = 0)
 		{
 			db_insertAnnouncement(szName, g_szMapName, 1, g_szFinalTime[client], zGroup, 0);
 		}
-		
-		char buffer1[1024];
-		GetConVarString(g_hRecordAnnounceDiscordBonus, buffer1, 1024);
-		if (!StrEqual(buffer1, ""))
-		{
-			sendDiscordAnnouncementBonus(szName, szSteamId64, g_szMapName, g_szFinalTime[client], zGroup, szRecordDiff2);
-		}
 	}
 
 	/* Start function call */
@@ -2203,6 +2190,7 @@ stock void PrintChatBonus (int client, int zGroup, int rank = 0)
 	/* Finish the call, get the result */
 	Call_Finish();
 
+	SendNewRecordForward(client, 0, szRecordDiff, zGroup);
 	CheckBonusRanks(client, zGroup);
 	db_CalcAvgRunTimeBonus();
 
@@ -4377,15 +4365,8 @@ stock void StyleFinishedMsgs(int client, int style)
 			{	
 				db_insertAnnouncement(szName, g_szMapName, 2, g_szFinalTime[client], 0, style);
 			}
-			
-			char buffer[1024];
-			GetConVarString(g_hRecordAnnounceDiscordStyle, buffer, 1024);
-			if (!StrEqual(buffer, ""))
-			{
-				sendDiscordAnnouncementStyle(szName, szSteamId64, g_szMapName, g_szFinalTime[client], szRecordDiff2, style);
-			}
 		}
-
+		SendNewRecordForward(client, style, szRecordDiff2);
 		CalculatePlayerRank(client, style);
 		return;
 	}
@@ -4481,15 +4462,8 @@ stock void PrintChatBonusStyle (int client, int zGroup, int style, int rank = 0)
 		{
 			db_insertAnnouncement(szName, g_szMapName, 3, g_szFinalTime[client], zGroup, style);
 		}
-
-		char buffer1[1024];
-		GetConVarString(g_hRecordAnnounceDiscordBonusStyle, buffer1, 1024);
-		if (!StrEqual(buffer1, ""))
-		{
-			sendDiscordAnnouncementBonusStyle(szName, szSteamId64, g_szMapName, g_szFinalTime[client], zGroup, szRecordDiff2, style);
-		}
 	}
-
+	SendNewRecordForward(client, style, szRecordDiff2, zGroup);
 	CalculatePlayerRank(client, style);
 	return;
 }
@@ -5589,4 +5563,20 @@ public void PrintPracSrcp(int client, int style, int stage, float fClientPbStage
 	}
 
 	CheckpointToSpec(client, szSpecMessage);
+}
+
+stock void SendNewRecordForward(int client, int style, char[] szRecordDiff, int bonusGroup = -1)
+{
+	/* Start New record function call */
+	Call_StartForward(g_NewRecordForward);
+
+	/* Push parameters one at a time */
+	Call_PushCell(client);
+	Call_PushCell(style);
+	Call_PushString(g_szFinalTime[client]);
+	Call_PushString(szRecordDiff);
+	Call_PushCell(bonusGroup);
+
+	/* Finish the call, get the result */
+	Call_Finish();
 }
