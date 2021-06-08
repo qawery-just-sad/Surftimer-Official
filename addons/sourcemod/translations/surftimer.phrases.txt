@@ -1,10 +1,5 @@
 "Phrases"
 {
-	"Discord_Test"
-	{
-		"#format"	"{1:s}"
-		"en"		"{1} Discord test message sent."
-	}
 	"PracticeNormal"
 	{
 		"#format"	"{1:s}"

@@ -90,13 +90,6 @@ ConVar g_hServerID = null;										// Sets the servers id for cross-server anno
 ConVar g_hRecordAnnounce = null;								// Enable/Disable cross-server announcements
 ConVar g_hRecordAnnounceStyle = null;							// Enable/Disable cross-server announcements for styles
 ConVar g_hRecordAnnounceStyleType = null;						// Select type of cross-server announcements for styles
-ConVar g_hRecordAnnounceDiscord = null;							// Web hook link to announce records to discord
-ConVar g_hRecordAnnounceDiscordStyle = null;					// Web hook link to announce style records to discord
-ConVar g_hRecordAnnounceDiscordBonus = null;					// Web hook link to announce bonus records to discord
-ConVar g_hRecordAnnounceDiscordBonusStyle = null;				// Web hook link to announce bonus style records to discord
-ConVar g_hRecordAnnounceDiscordStyleType = null;                // Select type of discord announcements for styles
-ConVar g_hReportBugsDiscord = null;								// Web hook link to report bugs to discord
-ConVar g_hCalladminDiscord = null;								// Web hook link to allow players to call admin to discord
 ConVar g_hSidewaysBlockKeys = null;
 ConVar g_hEnforceDefaultTitles = null;
 ConVar g_hWrcpPoints = null;
@@ -116,22 +109,9 @@ char g_szRelativeSoundPathWRCP[PLATFORM_MAX_PATH];
 ConVar g_hMustPassCheckpoints = null;
 ConVar g_hSlayOnRoundEnd = null;
 ConVar g_hLimitSpeedType = null;
-ConVar g_dcMapRecordName = null;
-ConVar g_dcBonusRecordName = null;
-ConVar g_dcCalladminName = null;
-ConVar g_dcBugTrackerName = null;
 ConVar g_drDeleteSecurity = null;
 ConVar g_iAdminCountryTags = null;
 ConVar g_replayBotDelay = null;
-ConVar g_dcColor = null;
-ConVar g_dcTitle = null;
-ConVar g_dcTitleBonus = null;
-ConVar g_dcMention = null;
-ConVar g_dcKSFStyle = null;
-ConVar g_dcTest = null;
-ConVar g_dcUrl_main = null;
-ConVar g_dcUrl_thumb = null;
-ConVar g_dcBonusImage = null;											// Use induvidual images for bonus records on discord embeds
 ConVar g_hAllowCheckpointRecreation = null;								// Allows players to recreate checkpoints along with where to display info.
 
 
@@ -180,10 +160,6 @@ void CreateConVars()
 	g_hBackupReplays = AutoExecConfig_CreateConVar("ck_replay_backup", "1", "(1 / 0) Back up replay files, when they are being replaced", FCVAR_NOTIFY, true, 0.0, true, 1.0);
 	g_hReplaceReplayTime = 	AutoExecConfig_CreateConVar("ck_replay_replace_faster", "1", "(1 / 0) Replace record bots if a players time is faster than the bot, even if the time is not a server record.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
 	g_hTeleToStartWhenSettingsLoaded = AutoExecConfig_CreateConVar("ck_teleportclientstostart", "1", "(1 / 0) Teleport players automatically back to the start zone, when their settings have been loaded.", FCVAR_NOTIFY, true, 0.0, true, 1.0);
-	g_dcCalladminName = AutoExecConfig_CreateConVar("ck_discord_calladmin_name", "Calladmin", "Webhook name for !calladmin - Discord side", FCVAR_NOTIFY);
-	g_dcBugTrackerName = AutoExecConfig_CreateConVar("ck_discord_bug_tracker_name", "Bugtracker", "Webhook name for !bug - Discord side", FCVAR_NOTIFY);
-	g_dcBonusRecordName = AutoExecConfig_CreateConVar("ck_discord_bonus_record_name", "Surf Records", "Webhook name for bonus record announcements - Discord side", FCVAR_NOTIFY);
-	g_dcMapRecordName = AutoExecConfig_CreateConVar("ck_discord_map_record_name", "Surf Records", "Webhook name for map record announcements - Discord side", FCVAR_NOTIFY);
 	g_drDeleteSecurity = AutoExecConfig_CreateConVar("ck_dr_delete_security", "1", "(1 / 0) Disabled/Enable delete security for !dr command", FCVAR_NOTIFY, true, 0.0, true, 1.0);
 	g_iAdminCountryTags = AutoExecConfig_CreateConVar("ck_admin_country_tags", "0", "(1 / 0) Disabled/Enable country tags for admins", FCVAR_NOTIFY, true, 0.0, true, 1.0);
 	g_replayBotDelay = AutoExecConfig_CreateConVar("ck_replay_bot_delay", "10", "Delay in seconds after initial mapstart after the bots join the server", FCVAR_NOTIFY, true, 10.0);
@@ -344,25 +320,8 @@ void CreateConVars()
 	g_hServerID = AutoExecConfig_CreateConVar("ck_server_id", "-1", "Sets the server ID, each server needs a valid id that is UNIQUE");
 	HookConVarChange(g_hServerID, OnSettingChanged);
 
-	// Discord
-	g_hRecordAnnounceDiscord = AutoExecConfig_CreateConVar("ck_announce_records_discord", "", "Web hook link to announce records to discord, keep empty to disable");
-	g_hRecordAnnounceDiscordStyle = AutoExecConfig_CreateConVar("ck_announce_style_records_discord", "", "Web hook link to announce style records to discord, keep empty to disable");
-	g_hRecordAnnounceDiscordBonus = AutoExecConfig_CreateConVar("ck_announce_bonus_records_discord", "", "Web hook link to announce bonus records to discord, keep empty to disable");	
-	g_hRecordAnnounceDiscordBonusStyle = AutoExecConfig_CreateConVar("ck_announce_bonus_style_records_discord", "", "Web hook link to announce bonus style records to discord, keep empty to disable");
-	g_hRecordAnnounceDiscordStyleType = AutoExecConfig_CreateConVar("ck_announce_records_style_type_discord", "0", "Select which type of discord announcements for styles to use, 0 Ranked styles only, 1 All styles");
-	g_hReportBugsDiscord = AutoExecConfig_CreateConVar("ck_report_discord", "", "Web hook link to report bugs to discord, keep empty to disable");
-	g_hCalladminDiscord = AutoExecConfig_CreateConVar("ck_calladmin_discord", "", "Web hook link to allow players to call admin to discord, keep empty to disable");
 	g_hSidewaysBlockKeys = AutoExecConfig_CreateConVar("ck_sideways_block_keys", "0", "Changes the functionality of sideways, 1 will block keys, 0 will change the clients style to normal if not surfing sideways");
 	g_hEnforceDefaultTitles = AutoExecConfig_CreateConVar("ck_enforce_default_titles", "0", "Sets whether default titles will be enforced on clients, Enable / Disable");
-	g_dcColor = AutoExecConfig_CreateConVar("ck_discord_embed_color", "#ff2222", "The color of the discord embed message - Discord side", FCVAR_NOTIFY);
-	g_dcTitle = AutoExecConfig_CreateConVar("ck_discord_embed_title", "New Server Record on {Server_Name}!", "The title of the discord embed for a server record, {Server_Name} will be replaced with your server's name - Discord side", FCVAR_NOTIFY);
-	g_dcTitleBonus = AutoExecConfig_CreateConVar("ck_discord_embed_title_bonus", "New Server Bonus Record on {Server_Name}!", "The title of the discord embed for a bonus record, {Server_Name} will be replaced with your server's name - Discord side", FCVAR_NOTIFY);
-	g_dcMention = AutoExecConfig_CreateConVar("ck_discord_mention", "@here", "Group to mention when somebody sets a record. Leave blank to disable. For a group other than @here or @everyone, use backslash@groupname in the discord's chat.", FCVAR_NOTIFY);
-	g_dcKSFStyle = AutoExecConfig_CreateConVar("ck_discord_ksf_style", "0", "Wether or not to use the KSF style for discord announcements. Set to 1 for KSF style.", FCVAR_NOTIFY);
-	g_dcTest = AutoExecConfig_CreateConVar("ck_discord_test", "0", "Wether or not discord testing is enabled. If it is, type !ck_discord_test to test it.", FCVAR_NOTIFY);
-	g_dcUrl_main = AutoExecConfig_CreateConVar("ck_discord_url_main", "", "The base url of where the Discord main images are stored. Leave blank to disable.");
-	g_dcUrl_thumb = AutoExecConfig_CreateConVar("ck_discord_url_thumb", "https://raw.githubusercontent.com/qawery-just-sad/SurfMapPics/master/csgo/", "The base url of where the Discord thumb images are stored. Leave blank to disable.");
-	g_dcBonusImage = AutoExecConfig_CreateConVar("ck_discord_bonus_image", "0", "Wether or not to display differnt images for bonus records on discord embeds. Image name must be suffixed by _b and corresponding bonus number eg. _b1 / _b2 ");
 
 	HookConVarChange(g_hEnforceDefaultTitles, OnSettingChanged);
 
