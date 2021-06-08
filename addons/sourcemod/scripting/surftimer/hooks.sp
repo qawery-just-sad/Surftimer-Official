@@ -319,7 +319,7 @@ public Action Say_Hook(int client, const char[] command, int argc)
 					g_mapZones[g_ClientSelectedZone[client]].PreSpeed = prespeed;
 					PrespeedMenu(client);
 				}
-				case 3:
+				case 1:
 				{
 					// Hook zone zonegroup
 					int zgrp = StringToInt(sText);
@@ -331,7 +331,7 @@ public Action Say_Hook(int client, const char[] command, int argc)
 					g_iZonegroupHook[client] = zgrp;
 					CPrintToChat(client, "%t", "Hooks3", g_szChatPrefix, zgrp);
 				}
-				case 4:
+				case 2:
 				{
 					// Maxvelocity for map
 					float maxvelocity = StringToFloat(sText);
@@ -342,7 +342,7 @@ public Action Say_Hook(int client, const char[] command, int argc)
 					MaxVelocityMenu(client);
 					CPrintToChat(client, "%t", "Hooks4", g_szChatPrefix, g_szMapName, maxvelocity);
 				}
-				case 5:
+				case 3:
 				{
 					// Zone set clients Target Name
 					if (StrEqual(sText, "reset"))
@@ -354,7 +354,7 @@ public Action Say_Hook(int client, const char[] command, int argc)
 
 					EditorMenu(client);
 				}
-				case 6:
+				case 4:
 				{
 					g_SelectedType[client] = StringToInt(sText);
 					char szQuery[512];

@@ -2044,7 +2044,7 @@ public int MenuHandler_Editor(Handle tMenu, MenuAction action, int client, int i
 				case 9:
 				{
 					// Set Target Name
-					g_iWaitingForResponse[client] = 5;
+					g_iWaitingForResponse[client] = 3;
 					CPrintToChat(client, "%t", "SurfZones9", g_szChatPrefix);
 				}
 				case 10:
