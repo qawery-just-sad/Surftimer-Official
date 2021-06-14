@@ -833,10 +833,6 @@ public Action OnPlayerRunCmd(int client, int &buttons, int &impulse, float vel[3
 		buttons &= ~IN_DUCK;
 		g_bInPushTrigger[client] = false;
 	}
-	else if (g_bInMaxSpeed[client])
-	{
-		LimitMaxSpeed(client, 2500.0);
-	}
 
 	/*------ Styles ------*/
 	if (g_iCurrentStyle[client] == 1) 	// Sideways
@@ -1195,7 +1191,7 @@ public Action OnPlayerRunCmd(int client, int &buttons, int &impulse, float vel[3
 		AttackProtection(client, buttons);
 
 		// If in start zone, cap speed
-		LimitSpeed(client);
+		//LimitSpeed(client);
 
 		g_fLastSpeed[client] = speed;
 		g_LastButton[client] = buttons;

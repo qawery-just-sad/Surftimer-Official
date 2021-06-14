@@ -1138,49 +1138,52 @@ public void FixPlayerName(int client)
 	}
 }
 
-public void LimitSpeed(int client)
-{
-	/* Dont limit speed in these conditions:
-	 * Practice mode
-	 * No end zone in current zonegroup
-	 * End Zone
-	 * Checkpoint Zone
-	 * Misc Zones
-	*/
-	if (!IsValidClient(client) || !IsPlayerAlive(client) || IsFakeClient(client) || g_bPracticeMode[client] || g_mapZonesTypeCount[g_iClientInZone[client][2]][2] == 0 || g_iClientInZone[client][3] < 0 || g_iClientInZone[client][0] == 2 || g_iClientInZone[client][0] == 4 || g_iClientInZone[client][0] >= 6 || GetConVarInt(g_hLimitSpeedType) == 1)
-		return;
+// public void LimitSpeed(int client)
+// {
+// 	/* Dont limit speed in these conditions:
+// 	 * Practice mode
+// 	 * No end zone in current zonegroup
+// 	 * End Zone
+// 	 * Checkpoint Zone
+// 	 * Misc Zones
+// 	*/
+// 	if (!IsValidClient(client) || !IsPlayerAlive(client) || IsFakeClient(client) || g_bPracticeMode[client] || g_mapZonesTypeCount[g_iClientInZone[client][2]][2] == 0 || g_iClientInZone[client][3] < 0 || g_iClientInZone[client][0] == 2 || g_iClientInZone[client][0] == 4 || g_iClientInZone[client][0] >= 6 || GetConVarInt(g_hLimitSpeedType) == 1)
+// 		return;
 
-	float speedCap = 0.0, CurVelVec[3];
-	speedCap = g_mapZones[g_iClientInZone[client][3]].PreSpeed;
+// 	float speedCap = 0.0, CurVelVec[3];
+// 	speedCap = g_mapZones[g_iClientInZone[client][3]].PreSpeed;
 
-	if (speedCap == 0.0)
-		return;
+// 	if (speedCap == 0.0)
+// 		return;
 
-	GetEntPropVector(client, Prop_Data, "m_vecVelocity", CurVelVec);
+// 	GetEntPropVector(client, Prop_Data, "m_vecVelocity", CurVelVec);
 
-	if (CurVelVec[0] == 0.0)
-		CurVelVec[0] = 1.0;
-	if (CurVelVec[1] == 0.0)
-		CurVelVec[1] = 1.0;
-	if (CurVelVec[2] == 0.0)
-		CurVelVec[2] = 1.0;
+// 	if (CurVelVec[0] == 0.0)
+// 		CurVelVec[0] = 1.0;
+// 	if (CurVelVec[1] == 0.0)
+// 		CurVelVec[1] = 1.0;
+// 	if (CurVelVec[2] == 0.0)
+// 		CurVelVec[2] = 1.0;
 
-	float currentspeed = SquareRoot(Pow(CurVelVec[0], 2.0) + Pow(CurVelVec[1], 2.0));
+// 	float currentspeed = SquareRoot(Pow(CurVelVec[0], 2.0) + Pow(CurVelVec[1], 2.0));
 
-	if (currentspeed > speedCap)
-	{
-		NormalizeVector(CurVelVec, CurVelVec);
-		ScaleVector(CurVelVec, speedCap);
-		TeleportEntity(client, NULL_VECTOR, NULL_VECTOR, CurVelVec);
-	}
-}
+// 	if (currentspeed > speedCap)
+// 	{
+// 		NormalizeVector(CurVelVec, CurVelVec);
+// 		ScaleVector(CurVelVec, speedCap);
+// 		TeleportEntity(client, NULL_VECTOR, NULL_VECTOR, CurVelVec);
+// 	}
+// }
 
 public void LimitSpeedNew(int client)
 {
-	if (!IsValidClient(client) || !IsPlayerAlive(client) || IsFakeClient(client) || g_mapZonesCount <= 0 || g_bPracticeMode[client] || g_mapZonesTypeCount[g_iClientInZone[client][2]][2] == 0 || g_iClientInZone[client][3] < 0 || g_iClientInZone[client][0] == 2 || g_iClientInZone[client][0] == 4 || g_iClientInZone[client][0] >= 6 || GetConVarInt(g_hLimitSpeedType) == 0 || g_iCurrentStyle[client] == 7)
-		return;
+	bool validzone;
+	if (g_bInStartZone[client] || g_bInStageZone[client] || g_bInMaxSpeed[client])
+		validzone = true;
+	else
+		validzone = false;
 
-	if (GetConVarInt(g_hLimitSpeedType) == 0 || !g_bInStartZone[client] && !g_bInStageZone[client])
+	if (!validzone || !IsValidClient(client) || !IsPlayerAlive(client) || IsFakeClient(client) || g_iCurrentStyle[client] == 7 || g_mapZonesCount <= 0 || g_mapZonesTypeCount[g_iClientInZone[client][2]][2] == 0 || g_iClientInZone[client][3] < 0)
 		return;
 
 	float speedCap = 0.0;
@@ -1192,24 +1195,21 @@ public void LimitSpeedNew(int client)
 	float fVel[3];
 	GetEntPropVector(client, Prop_Data, "m_vecVelocity", fVel);
 
-	if (g_bInStartZone[client] || g_bInStageZone[client])
+	if (GetEntityFlags(client) & FL_ONGROUND)
 	{
-		if (GetEntityFlags(client) & FL_ONGROUND)
+		g_iTicksOnGround[client]++;
+		if (g_iTicksOnGround[client] > 60)
 		{
-			g_iTicksOnGround[client]++;
-			if (g_iTicksOnGround[client] > 60)
-			{
-				g_bNewStage[client] = false;
-				g_bLeftZone[client] = false;
-				return;
-			}
+			g_bNewStage[client] = false;
+			g_bLeftZone[client] = false;
+			return;
 		}
 	}
 
 	// Determine how much each vector must be scaled for the magnitude to equal the limit
 	// Derived from Pythagorean theorem, where the hypotenuse represents the magnitude of velocity,
 	// and the two legs represent the x and y velocity components.
-  // As a side effect, velocity component signs are also handled.
+	// As a side effect, velocity component signs are also handled.
 	float scale = speedCap / SquareRoot( Pow(fVel[0], 2.0) + Pow(fVel[1], 2.0) );
 
 	// A scale < 1 indicates a magnitude > limit
@@ -1225,38 +1225,6 @@ public void LimitSpeedNew(int client)
 		{
 			TeleportEntity(client, NULL_VECTOR, NULL_VECTOR, fVel);
 		}
-	}
-}
-
-public void LimitMaxSpeed(int client, float fMaxSpeed)
-{
-	if (!IsValidClient(client) || !IsPlayerAlive(client) || IsFakeClient(client))
-		return;
-
-	float CurVelVec[3];
-	GetEntPropVector(client, Prop_Data, "m_vecVelocity", CurVelVec);
-
-	if (CurVelVec[0] == 0.0)
-		CurVelVec[0] = 1.0;
-	if (CurVelVec[1] == 0.0)
-		CurVelVec[1] = 1.0;
-	if (CurVelVec[2] == 0.0)
-		CurVelVec[2] = 1.0;
-
-	float currentspeed = SquareRoot(Pow(CurVelVec[0], 2.0) + Pow(CurVelVec[1], 2.0));
-
-	if (currentspeed > fMaxSpeed)
-	{
-		if (CurVelVec[0] > fMaxSpeed)
-			CurVelVec[0] = fMaxSpeed;
-		if (CurVelVec[1] > fMaxSpeed)
-			CurVelVec[1] = fMaxSpeed;
-		if (CurVelVec[2] > fMaxSpeed)
-			CurVelVec[2] = fMaxSpeed;
-
-		NormalizeVector(CurVelVec, CurVelVec);
-		ScaleVector(CurVelVec, fMaxSpeed);
-		TeleportEntity(client, NULL_VECTOR, NULL_VECTOR, CurVelVec);
 	}
 }
 
@@ -1353,6 +1321,12 @@ public void SetClientDefaults(int client)
 		{
 			g_fCheckpointTimesNew[x][client][i] = 0.0;
 			g_fCheckpointTimesRecord[x][client][i] = 0.0;
+
+			for (int k = 0; i < 3; i++)
+			{
+				g_iCheckpointVelsStartNew[x][client][i][k] = 0;
+				g_iCheckpointVelsStartRecord[x][client][i][k] = 0;
+			}
 		}
 	}
 
@@ -1483,6 +1457,23 @@ public float GetSpeed(int client)
 		speed = fVelocity[2];
 	else // XY default
 		speed = SquareRoot(Pow(fVelocity[0], 2.0) + Pow(fVelocity[1], 2.0));
+
+	return speed;
+}
+
+int GetAllSpeedTypes(int client)
+{
+	int speed[3]= 0;
+
+	if (!IsValidClient(client))
+		return speed;
+
+	float fVelocity[3];
+	GetEntPropVector(client, Prop_Data, "m_vecVelocity", fVelocity);
+
+	speed[0] = RoundToNearest(SquareRoot(Pow(fVelocity[0], 2.0) + Pow(fVelocity[1], 2.0))); // XY
+	speed[1] = RoundToNearest(SquareRoot(Pow(fVelocity[0], 2.0) + Pow(fVelocity[1], 2.0) + Pow(fVelocity[2], 2.0))); // XYZ
+	speed[2] = RoundToNearest(fVelocity[2]);
 
 	return speed;
 }
@@ -4034,10 +4025,12 @@ public void SideHudAlive(int client)
 	}
 }
 
-public void Checkpoint(int client, int zone, int zonegroup, float time)
+public void Checkpoint(int client, int zone, int zonegroup, float time, AllSpeed[3])
 {
 	if (!IsValidClient(client) || g_bPositionRestored[client] || IsFakeClient(client) || zone >= CPLIMIT)
 		return;
+
+	int speedType = g_SpeedMode[client];
 
 	float percent = -1.0;
 	int totalPoints = 0;
@@ -4145,6 +4138,59 @@ public void Checkpoint(int client, int zone, int zonegroup, float time)
 		}
 		g_fLastDifferenceTime[client] = GetGameTime();
 
+		char szStartWR[256], szStartPB[256];
+
+		// WR Start Speed
+		int startSpeedDiffWR, startSpeedDiffPB;
+		int compare, compare2;
+		if (zone == 0)
+		{
+			compare = g_iStartVelsServerRecord[0][speedType];
+			compare2 = g_iStartVelsNew[client][0][speedType];
+		}
+		else
+		{
+			compare = g_iCheckpointVelsStartServerRecord[zonegroup][zone - 1][speedType];
+			compare2 = g_iCheckpointVelsStartNew[zonegroup][client][zone - 1][speedType];
+		}
+
+		if (compare == 0)
+			startSpeedDiffWR = compare2;
+		else if (compare > compare2)
+			startSpeedDiffWR = (compare - compare2);
+		else
+			startSpeedDiffWR = (compare2 - compare);
+
+		if (compare2 > compare)
+			Format(szStartWR, sizeof(szStartWR), "+%d", startSpeedDiffWR);
+		else
+			Format(szStartWR, sizeof(szStartWR), "-%d", startSpeedDiffWR);
+
+		// PB Start Speed
+		if (zone == 0)
+		{
+			compare = g_iStartVelsRecord[client][0][speedType];
+			compare2 = g_iStartVelsNew[client][0][speedType];
+		}
+		else
+		{
+			compare = g_iCheckpointVelsStartRecord[zonegroup][client][zone - 1][speedType];
+			compare2 = g_iCheckpointVelsStartNew[zonegroup][client][zone - 1][speedType];
+		}
+
+		if (compare == 0)
+			startSpeedDiffPB = compare2;
+		else if (compare > compare2)
+			startSpeedDiffPB = (compare - compare2);
+		else
+			startSpeedDiffPB = (compare2 - compare);
+
+		if (compare2 > compare)
+			Format(szStartPB, sizeof(szStartPB), "+%d", startSpeedDiffPB);
+		else
+			Format(szStartPB, sizeof(szStartPB), "-%d", startSpeedDiffPB);
+
+
 		if (g_fCheckpointTimesRecord[zonegroup][client][zone] <= 0.0)
 			Format(szDiff, 128, "");
 
@@ -4169,6 +4215,12 @@ public void Checkpoint(int client, int zone, int zonegroup, float time)
 		if (g_bCheckpointsEnabled[client] && g_iCpMessages[client])
 		{
 			CPrintToChat(client, "%t", "Misc30", g_szChatPrefix, g_iClientInZone[client][1] + 1, szTime, szDiff, sz_srDiff);
+
+			if (!g_bhasStages)
+			{
+				CPrintToChat(client, "%t", "CheckpointSpeed", g_szChatPrefix, g_iClientInZone[client][1] + 1, AllSpeed[speedType], szStartWR, szStartPB);
+				CPSpeedToSpec(client, zonegroup, zone, AllSpeed);
+			}
 		}
 
 		Format(szSpecMessage, sizeof(szSpecMessage), "%t", "Misc31", g_szChatPrefix, szName, g_iClientInZone[client][1] + 1, szTime, szDiff, sz_srDiff);
@@ -4180,6 +4232,45 @@ public void Checkpoint(int client, int zone, int zonegroup, float time)
 	else // if first run
 		if (g_bTimerRunning[client])
 		{
+			char szStartWR[256];
+			// WR Start Speed
+			int startSpeedDiffWR;
+			int compare, compare2;
+			if (zone == 0)
+			{
+				compare = g_iStartVelsServerRecord[0][speedType];
+				compare2 = g_iStartVelsNew[client][0][speedType];
+			}
+			else
+			{
+				compare = g_iCheckpointVelsStartServerRecord[zonegroup][zone - 1][speedType];
+				compare2 = g_iCheckpointVelsStartNew[zonegroup][client][zone - 1][speedType];
+			}
+
+			if (compare == 0)
+				startSpeedDiffWR = compare2;
+			else if (compare > compare2)
+				startSpeedDiffWR = (compare - compare2);
+			else
+				startSpeedDiffWR = (compare2 - compare);
+
+			if (compare2 > compare)
+				Format(szStartWR, sizeof(szStartWR), "+%d", startSpeedDiffWR);
+			else
+				Format(szStartWR, sizeof(szStartWR), "-%d", startSpeedDiffWR);
+			
+			int startSpeed;
+			if (zone == 0)
+				startSpeed = g_iStartVelsNew[client][0][speedType];
+			else
+				startSpeed = g_iCheckpointVelsStartNew[zonegroup][client][zone - 1][speedType];
+
+			if (!g_bhasStages)
+			{
+				CPrintToChat(client, "%t", "CheckpointSpeed", g_szChatPrefix, startSpeed, szStartWR, "+0", AllSpeed[speedType]);
+				CPSpeedToSpec(client, zonegroup, zone, AllSpeed);
+			}
+			
 			// Set percent of completion to assist
 			if (CS_GetMVPCount(client) < 1)
 				CS_SetClientAssists(client, RoundToFloor(g_fMaxPercCompleted[client]));
@@ -4229,6 +4320,72 @@ public void CheckpointToSpec(int client, char[] buffer)
 					CPrintToChat(x, "%s", buffer);
 			}
 		}
+	}
+}
+
+public void CPSpeedToSpec(int client, int zonegroup, int zone, AllSpeed[3])
+{
+	for(int i = 1; i <= MaxClients; i++){
+		if (!IsClientInGame(i) || IsFakeClient(i))
+				continue;
+
+		if (GetClientTeam(i) != CS_TEAM_SPECTATOR)
+			continue;
+
+		int ObserverMode = GetEntProp(i, Prop_Send, "m_iObserverMode");
+		if (ObserverMode != 4 && ObserverMode != 5)
+			continue;
+
+		int ObserverTarget = GetEntPropEnt(i, Prop_Send, "m_hObserverTarget");
+		if (ObserverTarget != client)
+			continue;
+		
+		char szStartWR[256], szStartPB[256];
+		int speedType = g_SpeedMode[i];
+		int startSpeedDiffWR, startSpeedDiffPB;
+		int compare, compare2;
+		
+		compare = g_iCheckpointVelsStartServerRecord[zonegroup][zone - 1][speedType];
+		compare2 = g_iCheckpointVelsStartNew[zonegroup][client][zone - 1][speedType];
+		
+
+		if (compare == 0)
+			startSpeedDiffWR = compare2;
+		else if (compare > compare2)
+			startSpeedDiffWR = (compare - compare2);
+		else
+			startSpeedDiffWR = (compare2 - compare);
+
+		if (compare2 > compare)
+			Format(szStartWR, sizeof(szStartWR), "+%d", startSpeedDiffWR);
+		else
+			Format(szStartWR, sizeof(szStartWR), "-%d", startSpeedDiffWR);
+
+		// PB Start Speed
+		if (zone == 0)
+		{
+			compare = g_iStartVelsRecord[client][0][speedType];
+			compare2 = g_iStartVelsNew[client][0][speedType];
+		}
+		else
+		{
+			compare = g_iCheckpointVelsStartRecord[zonegroup][client][zone - 1][speedType];
+			compare2 = g_iCheckpointVelsStartNew[zonegroup][client][zone - 1][speedType];
+		}
+
+		if (compare == 0)
+			startSpeedDiffPB = compare2;
+		else if (compare > compare2)
+			startSpeedDiffPB = (compare - compare2);
+		else
+			startSpeedDiffPB = (compare2 - compare);
+
+		if (compare2 > compare)
+			Format(szStartPB, sizeof(szStartPB), "+%d", startSpeedDiffPB);
+		else
+			Format(szStartPB, sizeof(szStartPB), "-%d", startSpeedDiffPB);
+
+		CPrintToChat(i, "%t", "CheckpointSpeed", g_szChatPrefix, g_iClientInZone[client][1] + 1, AllSpeed[speedType], szStartWR, szStartPB);
 	}
 }
 
