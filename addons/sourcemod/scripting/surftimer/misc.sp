@@ -4258,16 +4258,10 @@ public void Checkpoint(int client, int zone, int zonegroup, float time, AllSpeed
 				Format(szStartWR, sizeof(szStartWR), "+%d", startSpeedDiffWR);
 			else
 				Format(szStartWR, sizeof(szStartWR), "-%d", startSpeedDiffWR);
-			
-			int startSpeed;
-			if (zone == 0)
-				startSpeed = g_iStartVelsNew[client][0][speedType];
-			else
-				startSpeed = g_iCheckpointVelsStartNew[zonegroup][client][zone - 1][speedType];
 
 			if (!g_bhasStages)
 			{
-				CPrintToChat(client, "%t", "CheckpointSpeed", g_szChatPrefix, startSpeed, szStartWR, "+0", AllSpeed[speedType]);
+				CPrintToChat(client, "%t", "CheckpointSpeed", g_szChatPrefix, g_iClientInZone[client][1] + 1, AllSpeed[speedType], szStartWR, "N/A");
 				CPSpeedToSpec(client, zonegroup, zone, AllSpeed);
 			}
 			
