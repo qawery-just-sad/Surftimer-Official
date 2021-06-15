@@ -4163,6 +4163,8 @@ public void Checkpoint(int client, int zone, int zonegroup, float time, AllSpeed
 
 		if (compare2 > compare)
 			Format(szStartWR, sizeof(szStartWR), "+%d", startSpeedDiffWR);
+		if (compare == 0 )
+			Format(szStartWR, sizeof(szStartWR), "N/A");
 		else
 			Format(szStartWR, sizeof(szStartWR), "-%d", startSpeedDiffWR);
 
@@ -4256,6 +4258,8 @@ public void Checkpoint(int client, int zone, int zonegroup, float time, AllSpeed
 
 			if (compare2 > compare)
 				Format(szStartWR, sizeof(szStartWR), "+%d", startSpeedDiffWR);
+			if (compare == 0 )
+				Format(szStartWR, sizeof(szStartWR), "N/A");
 			else
 				Format(szStartWR, sizeof(szStartWR), "-%d", startSpeedDiffWR);
 
