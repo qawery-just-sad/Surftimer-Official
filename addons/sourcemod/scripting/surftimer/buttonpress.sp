@@ -137,7 +137,7 @@ public void CL_OnStartTimerPress(int client)
 					g_fLastDifferenceSpeed[client] = GetGameTime();
 
 				if (g_iPrespeedText[client])
-					CPrintToChat(client, "%t", "StartPrestrafe", g_szChatPrefix, AllSpeed[guess], szDiff, szDiff2);
+					CPrintToChat(client, "%t", "StartPrestrafe", g_szChatPrefix, AllSpeed[guess], szDiff2, szDiff);
 
 				for(int i = 1; i <= MaxClients; i++)
 				{
@@ -192,7 +192,7 @@ public void CL_OnStartTimerPress(int client)
 						{
 							Format(szDiff2, sizeof(szDiff2), "{red}%d{default}", idiff);
 						}
-						CPrintToChat(i, "%t", "StartPrestrafe", g_szChatPrefix, AllSpeed[guess2], szDiff[guess2] ,szDiff2[guess2]);
+						CPrintToChat(i, "%t", "StartPrestrafe", g_szChatPrefix, AllSpeed[guess2], szDiff2, szDiff);
 					}
 				}
 			}
@@ -310,7 +310,7 @@ public void CL_OnEndTimerPress(int client)
 	
 	// Print Speed if velocity setting
 	if (g_iPrespeedText[client])
-		CPrintToChat(client, "%t", "EndSpeed", g_szChatPrefix, AllSpeed[guess], szDiffS ,szDiffS2);
+		CPrintToChat(client, "%t", "EndSpeed", g_szChatPrefix, AllSpeed[guess], szDiffS2, szDiffS );
 
 	for(int i = 1; i <= MaxClients; i++)
 	{
@@ -351,7 +351,7 @@ public void CL_OnEndTimerPress(int client)
 			else
 				Format(szDiffS2, sizeof(szDiffS2), "{red}%d{default}",idiff);
 
-			CPrintToChat(i, "%t", "EndSpeed", g_szChatPrefix, AllSpeed[guess2], szDiffS ,szDiffS2);
+			CPrintToChat(i, "%t", "EndSpeed", g_szChatPrefix, AllSpeed[guess2], szDiffS2, szDiffS);
 		}
 	}
 
@@ -363,11 +363,54 @@ public void CL_OnEndTimerPress(int client)
 	{
 		// Get CurrentRunTime and format it to a string
 		FormatTimeFloat(client, g_fCurrentRunTime[client], 3, g_szPracticeTime[client], 32);
+		// Vars for diff calc
+		char szDiff[54];
+		float diffSr;
+		char calcDiffSr[54];
+		float diffPr;
+		char calcDiffPr[54];
 
-		if (g_iClientInZone[client][2] > 0)
-			CPrintToChat(client, "%t", "BPress4", g_szChatPrefix, szName, g_szPracticeTime[client]);
+
+		if (zGroup > 0)
+		{
+			//Bonus
+			diffSr = g_fBonusFastest[zGroup] - g_fCurrentRunTime[client];
+			diffPr = g_fPersonalRecordBonus[zGroup][client] - g_fCurrentRunTime[client];
+			FormatTimeFloat(client, diffSr, 3, szDiff, sizeof(szDiff));
+			FormatTimeFloat(client, diffPr, 3, szDiff, sizeof(szDiff));
+
+			if (diffSr > 0.0)
+				Format(calcDiffSr, sizeof(szDiff), "-{green}%s{default}", szDiff);
+			else
+				Format(calcDiffSr, sizeof(szDiff), "+{red}%s{default}", szDiff);
+
+			if (diffPr > 0.0)
+				Format(calcDiffPr, sizeof(szDiff), "-{green}%s{default}", szDiff);
+			else
+				Format(calcDiffPr, sizeof(szDiff), "+{red}%s{default}", szDiff);
+
+			CPrintToChat(client, "%t", "BPress4", g_szChatPrefix, szName, g_szPracticeTime[client], calcDiffSr, calcDiffPr, zGroup);
+		}
 		else
-			CPrintToChat(client, "%t", "BPress5", g_szChatPrefix, szName, g_szPracticeTime[client]);
+		{
+			//Map
+			diffSr = g_fRecordMapTime - g_fCurrentRunTime[client];
+			diffPr = g_fPersonalRecord[client] - g_fCurrentRunTime[client];
+			FormatTimeFloat(client, diffSr, 3, szDiff, sizeof(szDiff));
+			FormatTimeFloat(client, diffPr, 3, szDiff, sizeof(szDiff));
+
+			if (diffSr > 0.0)
+				Format(calcDiffSr, sizeof(szDiff), "-{green}%s{default}", szDiff);
+			else
+				Format(calcDiffSr, sizeof(szDiff), "+{red}%s{default}", szDiff);
+
+			if (diffPr > 0.0)
+				Format(calcDiffPr, sizeof(szDiff), "-{green}%s{default}", szDiff);
+			else
+				Format(calcDiffPr, sizeof(szDiff), "+{red}%s{default}", szDiff);
+
+			CPrintToChat(client, "%t", "BPress5", g_szChatPrefix, szName, g_szPracticeTime[client], calcDiffSr, calcDiffPr);
+		}
 		
 		/* Start function call */
 		Call_StartForward(g_PracticeFinishForward);
@@ -993,7 +1036,7 @@ public void CL_OnStartWrcpTimerPress(int client)
 					g_fLastDifferenceSpeed[client] = GetGameTime();
 
 				if (g_iPrespeedText[client])
-					CPrintToChat(client, "%t", "StagePrestrafe", g_szChatPrefix, stage, AllSpeed[guess], szDiff ,szDiff2);
+					CPrintToChat(client, "%t", "StagePrestrafe", g_szChatPrefix, stage, AllSpeed[guess], szDiff2, szDiff);
 
 				for(int i = 1; i <= MaxClients; i++)
 				{
@@ -1041,8 +1084,7 @@ public void CL_OnStartWrcpTimerPress(int client)
 							Format(szDiff2, sizeof(szDiff2), "{green}+%d{default}", idiff);
 						else
 							Format(szDiff2, sizeof(szDiff2), "{red}%d{default}", idiff);
-						
-						CPrintToChat(i, "%t", "StagePrestrafe", g_szChatPrefix, stage, AllSpeed[guess2], szDiff ,szDiff2);
+						CPrintToChat(i, "%t", "StagePrestrafe", g_szChatPrefix, stage, AllSpeed[guess2], szDiff2, szDiff);
 					}
 				}
 			}

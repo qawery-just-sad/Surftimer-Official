@@ -492,15 +492,15 @@
 		"en"		"{1} The server hasn't finished loading your settings, please wait"
 	}
 	"BPress4"
-	{
-		"#format"	"{1:s},{2:s},{3:s}"
-		"en"		"{1} {yellow}{2}{default} finished the bonus in [{blue}{3}{default}] in practice mode!"
-	}
-	"BPress5"
-	{
-		"#format"	"{1:s},{2:s},{3:s}"
-		"en"		"{1} {yellow}{2}{default} finished the map in [{blue}{3}{default}] in practice mode!"
-	}
+    {
+        "#format"    "{1:s},{2:s},{3:s},{4:s},{5:s},{6:i}"
+        "en"        "{1} [{blue}Practice{default}] {yellow}{2}{default} finished bonus {6} in {lightblue}{3}{default} [{blue}PR{default}: {5} | {yellow}SR{default}: {4}]"
+    }
+    "BPress5"
+    {
+        "#format"    "{1:s},{2:s},{3:s},{4:s},{5:s}"
+        "en"        "{1} [{blue}Practice{default}] {yellow}{2}{default} finished the map in [{lightblue}{3}{default}] [{blue}PR{default}: {5} | {yellow}SR{default}: {4}]"
+    }
 	"BPress6"
 	{
 		"#format"	"{1:s},{2:s},{3:s},{4:s},{5:s},{6:i},{7:i},{8:s}"
@@ -1717,22 +1717,22 @@
 	"StartPrestrafe"
 	{
 		"#format"	"{1:s},{2:i},{3:s},{4:s}"
-		"en"		"{1} {green}Start{default}: {2} u/s [{yellow}SR{default}: {3} | {blue}PB{default}: {4}]"
+		"en"		"{1} {green}Start{default}: {2} u/s [{blue}PB{default}: {3} | {yellow}SR{default}: {4}]"
 	}
 	"StagePrestrafe"
 	{
 		"#format"	"{1:s},{2:i},{3:i},{4:s},{5:s}"
-		"en"		"{1} {lime}Stage {2}{default}: {3} u/s [{yellow}SR{default}: {4} | {blue}PB{default}: {5}]"
+		"en"		"{1} {lime}Stage {2}{default}: {3} u/s [{blue}PB{default}: {4} | {yellow}SR{default}: {5}]"
 	}
 	"EndSpeed"
 	{
 		"#format"	"{1:s},{2:i},{3:s},{4:s}"
-		"en"		"{1} {red}End{default}: {2} u/s [{yellow}SR{default}: {3} | {blue}PB{default}: {4}]"
+		"en"		"{1} {red}End{default}: {2} u/s [{blue}PB{default}: {3} | {yellow}SR{default}: {4}]"
 	}
 	"CheckpointSpeed"
 	{
 		"#format"	"{1:s},{2:i},{3:i},{4:s},{5:s}"
-		"en"		"{1} {yellow}Checkpoint {2}{default}: {3} u/s {default}[{yellow}SR{default}: {4} | {blue}PB{default}: {5}]"
+		"en"		"{1} {yellow}Checkpoint {2}{default}: {3} u/s {default}[{blue}PB{default}: {4} | {yellow}SR{default}: {5}]"
 	}
 	"SilentSpecMessageToggleOn"
 	{
