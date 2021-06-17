@@ -116,7 +116,7 @@ char sql_selectFasterWrcpsStyle[] = "SELECT count(runtimepro) FROM ck_wrcps WHER
 
 char sql_selectMapWrcp[] = "SELECT name, MIN(runtimepro), stage, style, velStartXY, velStartXYZ, velStartZ FROM ck_wrcps WHERE mapname = '%s' GROUP BY stage, style;";
 char sql_selectStageTimes[] = "SELECT runtimepro, stage, style, velStartXY, velStartXYZ, velStartZ FROM ck_wrcps WHERE steamid = '%s' AND mapname = '%s' AND runtimepro > '0.0';";
-char sql_selectPersonalRecords[] = "SELECT runtimepro, style, velStartXY, velStartXYZ, velStartZ FROM ck_playertimes WHERE steamid = '%s' AND mapname = '%s' AND runtimepro > 0.0;";
+char sql_selectPersonalRecords[] = "SELECT runtimepro, style, velStartXY, velStartXYZ, velStartZ, velEndXY, velEndXYZ, velEndZ FROM ck_playertimes WHERE steamid = '%s' AND mapname = '%s' AND runtimepro > 0.0;";
 
 // ck_zones
 char sql_createZones[] = "CREATE TABLE IF NOT EXISTS `ck_zones` (`mapname` varchar(54) NOT NULL, `zoneid` int(12) NOT NULL DEFAULT '-1', `zonetype` int(12) DEFAULT '-1', `zonetypeid` int(12) DEFAULT '-1', `pointa_x` float DEFAULT '-1', `pointa_y` float DEFAULT '-1', `pointa_z` float DEFAULT '-1', `pointb_x` float DEFAULT '-1', `pointb_y` float DEFAULT '-1', `pointb_z` float DEFAULT '-1', `vis` int(12) DEFAULT '0', `team` int(12) DEFAULT '0', `zonegroup` int(11) NOT NULL DEFAULT '0', `zonename` varchar(128) DEFAULT NULL, `hookname` varchar(128) DEFAULT 'None', `targetname` varchar(128) DEFAULT 'player', `onejumplimit` int(12) NOT NULL DEFAULT '1', `prespeed` int(64) NOT NULL DEFAULT '250.0', PRIMARY KEY (`mapname`,`zoneid`)) DEFAULT CHARSET=utf8mb4;";

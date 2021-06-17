@@ -2646,6 +2646,10 @@ public void SQL_UpdateRecordProCallback2(Handle owner, Handle hndl, const char[]
 		LogError("[SurfTimer] SQL Error (SQL_UpdateRecordProCallback2): %s", error);
 		return;
 	}
+
+	if(!IsValidClient(data))
+		return;
+
 	// Get players rank, 9999999 = error
 	int rank = 9999999;
 	if (SQL_HasResultSet(hndl) && SQL_FetchRow(hndl))
@@ -2653,9 +2657,13 @@ public void SQL_UpdateRecordProCallback2(Handle owner, Handle hndl, const char[]
 		rank = (SQL_FetchInt(hndl, 0)+1);
 	}
 
-	for (int i = 0; i < 3; i ++)
+	for (int i = 0; i < 3; i++)
+	{
 		g_iStartVelsRecord[data][0][i] = g_iStartVelsNew[data][0][i];
-	
+		g_iEndVelsRecord[data][0][i] = g_iEndVelsNew[data][0][i];
+	}
+
+	db_GetMapRecord_Pro();
 
 	g_MapRank[data] = rank;
 	if (rank <= 10 && rank > 1)
@@ -3190,8 +3198,6 @@ public void SQL_selectPersonalRecordsCallback(Handle owner, Handle hndl, const c
 		g_fPersonalStyleRecord[i][client] = 0.0;
 	}
 
-	for (int i = 0; i < 3; i++)
-		g_iStartVelsRecord[client][0][i] = 0;
 
 	if (SQL_HasResultSet(hndl))
 	{
@@ -3206,6 +3212,10 @@ public void SQL_selectPersonalRecordsCallback(Handle owner, Handle hndl, const c
 				g_iStartVelsRecord[client][0][0] = SQL_FetchInt(hndl, 2);
 				g_iStartVelsRecord[client][0][1] = SQL_FetchInt(hndl, 3);
 				g_iStartVelsRecord[client][0][2] = SQL_FetchInt(hndl, 4);
+				g_iEndVelsRecord[client][0][0] = SQL_FetchInt(hndl, 5);
+				g_iEndVelsRecord[client][0][1] = SQL_FetchInt(hndl, 6);
+				g_iEndVelsRecord[client][0][2] = SQL_FetchInt(hndl, 7);
+
 
 				if (g_fPersonalRecord[client] > 0.0)
 				{
@@ -3231,6 +3241,12 @@ public void SQL_selectPersonalRecordsCallback(Handle owner, Handle hndl, const c
 	{
 		Format(g_szPersonalRecord[client], 64, "NONE");
 		g_fPersonalRecord[client] = 0.0;
+
+		for(int i = 0; i < 3; i++)
+		{
+			g_iStartVelsRecord[client][0][i] = 0;
+			g_iEndVelsRecord[client][0][i] = 0;
+		}
 
 		for (int i = 1; i < MAX_STYLES; i++)
 		{
@@ -5517,18 +5533,6 @@ public Action PrintUnfinishedLine(Handle timer, DataPack pack)
 	PrintToConsole(client, teksti);
 
 }
-
-/*
-void PrintUnfinishedLine(Handle pack)
-{
-ResetPack(pack);
-int client = ReadPackCell(pack);
-char teksti[1024];
-ReadPackString(pack, teksti, 1024);
-delete pack;
-PrintToConsole(client, teksti);
-}
-*/
 
 public void sql_selectPlayerNameCallback(Handle owner, Handle hndl, const char[] error, DataPack data)
 {
