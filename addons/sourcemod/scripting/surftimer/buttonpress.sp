@@ -1035,7 +1035,7 @@ public void CL_OnStartWrcpTimerPress(int client)
 				if (g_bShowSpeedDifferenceHud[client])
 					g_fLastDifferenceSpeed[client] = GetGameTime();
 
-				if (g_iPrespeedText[client])
+				if (g_iPrespeedText[client] && g_bPreSpeedStageType[client])
 					CPrintToChat(client, "%t", "StagePrestrafe", g_szChatPrefix, stage, AllSpeed[guess], szDiff2, szDiff);
 
 				for(int i = 1; i <= MaxClients; i++)
@@ -1054,7 +1054,7 @@ public void CL_OnStartWrcpTimerPress(int client)
 					if (ObserverTarget != client)
 						continue;
 
-					if (g_iPrespeedText[i])
+					if (g_iPrespeedText[i] && g_bPreSpeedStageType[i])
 					{
 						int guess2 = g_SpeedMode[i];
 						if (g_iWrcpVelsStartServerRecord[stage][guess2] == 0)

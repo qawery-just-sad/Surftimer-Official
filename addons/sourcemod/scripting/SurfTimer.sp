@@ -36,7 +36,7 @@
 #pragma semicolon 1
 
 // Plugin Info
-#define VERSION "3.2.-3"
+#define VERSION "3.2.-4"
 
 // Database Definitions
 #define MYSQL 0
@@ -125,7 +125,7 @@
 #define MAX_LOCS 128
 
 //CSGO HUD Hint Fix
-#define MAX_HINT_SIZE 256
+#define MAX_HINT_SIZE 512
 
 /*====================================
 =            Enumerations            =
@@ -381,8 +381,8 @@ bool g_bJumpZoneTimer[MAXPLAYERS + 1] = false;
 bool g_bInStartZone[MAXPLAYERS + 1] = false;
 bool g_bInStageZone[MAXPLAYERS + 1];
 
-/*----------  MaxSpeed Variables  ----------*/
-bool g_bInMaxSpeed[MAXPLAYERS + 1];
+// /*----------  MaxSpeed Variables  ----------*/
+// bool g_bInMaxSpeed[MAXPLAYERS + 1];
 
 /*----------  VIP Variables  ----------*/
 ConVar g_hAutoVipFlag = null;
@@ -774,6 +774,12 @@ bool g_iDisableTriggers[MAXPLAYERS + 1];
 
 // auto reset
 bool g_iAutoReset[MAXPLAYERS + 1];
+
+// small hud
+bool g_bSmallHud[MAXPLAYERS + 1];
+
+// PreSpeed messages for staged maps - true use stage speeds, false use cp speeds
+bool g_bPreSpeedStageType[MAXPLAYERS + 1];
 
 /*----------  Run Variables  ----------*/
 

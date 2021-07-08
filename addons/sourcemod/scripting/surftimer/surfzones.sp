@@ -549,7 +549,8 @@ public void StartTouch(int client, int action[3])
 		}
 		else if (action[0] == 11) // MaxSpeed
 		{
-			g_bInMaxSpeed[client] = true;
+			// g_bInMaxSpeed[client] = true;
+			MaxSpeedZoneLimiter(client);
 		}
 	}
 }
@@ -703,7 +704,7 @@ public void EndTouch(int client, int action[3])
 		}
 		else if (action[0] == 11) // MaxSpeed zone
 		{
-			g_bInMaxSpeed[client] = false;
+			// g_bInMaxSpeed[client] = false;
 		}
 
 		// Set client location

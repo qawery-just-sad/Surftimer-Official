@@ -206,8 +206,8 @@ void CreateCommands()
 	RegConsoleCmd("sm_replays", Command_PlayRecord, "[surftimer] Set the replay bot to replay a run");
 
 	// Delete records
-	RegAdminCmd("sm_deleterecords", Command_DeleteRecords, g_ZonerFlag, "[surftimer] [zoner] Delete records");
-	RegAdminCmd("sm_dr", Command_DeleteRecords, g_ZonerFlag, "[surftimer] [zoner] Delete records");
+	RegAdminCmd("sm_deleterecords", Command_DeleteRecords, ADMFLAG_CUSTOM4, "[surftimer] [zoner] Delete records");
+	RegAdminCmd("sm_dr", Command_DeleteRecords, ADMFLAG_CUSTOM4, "[surftimer] [zoner] Delete records");
 	RegAdminCmd("sm_wipeplayer", Admin_ResetRecords, ADMFLAG_ROOT, "[surfTimer] Removes all database entries of the specific steamid - requires z flag");
 
 	// Setting Commands
@@ -3106,6 +3106,7 @@ public void OptionMenu(int client)
 
 	AddMenuItem(optionmenu, "CentreHud", "Centre Hud Options");
 	AddMenuItem(optionmenu, "SideHud", "Side Hud Options");
+	AddMenuItem(optionmenu, "ChatOptions", "Chat Options");
 	AddMenuItem(optionmenu, "Miscellaneous", "Miscellaneous Options");
 
 	SetMenuOptionFlags(optionmenu, MENUFLAG_BUTTON_EXIT);
@@ -3125,7 +3126,8 @@ public int OptionMenuHandler(Menu menu, MenuAction action, int param1, int param
 			}
 			case 1: CentreHudOptions(param1, 0);
 			case 2: SideHudOptions(param1, 0);
-			case 3: MiscellaneousOptions(param1);
+			case 3: ChatOptions(param1);
+			case 4: MiscellaneousOptions(param1);
 		}
 	}
 	else if (action == MenuAction_End)
@@ -3143,6 +3145,11 @@ public void CentreHudOptions(int client, int item)
 		AddMenuItem(menu, "", "[ON] Centre Hud");
 	else
 		AddMenuItem(menu, "", "[OFF] Centre Hud");
+
+	if (g_bSmallHud[client])
+		AddMenuItem(menu, "", "[ON] Small font\n \n");
+	else
+		AddMenuItem(menu, "", "[OFF] Small font\n \n");
 
 	AddMenuItem(menu, "", "Reset Modules\n \n");
 
@@ -3173,6 +3180,11 @@ public int CentreHudOptionsHandler(Menu menu, MenuAction action, int param1, int
 			CentreHudOptions(param1, 0);
 		}
 		else if (param2 == 1)
+		{
+			g_bSmallHud[param1] = !g_bSmallHud[param1];
+			CentreHudOptions(param1, 0);
+		}
+		else if (param2 == 2)
 		{
 			g_bCentreHud[param1] = true;
 			g_iCentreHudModule[param1][0] = 1;
@@ -3493,23 +3505,11 @@ public void MiscellaneousOptions(int client)
 	else
 		AddMenuItem(menu, "", "[OFF] Centre Speed Display");
 
-	// Hide Chat
-	if (g_bHideChat[client])
-		AddMenuItem(menu, "", "[ON] Hide Chat");
-	else
-		AddMenuItem(menu, "", "[OFF] Hide Chat");
-
 	// Hide Weapon
 	if (g_bViewModel[client])
 		AddMenuItem(menu, "", "[OFF] Hide Weapon");
 	else
 		AddMenuItem(menu, "", "[ON] Hide Weapon");
-
-	// Show Prespeed
-	if (g_iPrespeedText[client])
-		AddMenuItem(menu, "", "[ON] Prestrafe Message");
-	else
-		AddMenuItem(menu, "", "[OFF] Prestrafe Message");
 	
 	SetMenuExitBackButton(menu, true);
 	DisplayMenu(menu, client, MENU_TIME_FOREVER);
@@ -3527,15 +3527,92 @@ public int MiscellaneousOptionsHandler(Menu menu, MenuAction action, int param1,
 			case 3: SpeedGradient(param1, true);
 			case 4: SpeedMode(param1, true);
 			case 5: CenterSpeedDisplay(param1, true);
-			case 6: HideChat(param1, true);
-			case 7: HideViewModel(param1, true);
-			case 8: PrespeedText(param1, true);
+			case 6: HideViewModel(param1, true);
 		}
 	}
 	else if (action == MenuAction_Cancel)
 		OptionMenu(param1);
 	else if (action == MenuAction_End)
 		delete menu;
+}
+
+public void ChatOptions(int client)
+{
+	Menu menu = CreateMenu(ChatOptionsHandler);
+	SetMenuTitle(menu, "Options Menu - Chat\n \n");
+
+	// Hide Chat
+	if (g_bHideChat[client])
+		AddMenuItem(menu, "", "[ON] Hide Chat");
+	else
+		AddMenuItem(menu, "", "[OFF] Hide Chat");
+
+	// CP Msg
+	if (g_iCpMessages[client])
+		AddMenuItem(menu, "", "[ON] Checkpoint Difference");
+	else
+		AddMenuItem(menu, "", "[OFF] Checkpoint Difference");
+
+	// SRCP Msg
+	if (g_iWrcpMessages[client])
+		AddMenuItem(menu, "", "[ON] Stage Difference");
+	else
+		AddMenuItem(menu, "", "[OFF] Stage Difference");
+
+	// Show Prespeed
+	if (g_iPrespeedText[client])
+		AddMenuItem(menu, "", "[ON] Prestrafe Message");
+	else
+		AddMenuItem(menu, "", "[OFF] Prestrafe Message");
+
+	//Stage map Prespeed comare to stage or cp
+	if (g_bPreSpeedStageType[client])
+		AddMenuItem(menu, "", "On staged maps compare prespeed to [Stage]");
+	else
+		AddMenuItem(menu, "", "On staged maps compare prespeed to [Checkpoint]");
+	
+	SetMenuExitBackButton(menu, true);
+	DisplayMenu(menu, client, MENU_TIME_FOREVER);
+}
+
+public int ChatOptionsHandler(Menu menu, MenuAction action, int param1, int param2)
+{
+	if (action == MenuAction_Select)
+	{
+		switch (param2)
+		{
+			case 0: HideChat(param1, true);
+			case 1: ToggleCps(param1);
+			case 2: ToggleWrcps(param1);
+			case 3: PrespeedText(param1, true);
+			case 4: TogglePSST(param1);
+		}
+	}
+	else if (action == MenuAction_Cancel)
+		OptionMenu(param1);
+	else if (action == MenuAction_End)
+		delete menu;
+}
+
+void ToggleWrcps(int client) {
+	
+	g_iWrcpMessages[client] = !g_iWrcpMessages[client];
+	ChatOptions(client);
+
+}
+
+void ToggleCps(int client) {
+
+	g_iCpMessages[client] = !g_iCpMessages[client];
+	ChatOptions(client);
+
+}
+
+void TogglePSST(int client) {
+
+	g_bPreSpeedStageType[client] = !g_bPreSpeedStageType[client];
+	ChatOptions(client);
+
 }
 
 // fluffys
