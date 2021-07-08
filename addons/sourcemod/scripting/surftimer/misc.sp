@@ -1209,7 +1209,7 @@ public void LimitSpeedNew(int client)
 	// Determine how much each vector must be scaled for the magnitude to equal the limit
 	// Derived from Pythagorean theorem, where the hypotenuse represents the magnitude of velocity,
 	// and the two legs represent the x and y velocity components.
-  // As a side effect, velocity component signs are also handled.
+	// As a side effect, velocity component signs are also handled.
 	float scale = speedCap / SquareRoot( Pow(fVel[0], 2.0) + Pow(fVel[1], 2.0) );
 
 	// A scale < 1 indicates a magnitude > limit
@@ -1228,35 +1228,29 @@ public void LimitSpeedNew(int client)
 	}
 }
 
-public void LimitMaxSpeed(int client, float fMaxSpeed)
+void MaxSpeedZoneLimiter(int client)
 {
-	if (!IsValidClient(client) || !IsPlayerAlive(client) || IsFakeClient(client))
+	if (!IsValidClient(client) || !IsPlayerAlive(client) || IsFakeClient(client) || g_iCurrentStyle[client] == 7)
 		return;
 
-	float CurVelVec[3];
-	GetEntPropVector(client, Prop_Data, "m_vecVelocity", CurVelVec);
+	float speedCap = 0.0;
+	speedCap = g_mapZones[g_iClientInZone[client][3]].PreSpeed;
+	if (speedCap <= 0.0)
+		return;
 
-	if (CurVelVec[0] == 0.0)
-		CurVelVec[0] = 1.0;
-	if (CurVelVec[1] == 0.0)
-		CurVelVec[1] = 1.0;
-	if (CurVelVec[2] == 0.0)
-		CurVelVec[2] = 1.0;
+	float fVel[3];
+	GetEntPropVector(client, Prop_Data, "m_vecVelocity", fVel);
 
-	float currentspeed = SquareRoot(Pow(CurVelVec[0], 2.0) + Pow(CurVelVec[1], 2.0));
+	float scale = speedCap / SquareRoot(Pow(fVel[0], 2.0) + Pow(fVel[1], 2.0) + Pow(fVel[2], 2.0));
 
-	if (currentspeed > fMaxSpeed)
+	if (scale < 1.0)
 	{
-		if (CurVelVec[0] > fMaxSpeed)
-			CurVelVec[0] = fMaxSpeed;
-		if (CurVelVec[1] > fMaxSpeed)
-			CurVelVec[1] = fMaxSpeed;
-		if (CurVelVec[2] > fMaxSpeed)
-			CurVelVec[2] = fMaxSpeed;
 
-		NormalizeVector(CurVelVec, CurVelVec);
-		ScaleVector(CurVelVec, fMaxSpeed);
-		TeleportEntity(client, NULL_VECTOR, NULL_VECTOR, CurVelVec);
+		fVel[0] = fVel[0] * scale;
+		fVel[1] = fVel[1] * scale;
+		fVel[2] = fVel[2] * scale;
+
+		TeleportEntity(client, NULL_VECTOR, NULL_VECTOR, fVel);
 	}
 }
 
@@ -1353,6 +1347,12 @@ public void SetClientDefaults(int client)
 		{
 			g_fCheckpointTimesNew[x][client][i] = 0.0;
 			g_fCheckpointTimesRecord[x][client][i] = 0.0;
+
+			for (int k = 0; i < 3; i++)
+			{
+				g_iCheckpointVelsStartNew[x][client][i][k] = 0;
+				g_iCheckpointVelsStartRecord[x][client][i][k] = 0;
+			}
 		}
 	}
 
@@ -1483,6 +1483,23 @@ public float GetSpeed(int client)
 		speed = fVelocity[2];
 	else // XY default
 		speed = SquareRoot(Pow(fVelocity[0], 2.0) + Pow(fVelocity[1], 2.0));
+
+	return speed;
+}
+
+int GetAllSpeedTypes(int client)
+{
+	int speed[3]= 0;
+
+	if (!IsValidClient(client))
+		return speed;
+
+	float fVelocity[3];
+	GetEntPropVector(client, Prop_Data, "m_vecVelocity", fVelocity);
+
+	speed[0] = RoundToNearest(SquareRoot(Pow(fVelocity[0], 2.0) + Pow(fVelocity[1], 2.0))); // XY
+	speed[1] = RoundToNearest(SquareRoot(Pow(fVelocity[0], 2.0) + Pow(fVelocity[1], 2.0) + Pow(fVelocity[2], 2.0))); // XYZ
+	speed[2] = RoundToNearest(fVelocity[2]);
 
 	return speed;
 }
@@ -1868,6 +1885,7 @@ stock void MapFinishedMsgs(int client, int rankThisRun = 0)
 		{
 			Format(szRecordDiff, 32, "+%s", szRecordDiff);
 		}
+		PrintToChat(client, "RecDiff: %f", RecordDiff);
 
 		// Player beat map SR, time difference formatting 
 		RecordDiff2 = g_fOldRecordMapTime - g_fFinalTime[client];
@@ -1880,6 +1898,7 @@ stock void MapFinishedMsgs(int client, int rankThisRun = 0)
 		{
 			Format(szRecordDiff2, 32, "+%s", szRecordDiff2);
 		}
+		PrintToChat(client, "RecDiff2: %f", RecordDiff2);
 
 		// Check that ck_chat_record_type matches and ck_min_rank_announce matches
 		if ((GetConVarInt(g_hAnnounceRecord) == 0 ||
@@ -3413,7 +3432,8 @@ public void CenterHudDead(int client)
 				else if (ObservedUser == g_WrcpBot)
 					Format(obsAika, sizeof(obsAika), "<font color='#ec8'>%s</font>", g_szWrcpReplayTime[g_iCurrentlyPlayingStage]);
 
-				PrintCSGOHUDText(client, "<pre>%s\nSpeed: <font color='#5e5'>%i u/s\n%s</pre>", obsAika, RoundToNearest(g_fLastSpeed[ObservedUser]), sResult);
+				GetSpeedColour(client, RoundToNearest(g_fLastSpeed[ObservedUser]), g_SpeedGradient[client]);
+				PrintCSGOHUDText(client, "<pre>%s\nSpeed: <font color='%s'>%i<font color='#fff'> u/s\n%s</pre>", obsAika, g_szSpeedColour[client], RoundToNearest(g_fLastSpeed[ObservedUser]), sResult);
 				return;
 			}
 			else if (g_bTimerRunning[ObservedUser])
@@ -3451,7 +3471,8 @@ public void CenterHudDead(int client)
 			else if (g_iCurrentStyle[ObservedUser] != 0)
 				Format(timerText, 32, "%s ", g_szStyleHud[ObservedUser]);
 
-			PrintCSGOHUDText(client, "<pre>%s<font color='#5e5'>%s</font>\nSpeed: <font color='#5e5'>%i u/s\n%s</pre>", timerText, obsAika, RoundToNearest(g_fLastSpeed[ObservedUser]), sResult);
+			GetSpeedColour(client, RoundToNearest(g_fLastSpeed[ObservedUser]), g_SpeedGradient[client]);
+			PrintCSGOHUDText(client, "<pre>%s<font color='#5e5'>%s</font>\nSpeed: <font color='%s'>%i<font color='#fff'> u/s\n%s</pre>", timerText, obsAika, g_szSpeedColour[client], RoundToNearest(g_fLastSpeed[ObservedUser]), sResult);
 		}
 	}
 	else
@@ -3648,20 +3669,20 @@ public void CenterHudAlive(int client)
 					if (g_iCurrentStyle[client] == 0) // Normal
 					{
 						if (g_fPersonalRecordBonus[g_iClientInZone[client][2]][client] > 0.0)
-							Format(szRank, 64, "Rank: %i / %i", g_MapRankBonus[g_iClientInZone[client][2]][client], g_iBonusCount[g_iClientInZone[client][2]]);
+							Format(szRank, 64, "Rank: %i/%i", g_MapRankBonus[g_iClientInZone[client][2]][client], g_iBonusCount[g_iClientInZone[client][2]]);
 						else
 							if (g_iBonusCount[g_iClientInZone[client][2]] > 0)
-								Format(szRank, 64, "Rank: - / %i", g_iBonusCount[g_iClientInZone[client][2]]);
+								Format(szRank, 64, "Rank: -/%i", g_iBonusCount[g_iClientInZone[client][2]]);
 							else
 								Format(szRank, 64, "Rank: N/A");
 					}
 					else if (g_iCurrentStyle[client] != 0) // Styles
 					{
 						if (g_fStylePersonalRecordBonus[style][g_iClientInZone[client][2]][client] > 0.0)
-							Format(szRank, 64, "Rank: %i / %i", g_StyleMapRankBonus[style][g_iClientInZone[client][2]][client], g_iStyleBonusCount[style][g_iClientInZone[client][2]]);
+							Format(szRank, 64, "Rank: %i/%i", g_StyleMapRankBonus[style][g_iClientInZone[client][2]][client], g_iStyleBonusCount[style][g_iClientInZone[client][2]]);
 						else
 							if (g_iStyleBonusCount[style][g_iClientInZone[client][2]] > 0)
-								Format(szRank, 64, "Rank: - / %i", g_iStyleBonusCount[style][g_iClientInZone[client][2]]);
+								Format(szRank, 64, "Rank: -/%i", g_iStyleBonusCount[style][g_iClientInZone[client][2]]);
 							else
 								Format(szRank, 64, "Rank: N/A");
 					}
@@ -3671,20 +3692,20 @@ public void CenterHudAlive(int client)
 					if (g_iCurrentStyle[client] == 0) // Normal
 					{
 						if (g_fPersonalRecord[client] > 0.0)
-							Format(szRank, 64, "Rank: %i / %i", g_MapRank[client], g_MapTimesCount);
+							Format(szRank, 64, "Rank: %i/%i", g_MapRank[client], g_MapTimesCount);
 						else
 							if (g_MapTimesCount > 0)
-								Format(szRank, 64, "Rank: - / %i", g_MapTimesCount);
+								Format(szRank, 64, "Rank: -/%i", g_MapTimesCount);
 							else
 								Format(szRank, 64, "Rank: N/A");
 					}
 					else if (g_iCurrentStyle[client] != 0) // Styles
 					{
 						if (g_fPersonalStyleRecord[style][client] > 0.0)
-							Format(szRank, 64, "Rank: %i / %i", g_StyleMapRank[style][client], g_StyleMapTimesCount[style]);
+							Format(szRank, 64, "Rank: %i/%i", g_StyleMapRank[style][client], g_StyleMapTimesCount[style]);
 						else
 							if (g_StyleMapTimesCount[style] > 0)
-								Format(szRank, 64, "Rank: - / %i", g_StyleMapTimesCount[style]);
+								Format(szRank, 64, "Rank: -/%i", g_StyleMapTimesCount[style]);
 							else
 								Format(szRank, 64, "Rank: N/A");
 					}
@@ -3699,7 +3720,7 @@ public void CenterHudAlive(int client)
 				{
 					if (!g_bhasStages) // map is linear
 					{
-						Format(module[i], 128, "Linear Map");
+						Format(module[i], 128, "Linear");
 					}
 					else // map has stages
 					{
@@ -3707,16 +3728,16 @@ public void CenterHudAlive(int client)
 						{
 							if (g_bSaveLocTele[client]) // Has the player teleported to saveloc?
 							{
-								Format(module[i], 128, "Stage: %i / %i", g_iPlayerPracLocationSnap[client][g_iPlayerPracLocationSnapIdClient[client]], (g_mapZonesTypeCount[g_iClientInZone[client][2]][3] + 1));
+								Format(module[i], 128, "Stage: %i/%i", g_iPlayerPracLocationSnap[client][g_iPlayerPracLocationSnapIdClient[client]], (g_mapZonesTypeCount[g_iClientInZone[client][2]][3] + 1));
 							}
 							else
 							{
-								Format(module[i], 128, "Stage: %i / %i", g_Stage[g_iClientInZone[client][2]][client], (g_mapZonesTypeCount[g_iClientInZone[client][2]][3] + 1));
+								Format(module[i], 128, "Stage: %i/%i", g_Stage[g_iClientInZone[client][2]][client], (g_mapZonesTypeCount[g_iClientInZone[client][2]][3] + 1));
 							}
 						}
 						else
 						{
-							Format(module[i], 128, "Stage: %i / %i", g_Stage[g_iClientInZone[client][2]][client], (g_mapZonesTypeCount[g_iClientInZone[client][2]][3] + 1)); // less \t's to make lines align
+							Format(module[i], 128, "Stage: %i/%i", g_Stage[g_iClientInZone[client][2]][client], (g_mapZonesTypeCount[g_iClientInZone[client][2]][3] + 1)); // less \t's to make lines align
 						}
 					}
 				}
@@ -3731,13 +3752,10 @@ public void CenterHudAlive(int client)
 				GetSpeedColour(client, RoundToNearest(g_fLastSpeed[client]), g_SpeedGradient[client]);
 				if (RoundToNearest(g_fLastSpeed[client]) < 10 && RoundToNearest(g_fLastSpeed[client]) > -1)
 				{
-					if (i == 0 || i == 2 || i == 4)
-						Format(module[i], 128, "Speed: <font color='%s'>%i</font> u/s       ", g_szSpeedColour[client], RoundToNearest(g_fLastSpeed[client]));
-					else
-						Format(module[i], 128, "Speed: <font color='%s'>%i</font> u/s", g_szSpeedColour[client], RoundToNearest(g_fLastSpeed[client]));
+					Format(module[i], 128, "<font color='%s'>%i</font> u/s", g_szSpeedColour[client], RoundToNearest(g_fLastSpeed[client]));
 				}
 				else
-					Format(module[i], 128, "Speed: <font color='%s'>%i</font> u/s", g_szSpeedColour[client], RoundToNearest(g_fLastSpeed[client]));
+					Format(module[i], 128, "<font color='%s'>%i</font> u/s", g_szSpeedColour[client], RoundToNearest(g_fLastSpeed[client]));
 			}
 			else if (g_iCentreHudModule[client][i] == 7)
 			{
@@ -3746,15 +3764,13 @@ public void CenterHudAlive(int client)
 			}
 		}
 
-		// if (g_iCurrentStyle[client] > 0)
-		// 	Format(timerText, sizeof(timerText), "%s%s", g_szStyleHud[client], timerColour);
-		// else
-		// 	Format(timerText, sizeof(timerText), "%s", timerColour);
-
 		if (IsValidEntity(client) && 1 <= client <= MaxClients && !g_bOverlay[client])
 		{
 			// PrintCSGOHUDText(client, "<font face=''>%s%s\n%s%s\n%s%s</font>", module[0], module2, module[2], module4, module[4], module6);
-			PrintCSGOHUDText(client, "<pre><font>%15s\t %15s\n%15s\t %15s\n%15s\t %15s</font></pre>", module[0], module[1], module[2], module[3], module[4], module[5]);
+			if (g_bSmallHud[client])
+				PrintCSGOHUDText(client, "<pre><font class='fontSize-sm'>%11s\t %11s\n%11s\t %11s\n%11s\t %11s</font></pre>", module[0], module[1], module[2], module[3], module[4], module[5]);
+			else
+				PrintCSGOHUDText(client, "<pre>%14s\t %14s\n%14s\t %14s\n%14s\t %14s</pre>", module[0], module[1], module[2], module[3], module[4], module[5]);
 		}
 	}
 }
@@ -4023,10 +4039,12 @@ public void SideHudAlive(int client)
 	}
 }
 
-public void Checkpoint(int client, int zone, int zonegroup, float time)
+public void Checkpoint(int client, int zone, int zonegroup, float time, AllSpeed[3])
 {
 	if (!IsValidClient(client) || g_bPositionRestored[client] || IsFakeClient(client) || zone >= CPLIMIT)
 		return;
+
+	int speedType = g_SpeedMode[client];
 
 	float percent = -1.0;
 	int totalPoints = 0;
@@ -4035,8 +4053,7 @@ public void Checkpoint(int client, int zone, int zonegroup, float time)
 
 	if (g_bhasStages) // If staged map
 		totalPoints = g_mapZonesTypeCount[zonegroup][3];
-	else
-		if (g_mapZonesTypeCount[zonegroup][4] > 0) // If Linear Map and checkpoints
+	if (g_mapZonesTypeCount[zonegroup][4] > 0) // If Linear Map and checkpoints
 		totalPoints = g_mapZonesTypeCount[zonegroup][4];
 
 	// Count percent of completion
@@ -4134,6 +4151,61 @@ public void Checkpoint(int client, int zone, int zonegroup, float time)
 		}
 		g_fLastDifferenceTime[client] = GetGameTime();
 
+		char szStartWR[256], szStartPB[256];
+
+		// WR Start Speed
+		int startSpeedDiffWR, startSpeedDiffPB;
+		int compare, compare2;
+		if (zone == 0)
+		{
+			compare = g_iStartVelsServerRecord[0][speedType];
+			compare2 = g_iStartVelsNew[client][0][speedType];
+		}
+		else
+		{
+			compare = g_iCheckpointVelsStartServerRecord[zonegroup][zone - 1][speedType];
+			compare2 = g_iCheckpointVelsStartNew[zonegroup][client][zone - 1][speedType];
+		}
+
+		if (compare == 0)
+			startSpeedDiffWR = compare2;
+		else if (compare > compare2)
+			startSpeedDiffWR = (compare - compare2);
+		else
+			startSpeedDiffWR = (compare2 - compare);
+
+		if (compare2 > compare)
+			Format(szStartWR, sizeof(szStartWR), "+%d", startSpeedDiffWR);
+		if (compare == 0 )
+			Format(szStartWR, sizeof(szStartWR), "N/A");
+		else
+			Format(szStartWR, sizeof(szStartWR), "-%d", startSpeedDiffWR);
+
+		// PB Start Speed
+		if (zone == 0)
+		{
+			compare = g_iStartVelsRecord[client][0][speedType];
+			compare2 = g_iStartVelsNew[client][0][speedType];
+		}
+		else
+		{
+			compare = g_iCheckpointVelsStartRecord[zonegroup][client][zone - 1][speedType];
+			compare2 = g_iCheckpointVelsStartNew[zonegroup][client][zone - 1][speedType];
+		}
+
+		if (compare == 0)
+			startSpeedDiffPB = compare2;
+		else if (compare > compare2)
+			startSpeedDiffPB = (compare - compare2);
+		else
+			startSpeedDiffPB = (compare2 - compare);
+
+		if (compare2 > compare)
+			Format(szStartPB, sizeof(szStartPB), "+%d", startSpeedDiffPB);
+		else
+			Format(szStartPB, sizeof(szStartPB), "-%d", startSpeedDiffPB);
+
+
 		if (g_fCheckpointTimesRecord[zonegroup][client][zone] <= 0.0)
 			Format(szDiff, 128, "");
 
@@ -4158,6 +4230,12 @@ public void Checkpoint(int client, int zone, int zonegroup, float time)
 		if (g_bCheckpointsEnabled[client] && g_iCpMessages[client])
 		{
 			CPrintToChat(client, "%t", "Misc30", g_szChatPrefix, g_iClientInZone[client][1] + 1, szTime, szDiff, sz_srDiff);
+
+			if (!g_bhasStages)
+			{
+				CPrintToChat(client, "%t", "CheckpointSpeed", g_szChatPrefix, g_iClientInZone[client][1] + 1, AllSpeed[speedType], szStartPB, szStartWR);
+				CPSpeedToSpec(client, zonegroup, zone, AllSpeed);
+			}
 		}
 
 		Format(szSpecMessage, sizeof(szSpecMessage), "%t", "Misc31", g_szChatPrefix, szName, g_iClientInZone[client][1] + 1, szTime, szDiff, sz_srDiff);
@@ -4169,6 +4247,45 @@ public void Checkpoint(int client, int zone, int zonegroup, float time)
 	else // if first run
 		if (g_bTimerRunning[client])
 		{
+			if (zone > 0)
+			{
+				char szStartWR[256];
+				// WR Start Speed
+				int startSpeedDiffWR;
+				int compare, compare2;
+				if (zone == 0)
+				{
+					compare = g_iStartVelsServerRecord[0][speedType];
+					compare2 = g_iStartVelsNew[client][0][speedType];
+				}
+				else
+				{
+					compare = g_iCheckpointVelsStartServerRecord[zonegroup][zone - 1][speedType];
+					compare2 = g_iCheckpointVelsStartNew[zonegroup][client][zone - 1][speedType];
+				}
+
+				if (compare == 0)
+					startSpeedDiffWR = compare2;
+				else if (compare > compare2)
+					startSpeedDiffWR = (compare - compare2);
+				else
+					startSpeedDiffWR = (compare2 - compare);
+
+				if (compare2 > compare)
+					Format(szStartWR, sizeof(szStartWR), "+%d", startSpeedDiffWR);
+				if (compare == 0 )
+					Format(szStartWR, sizeof(szStartWR), "N/A");
+				else
+					Format(szStartWR, sizeof(szStartWR), "-%d", startSpeedDiffWR);
+
+				if (!g_bhasStages)
+				{
+					CPrintToChat(client, "%t", "CheckpointSpeed", g_szChatPrefix, g_iClientInZone[client][1] + 1, AllSpeed[speedType], "N/A", szStartWR);
+					CPSpeedToSpec(client, zonegroup, zone, AllSpeed);
+				}
+				
+			}
+			
 			// Set percent of completion to assist
 			if (CS_GetMVPCount(client) < 1)
 				CS_SetClientAssists(client, RoundToFloor(g_fMaxPercCompleted[client]));
@@ -4218,6 +4335,86 @@ public void CheckpointToSpec(int client, char[] buffer)
 					CPrintToChat(x, "%s", buffer);
 			}
 		}
+	}
+}
+
+public void CPSpeedToSpec(int client, int zonegroup, int zone, AllSpeed[3])
+{
+	for(int i = 1; i <= MaxClients; i++){
+
+		if (!IsClientInGame(i) || IsFakeClient(i))
+				continue;
+
+		if (GetClientTeam(i) != CS_TEAM_SPECTATOR)
+			continue;
+
+		int ObserverMode = GetEntProp(i, Prop_Send, "m_iObserverMode");
+		if (ObserverMode != 4 && ObserverMode != 5)
+			continue;
+
+		int ObserverTarget = GetEntPropEnt(i, Prop_Send, "m_hObserverTarget");
+		if (ObserverTarget != client)
+			continue;
+
+		if (!g_iPrespeedText[i])
+			continue;
+
+		if (g_bhasStages)
+			continue;
+		
+		char szStartWR[256], szStartPB[256];
+		int speedType = g_SpeedMode[i];
+		int startSpeedDiffWR, startSpeedDiffPB;
+		int compare, compare2;
+		
+		if (zone == 0)
+		{
+			compare = g_iStartVelsServerRecord[0][speedType];
+			compare2 = g_iStartVelsNew[client][0][speedType];
+		}
+		else
+		{
+			compare = g_iCheckpointVelsStartServerRecord[zonegroup][zone - 1][speedType];
+			compare2 = g_iCheckpointVelsStartNew[zonegroup][client][zone - 1][speedType];
+		}
+
+		if (compare == 0)
+			startSpeedDiffWR = compare2;
+		else if (compare > compare2)
+			startSpeedDiffWR = (compare - compare2);
+		else
+			startSpeedDiffWR = (compare2 - compare);
+
+		if (compare2 > compare)
+			Format(szStartWR, sizeof(szStartWR), "+%d", startSpeedDiffWR);
+		else
+			Format(szStartWR, sizeof(szStartWR), "-%d", startSpeedDiffWR);
+
+		// PB Start Speed
+		if (zone == 0)
+		{
+			compare = g_iStartVelsRecord[client][0][speedType];
+			compare2 = g_iStartVelsNew[client][0][speedType];
+		}
+		else
+		{
+			compare = g_iCheckpointVelsStartRecord[zonegroup][client][zone - 1][speedType];
+			compare2 = g_iCheckpointVelsStartNew[zonegroup][client][zone - 1][speedType];
+		}
+
+		if (compare == 0)
+			startSpeedDiffPB = compare2;
+		else if (compare > compare2)
+			startSpeedDiffPB = (compare - compare2);
+		else
+			startSpeedDiffPB = (compare2 - compare);
+
+		if (compare2 > compare)
+			Format(szStartPB, sizeof(szStartPB), "+%d", startSpeedDiffPB);
+		else
+			Format(szStartPB, sizeof(szStartPB), "-%d", startSpeedDiffPB);
+
+		CPrintToChat(i, "%t", "CheckpointSpeed", g_szChatPrefix, g_iClientInZone[client][1] + 1, AllSpeed[speedType], szStartPB, szStartWR);
 	}
 }
 
