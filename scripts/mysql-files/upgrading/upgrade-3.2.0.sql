@@ -94,4 +94,4 @@ ALTER TABLE `ck_bonus` ADD `velStartXY` INT NOT NULL AFTER `runtime`, ADD `velSt
 
 ALTER TABLE `ck_wrcps` ADD `velStartXY` INT NOT NULL AFTER `runtimepro`, ADD `velStartXYZ` INT NOT NULL AFTER `velStartXY`, ADD `velStartZ` INT NOT NULL AFTER `velStartXYZ`;
 
-ALTER TABLE `ck_playeroptions2` ADD `smallhud` tinyint NOT NULL DEFAULT 1 AFTER `wrcpmessages`, ADD `prespeedstagemsg` tinyint NOT NULL DEFAULT 1 AFTER `smallhud`;
+ALTER TABLE `ck_playeroptions2` ADD `smallhud` tinyint NOT NULL DEFAULT 1 AFTER `wrcpmessages`;

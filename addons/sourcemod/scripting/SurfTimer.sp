@@ -778,9 +778,6 @@ bool g_iAutoReset[MAXPLAYERS + 1];
 // small hud
 bool g_bSmallHud[MAXPLAYERS + 1];
 
-// PreSpeed messages for staged maps - true use stage speeds, false use cp speeds
-bool g_bPreSpeedStageType[MAXPLAYERS + 1];
-
 /*----------  Run Variables  ----------*/
 
 // Clients personal record in map

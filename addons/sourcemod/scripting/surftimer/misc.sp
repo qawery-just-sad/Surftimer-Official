@@ -1177,10 +1177,10 @@ public void LimitSpeed(int client)
 
 public void LimitSpeedNew(int client)
 {
-	if (!g_bInStartZone[client] || !g_bInStageZone[client])
+	if (!IsValidClient(client) || !IsPlayerAlive(client) || IsFakeClient(client) || g_mapZonesCount <= 0 || g_bPracticeMode[client] || g_mapZonesTypeCount[g_iClientInZone[client][2]][2] == 0 || g_iClientInZone[client][3] < 0 || g_iClientInZone[client][0] == 2 || g_iClientInZone[client][0] == 4 || g_iClientInZone[client][0] >= 6 || GetConVarInt(g_hLimitSpeedType) == 0 || g_iCurrentStyle[client] == 7)
 		return;
 
-	if (!IsValidClient(client) || !IsPlayerAlive(client) || IsFakeClient(client) || g_iCurrentStyle[client] == 7 || g_mapZonesCount <= 0 || g_mapZonesTypeCount[g_iClientInZone[client][2]][2] == 0 || g_iClientInZone[client][3] < 0 || GetConVarInt(g_hLimitSpeedType) == 0)
+	if (GetConVarInt(g_hLimitSpeedType) == 0 || !g_bInStartZone[client] && !g_bInStageZone[client])
 		return;
 
 	float speedCap = 0.0;
@@ -1192,14 +1192,17 @@ public void LimitSpeedNew(int client)
 	float fVel[3];
 	GetEntPropVector(client, Prop_Data, "m_vecVelocity", fVel);
 
-	if (GetEntityFlags(client) & FL_ONGROUND)
+	if (g_bInStartZone[client] || g_bInStageZone[client])
 	{
-		g_iTicksOnGround[client]++;
-		if (g_iTicksOnGround[client] > 60)
+		if (GetEntityFlags(client) & FL_ONGROUND)
 		{
-			g_bNewStage[client] = false;
-			g_bLeftZone[client] = false;
-			return;
+			g_iTicksOnGround[client]++;
+			if (g_iTicksOnGround[client] > 60)
+			{
+				g_bNewStage[client] = false;
+				g_bLeftZone[client] = false;
+				return;
+			}
 		}
 	}
 
@@ -4239,15 +4242,11 @@ public void Checkpoint(int client, int zone, int zonegroup, float time, AllSpeed
 		{
 			CPrintToChat(client, "%t", "Misc30", g_szChatPrefix, g_iClientInZone[client][1] + 1, szTime, szDiff, sz_srDiff);
 
-			if (g_bhasStages && !g_bPreSpeedStageType[client])
-			{
-				CPrintToChat(client, "%t", "CheckpointSpeed", g_szChatPrefix, g_iClientInZone[client][1] + 1, AllSpeed[speedType], szStartPB, szStartWR);
-			}
 			if (!g_bhasStages)
 			{
 				CPrintToChat(client, "%t", "CheckpointSpeed", g_szChatPrefix, g_iClientInZone[client][1] + 1, AllSpeed[speedType], szStartPB, szStartWR);
+				CPSpeedToSpec(client, zonegroup, zone, AllSpeed);
 			}
-			CPSpeedToSpec(client, zonegroup, zone, AllSpeed);
 		}
 
 		Format(szSpecMessage, sizeof(szSpecMessage), "%t", "Misc31", g_szChatPrefix, szName, g_iClientInZone[client][1] + 1, szTime, szDiff, sz_srDiff);
@@ -4290,15 +4289,12 @@ public void Checkpoint(int client, int zone, int zonegroup, float time, AllSpeed
 				else
 					Format(szStartWR, sizeof(szStartWR), "-%d", startSpeedDiffWR);
 
-				if (g_bhasStages && !g_bPreSpeedStageType[client])
-				{
-					CPrintToChat(client, "%t", "CheckpointSpeed", g_szChatPrefix, g_iClientInZone[client][1] + 1, AllSpeed[speedType], "N/A", szStartWR);
-				}
 				if (!g_bhasStages)
 				{
 					CPrintToChat(client, "%t", "CheckpointSpeed", g_szChatPrefix, g_iClientInZone[client][1] + 1, AllSpeed[speedType], "N/A", szStartWR);
+					CPSpeedToSpec(client, zonegroup, zone, AllSpeed);
 				}
-				CPSpeedToSpec(client, zonegroup, zone, AllSpeed);
+				
 			}
 			
 			// Set percent of completion to assist
@@ -4374,7 +4370,7 @@ public void CPSpeedToSpec(int client, int zonegroup, int zone, AllSpeed[3])
 		if (!g_iPrespeedText[i])
 			continue;
 
-		if (g_bhasStages && g_bPreSpeedStageType[i])
+		if (g_bhasStages)
 			continue;
 		
 		char szStartWR[256], szStartPB[256];

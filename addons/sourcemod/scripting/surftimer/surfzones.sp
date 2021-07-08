@@ -559,7 +559,7 @@ public void EndTouch(int client, int action[3])
 {
 	if (IsValidClient(client))
 	{
-		//LimitSpeed(client);
+		LimitSpeed(client);
 		// Set Client targetName
 		if (StrEqual(g_szMapName, "surf_forgotten"))
 		{

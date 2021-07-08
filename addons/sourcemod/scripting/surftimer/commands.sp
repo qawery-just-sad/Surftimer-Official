@@ -3564,12 +3564,6 @@ public void ChatOptions(int client)
 		AddMenuItem(menu, "", "[ON] Prestrafe Message");
 	else
 		AddMenuItem(menu, "", "[OFF] Prestrafe Message");
-
-	//Stage map Prespeed comare to stage or cp
-	if (g_bPreSpeedStageType[client])
-		AddMenuItem(menu, "", "On staged maps compare prespeed to [Stage]");
-	else
-		AddMenuItem(menu, "", "On staged maps compare prespeed to [Checkpoint]");
 	
 	SetMenuExitBackButton(menu, true);
 	DisplayMenu(menu, client, MENU_TIME_FOREVER);
@@ -3585,7 +3579,6 @@ public int ChatOptionsHandler(Menu menu, MenuAction action, int param1, int para
 			case 1: ToggleCps(param1);
 			case 2: ToggleWrcps(param1);
 			case 3: PrespeedText(param1, true);
-			case 4: TogglePSST(param1);
 		}
 	}
 	else if (action == MenuAction_Cancel)
@@ -3604,13 +3597,6 @@ void ToggleWrcps(int client) {
 void ToggleCps(int client) {
 
 	g_iCpMessages[client] = !g_iCpMessages[client];
-	ChatOptions(client);
-
-}
-
-void TogglePSST(int client) {
-
-	g_bPreSpeedStageType[client] = !g_bPreSpeedStageType[client];
 	ChatOptions(client);
 
 }
